@@ -1,41 +1,84 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center">
-      <div className="text-center">
-        <div className="flex justify-center space-x-8 mb-8">
-          <a href="https://vite.dev" target="_blank">
-            <img src={viteLogo} className="logo hover:scale-110 transition-transform" alt="Vite logo" />
-          </a>
-          <a href="https://react.dev" target="_blank">
-            <img src={reactLogo} className="logo react hover:scale-110 transition-transform" alt="React logo" />
-          </a>
+    <div className="min-h-screen bg-gradient-to-br from-[#E8DFCA] via-white to-[#E8DFCA] flex items-center justify-center px-4">
+      <div className="text-center max-w-2xl mx-auto">
+        {/* Cojines herbales decorativos */}
+        <div className="flex justify-center gap-4 mb-8">
+          <div className="w-16 h-16 rounded-full bg-[#4A9E7C] opacity-70 animate-pulse shadow-lg flex items-center justify-center">
+            <span className="text-2xl">🌿</span>
+          </div>
+          <div className="w-20 h-20 rounded-full bg-[#2391C3] opacity-80 animate-bounce shadow-xl flex items-center justify-center">
+            <span className="text-3xl">💙</span>
+          </div>
+          <div className="w-16 h-16 rounded-full bg-[#8A4A86] opacity-70 animate-pulse shadow-lg flex items-center justify-center">
+            <span className="text-2xl">✨</span>
+          </div>
         </div>
-        <h1 className="text-4xl font-bold text-white mb-8">Vite + React + Tailwind</h1>
-        <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg p-6 mb-6">
-          <button 
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
-            onClick={() => setCount((count) => count + 1)}
-          >
-            count is {count}
-          </button>
-          <p className="mt-4 text-gray-200">
-            Edit <code className="bg-gray-800 text-yellow-300 px-2 py-1 rounded">src/App.tsx</code> and save to test HMR
+
+        {/* Título principal con estilo Meraki */}
+        <h1 className="text-7xl font-bold mb-2" style={{ color: "#2391C3" }}>
+          Meraki ACA
+        </h1>
+        <p className="text-lg mb-8" style={{ color: "#8A4A86" }}>
+          Cojines Herbales con Alma, Creatividad y Amor
+        </p>
+
+        {/* Tarjeta principal cute */}
+        <div className="bg-white rounded-3xl p-8 shadow-2xl mb-6 border-4 border-[#F5E63C]">
+          <div className="mb-4">
+            <span className="text-6xl inline-block animate-bounce">🌸</span>
+          </div>
+          <p className="text-3xl font-bold mb-3" style={{ color: "#D7322D" }}>
+            ¡Estamos preparando algo especial!
+          </p>
+          <p className="text-gray-600 text-lg mb-4">
+            Nuestra tienda está tomando forma con mucho amor y dedicación
+          </p>
+
+          {/* Iconos de beneficios */}
+          <div className="flex justify-center gap-6 mt-6">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-[#4A9E7C] bg-opacity-20 flex items-center justify-center mx-auto mb-2">
+                <span className="text-2xl">🌱</span>
+              </div>
+              <p className="text-xs text-gray-600">100% Natural</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-[#2391C3] bg-opacity-20 flex items-center justify-center mx-auto mb-2">
+                <span className="text-2xl">💆‍♀️</span>
+              </div>
+              <p className="text-xs text-gray-600">Relajación</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-[#8A4A86] bg-opacity-20 flex items-center justify-center mx-auto mb-2">
+                <span className="text-2xl">✨</span>
+              </div>
+              <p className="text-xs text-gray-600">Bienestar</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Mensaje adicional */}
+        <div className="bg-white bg-opacity-60 rounded-2xl p-4 inline-block">
+          <p className="text-gray-600 text-sm flex items-center gap-2 justify-center">
+            <span className="text-lg">🛠️</span>
+            Mientras tanto, estamos creando tu experiencia perfecta
+            <span className="text-lg">💝</span>
           </p>
         </div>
-        <p className="text-gray-300">
-          Click on the Vite and React logos to learn more
-        </p>
+
+        {/* Decoración inferior */}
+        <div className="mt-8 flex justify-center gap-3 opacity-50">
+          <span className="text-2xl">🌿</span>
+          <span className="text-2xl">🌸</span>
+          <span className="text-2xl">💙</span>
+          <span className="text-2xl">🌿</span>
+        </div>
       </div>
     </div>
-  )
-}
+  );
 }
 
-export default App
+export default App;
