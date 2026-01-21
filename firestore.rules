@@ -1,0 +1,116 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ============================================
+    // FUNCIONES AUXILIARES
+    // ============================================
+    
+    // Verifica si el usuario está autenticado
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Verifica si el usuario es el dueño del documento
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // Verifica si el usuario es administrador
+    function isAdmin() {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+    
+    // Verifica si el email está en la lista de admins
+    function isAdminEmail() {
+      return isSignedIn() && (
+        request.auth.token.email == 'samugutibarona@gmail.com' ||
+        request.auth.token.email == 'merakiaca.c@gmail.com'
+      );
+    }
+    
+    // ============================================
+    // COLECCIÓN: users
+    // ============================================
+    match /users/{userId} {
+      // Permitir lectura si es el dueño o admin
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Permitir crear solo tu propio usuario al registrarte
+      allow create: if isOwner(userId);
+      
+      // Permitir actualizar solo tu propio usuario
+      allow update: if isOwner(userId);
+      
+      // Solo admins pueden eliminar usuarios
+      allow delete: if isAdmin();
+    }
+    
+    // ============================================
+    // COLECCIÓN: products
+    // ============================================
+    match /products/{productId} {
+      // Todos pueden leer productos activos
+      allow read: if true;
+      
+      // Solo admins pueden crear, actualizar o eliminar productos
+      allow create, update, delete: if isAdmin() || isAdminEmail();
+    }
+    
+    // ============================================
+    // COLECCIÓN: categories
+    // ============================================
+    match /categories/{categoryId} {
+      // Todos pueden leer categorías
+      allow read: if true;
+      
+      // Solo admins pueden crear, actualizar o eliminar categorías
+      allow create, update, delete: if isAdmin() || isAdminEmail();
+    }
+    
+    // ============================================
+    // COLECCIÓN: orders
+    // ============================================
+    match /orders/{orderId} {
+      // Los usuarios pueden leer sus propias órdenes
+      // Los admins pueden leer todas las órdenes
+      allow read: if isOwner(resource.data.userId) || isAdmin() || isAdminEmail();
+      
+      // Los usuarios pueden crear sus propias órdenes
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      
+      // Solo admins pueden actualizar órdenes (cambiar estado, etc.)
+      allow update: if isAdmin() || isAdminEmail();
+      
+      // Solo admins pueden eliminar órdenes
+      allow delete: if isAdmin() || isAdminEmail();
+    }
+    
+    // ============================================
+    // COLECCIÓN: carts (por si la usamos en el futuro)
+    // ============================================
+    match /carts/{cartId} {
+      // Los usuarios solo pueden leer su propio carrito
+      allow read: if isOwner(resource.data.userId);
+      
+      // Los usuarios pueden crear su propio carrito
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      
+      // Los usuarios pueden actualizar su propio carrito
+      allow update: if isOwner(resource.data.userId);
+      
+      // Los usuarios pueden eliminar su propio carrito
+      allow delete: if isOwner(resource.data.userId);
+    }
+    
+    // ============================================
+    // REGLA POR DEFECTO: DENEGAR TODO
+    // ============================================
+    // Cualquier colección no especificada explícitamente será denegada
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
