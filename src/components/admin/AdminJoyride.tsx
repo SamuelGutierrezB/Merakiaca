@@ -1,10 +1,137 @@
 import Joyride, { STATUS } from "react-joyride";
-import type { Step, CallBackProps } from "react-joyride";
+import type { Step, CallBackProps, TooltipRenderProps } from "react-joyride";
 import { useState, useEffect } from "react";
 
 interface AdminJoyrideProps {
   page: "dashboard" | "products" | "orders" | "categories";
 }
+
+// Tooltip personalizado en español
+const CustomTooltip = ({
+  continuous,
+  index,
+  step,
+  backProps,
+  closeProps,
+  primaryProps,
+  skipProps,
+  tooltipProps,
+  isLastStep,
+  size,
+}: TooltipRenderProps) => {
+  return (
+    <div
+      {...tooltipProps}
+      style={{
+        backgroundColor: "#fff",
+        borderRadius: "12px",
+        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+        maxWidth: "400px",
+        padding: "20px",
+      }}
+    >
+      {/* Contenido */}
+      <div style={{ marginBottom: "15px" }}>
+        <div
+          style={{
+            fontSize: "16px",
+            lineHeight: "1.6",
+            color: "#333",
+          }}
+        >
+          {step.content}
+        </div>
+      </div>
+
+      {/* Footer con progreso y botones */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "20px",
+        }}
+      >
+        {/* Indicador de progreso en español */}
+        <div style={{ color: "#666", fontSize: "14px" }}>
+          Paso {index + 1} de {size}
+        </div>
+
+        {/* Botones */}
+        <div style={{ display: "flex", gap: "10px" }}>
+          {index > 0 && (
+            <button
+              {...backProps}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "#666",
+                cursor: "pointer",
+                fontSize: "14px",
+                padding: "8px 16px",
+              }}
+            >
+              Atrás
+            </button>
+          )}
+
+          {continuous && !isLastStep && (
+            <button
+              {...primaryProps}
+              style={{
+                backgroundColor: "#2391C3",
+                border: "none",
+                borderRadius: "8px",
+                color: "#fff",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: 600,
+                padding: "10px 20px",
+              }}
+            >
+              Siguiente
+            </button>
+          )}
+
+          {isLastStep && (
+            <button
+              {...closeProps}
+              style={{
+                backgroundColor: "#2391C3",
+                border: "none",
+                borderRadius: "8px",
+                color: "#fff",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: 600,
+                padding: "10px 20px",
+              }}
+            >
+              Terminar
+            </button>
+          )}
+
+          {!isLastStep && (
+            <button
+              {...skipProps}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "#999",
+                cursor: "pointer",
+                fontSize: "13px",
+                padding: "8px 16px",
+                textDecoration: "underline",
+              }}
+            >
+              Saltar tour
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const tours: Record<string, Step[]> = {
   dashboard: [
@@ -61,13 +188,12 @@ const tours: Record<string, Step[]> = {
     },
     {
       target: "[data-tour='orders-title']",
-      content:
-        "Aquí verás todas las órdenes de compra cuando los clientes empiecen a comprar.",
+      content: "Aquí verás todas las órdenes de compra que hagan tus clientes.",
     },
     {
-      target: "[data-tour='orders-empty']",
+      target: "[data-tour='orders-table']",
       content:
-        "Por ahora no hay órdenes. Cuando alguien compre, aparecerán aquí con toda la información: qué compró, cuánto pagó, y a dónde enviarlo.",
+        "En esta tabla aparecerán todas las órdenes. Podrás ver el nombre del cliente, qué compró, cuánto pagó, el estado del pedido y la fecha. Haz clic en cualquier orden para ver más detalles.",
     },
   ],
   categories: [
@@ -125,39 +251,21 @@ export default function AdminJoyride({ page }: AdminJoyrideProps) {
       steps={steps}
       run={run}
       continuous
-      showProgress
-      showSkipButton
+      showSkipButton={false}
       callback={handleJoyrideCallback}
+      disableOverlayClose
+      hideCloseButton
+      spotlightClicks={false}
+      tooltipComponent={CustomTooltip}
       styles={{
         options: {
-          primaryColor: "#2391C3",
-          textColor: "#333",
-          backgroundColor: "#fff",
           arrowColor: "#fff",
           overlayColor: "rgba(0, 0, 0, 0.5)",
           zIndex: 10000,
         },
-        buttonNext: {
-          backgroundColor: "#2391C3",
-          fontSize: 14,
-          fontWeight: 600,
-          padding: "10px 20px",
-          borderRadius: "8px",
-        },
-        buttonBack: {
-          color: "#666",
-          marginRight: 10,
-        },
-        buttonSkip: {
-          color: "#999",
-        },
       }}
-      locale={{
-        back: "Atrás",
-        close: "Cerrar",
-        last: "Terminar",
-        next: "Siguiente",
-        skip: "Saltar tour",
+      floaterProps={{
+        disableAnimation: false,
       }}
     />
   );

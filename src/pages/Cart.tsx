@@ -185,9 +185,12 @@ export default function Cart() {
                 </div>
               </div>
 
-              <button className="w-full bg-[#2391C3] hover:bg-[#1A6B8E] text-white font-bold py-4 rounded-lg transition-colors shadow-lg mb-3">
+              <Link
+                to="/checkout"
+                className="block w-full bg-[#2391C3] hover:bg-[#1A6B8E] text-white font-bold py-4 rounded-lg transition-colors shadow-lg mb-3 text-center"
+              >
                 Proceder al Pago
-              </button>
+              </Link>
 
               <Link
                 to="/productos"
