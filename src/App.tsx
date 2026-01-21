@@ -72,9 +72,9 @@ function App() {
           {/* Imagen principal */}
           <div className="bg-white rounded-3xl shadow-2xl  border-4 border-[#F5E63C]">
             <img
-              src={img1}
+              src={logo}
               alt="Cojines Herbales Meraki ACA"
-              className="rounded-2xl w-full h-96 object-cover"
+              className="rounded-2xl w-full h-96"
             />
           </div>
         </div>
@@ -140,12 +140,11 @@ function App() {
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           {/* Placeholder Producto 1 */}
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-[#E8DFCA] hover:border-[#F5E63C] transition-colors">
-            <div className="bg-gradient-to-br from-[#4A9E7C] to-[#2391C3] h-64 flex items-center justify-center">
-              <div className="text-center text-white">
-                <span className="text-5xl mb-2 block">🖼️</span>
-                <p className="text-sm">Imagen Producto 1</p>
-              </div>
-            </div>
+            <img
+              src={img1}
+              alt="Cojín Relajante"
+              className="w-full h-64 object-cover"
+            />
             <div className="p-6">
               <h3
                 className="text-xl font-bold mb-2"
@@ -164,12 +163,11 @@ function App() {
 
           {/* Placeholder Producto 2 */}
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-[#E8DFCA] hover:border-[#F5E63C] transition-colors">
-            <div className="bg-gradient-to-br from-[#8A4A86] to-[#2391C3] h-64 flex items-center justify-center">
-              <div className="text-center text-white">
-                <span className="text-5xl mb-2 block">🖼️</span>
-                <p className="text-sm">Imagen Producto 2</p>
-              </div>
-            </div>
+            <img
+              src={img1}
+              alt="Cojín Térmico"
+              className="w-full h-64 object-cover"
+            />
             <div className="p-6">
               <h3
                 className="text-xl font-bold mb-2"
@@ -188,12 +186,11 @@ function App() {
 
           {/* Placeholder Producto 3 */}
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-[#E8DFCA] hover:border-[#F5E63C] transition-colors">
-            <div className="bg-gradient-to-br from-[#F5E63C] to-[#D7322D] h-64 flex items-center justify-center">
-              <div className="text-center text-white">
-                <span className="text-5xl mb-2 block">🖼️</span>
-                <p className="text-sm">Imagen Producto 3</p>
-              </div>
-            </div>
+            <img
+              src={img1}
+              alt="Cojín Aromático"
+              className="w-full h-64 object-cover"
+            />
             <div className="p-6">
               <h3
                 className="text-xl font-bold mb-2"
