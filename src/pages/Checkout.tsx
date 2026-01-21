@@ -17,7 +17,7 @@ const addressSchema = z.object({
   city: z.string().min(2, "Ingresa tu ciudad"),
   state: z.string().min(2, "Ingresa tu estado"),
   zipCode: z.string().min(4, "Ingresa tu código postal"),
-  country: z.string().default("México"),
+  country: z.string(),
   phone: z.string().min(10, "Ingresa un teléfono válido"),
 });
 
@@ -73,7 +73,7 @@ export default function Checkout() {
       }));
 
       // Crear la orden
-      const orderId = await createOrder(user.uid, {
+      await createOrder(user.uid, {
         items: orderItems,
         shippingAddress: data as Address,
         subtotal,

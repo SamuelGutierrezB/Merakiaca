@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import type { Product, ProductFormData, FabricOption } from "@/types";
+import type { Product, ProductFormData, FabricOption, Category } from "@/types";
 import { productSchema } from "@/utils/validators";
 import {
   createProduct,
@@ -10,6 +10,7 @@ import {
   updateProductMainImage,
   updateProductFabrics,
 } from "@/services/products.service";
+import { getAllCategories } from "@/services/categories.service";
 import ImageUpload from "@/components/common/ImageUpload";
 import FabricOptionForm from "@/components/admin/FabricOptionForm";
 
@@ -30,7 +31,22 @@ export default function ProductForm({
   const [fabrics, setFabrics] = useState<FabricOption[]>(
     product?.fabrics || [],
   );
+  const [categories, setCategories] = useState<Category[]>([]);
   const isEditing = !!product;
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const loadCategories = async () => {
+    try {
+      const data = await getAllCategories();
+      setCategories(data);
+    } catch (error) {
+      console.error("Error loading categories:", error);
+      toast.error("Error al cargar categorías");
+    }
+  };
 
   const {
     register,
@@ -237,13 +253,25 @@ export default function ProductForm({
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
         >
           <option value="">Selecciona una categoría</option>
-          <option value="cojines">Cojines</option>
-          <option value="almohadas">Almohadas</option>
-          <option value="terapeuticos">Terapéuticos</option>
-          <option value="aromaterapia">Aromaterapia</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.name}>
+              {cat.name}
+            </option>
+          ))}
         </select>
         {errors.category && (
           <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
+        )}
+        {categories.length === 0 && (
+          <p className="text-sm text-gray-500 mt-1">
+            No hay categorías.{" "}
+            <a
+              href="/admin/categorias"
+              className="text-[#2391C3] hover:underline"
+            >
+              Crear una categoría
+            </a>
+          </p>
         )}
       </div>
 

@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
-import type { Product } from "@/types";
+import type { Product, Category } from "@/types";
 import { getActiveProducts } from "@/services/products.service";
+import { getAllCategories } from "@/services/categories.service";
 import ProductCard from "@/components/products/ProductCard";
 import toast from "react-hot-toast";
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   useEffect(() => {
     loadProducts();
+    loadCategories();
   }, []);
 
   const loadProducts = async () => {
@@ -27,18 +30,19 @@ export default function Products() {
     }
   };
 
+  const loadCategories = async () => {
+    try {
+      const data = await getAllCategories();
+      setCategories(data);
+    } catch (error) {
+      console.error("Error al cargar categorías:", error);
+    }
+  };
+
   const filteredProducts =
     selectedCategory === "all"
       ? products
       : products.filter((p) => p.category === selectedCategory);
-
-  const categories = [
-    { value: "all", label: "Todos" },
-    { value: "cojines", label: "Cojines" },
-    { value: "almohadas", label: "Almohadas" },
-    { value: "terapeuticos", label: "Terapéuticos" },
-    { value: "aromaterapia", label: "Aromaterapia" },
-  ];
 
   return (
     <Layout>
@@ -57,17 +61,27 @@ export default function Products() {
 
         {/* Filtros por categoría */}
         <div className="flex gap-2 mb-6 sm:mb-8 overflow-x-auto pb-2 justify-start sm:justify-center">
+          <button
+            onClick={() => setSelectedCategory("all")}
+            className={`px-4 sm:px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap text-sm sm:text-base ${
+              selectedCategory === "all"
+                ? "bg-[#2391C3] text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            Todos
+          </button>
           {categories.map((cat) => (
             <button
-              key={cat.value}
-              onClick={() => setSelectedCategory(cat.value)}
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.name)}
               className={`px-4 sm:px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap text-sm sm:text-base ${
-                selectedCategory === cat.value
+                selectedCategory === cat.name
                   ? "bg-[#2391C3] text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              {cat.label}
+              {cat.name}
             </button>
           ))}
         </div>

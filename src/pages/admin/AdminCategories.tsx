@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeftIcon,
@@ -7,43 +7,262 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import AdminJoyride from "@/components/admin/AdminJoyride";
+import {
+  getAllCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} from "@/services/categories.service";
+import { getAllProducts } from "@/services/products.service";
+import type { Category } from "@/types/category.types";
 
-interface Category {
-  id: string;
-  name: string;
-  description: string;
-  productCount: number;
-}
+const categorySchema = z.object({
+  name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
+  description: z
+    .string()
+    .min(5, "La descripción debe tener al menos 5 caracteres"),
+  order: z.number().min(0, "El orden debe ser un número positivo"),
+  imageUrl: z.string().optional(),
+});
+
+type CategoryFormData = z.infer<typeof categorySchema>;
 
 export default function AdminCategories() {
   const navigate = useNavigate();
-  const [categories] = useState<Category[]>([
-    {
-      id: "1",
-      name: "Cojines",
-      description: "Cojines herbales artesanales",
-      productCount: 0,
-    },
-    {
-      id: "2",
-      name: "Almohadas",
-      description: "Almohadas terapéuticas",
-      productCount: 0,
-    },
-    {
-      id: "3",
-      name: "Terapéuticos",
-      description: "Productos de uso terapéutico",
-      productCount: 0,
-    },
-    {
-      id: "4",
-      name: "Aromaterapia",
-      description: "Productos con aromas naturales",
-      productCount: 0,
-    },
-  ]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [productCounts, setProductCounts] = useState<Record<string, number>>(
+    {},
+  );
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<CategoryFormData>({
+    resolver: zodResolver(categorySchema),
+  });
+
+  useEffect(() => {
+    loadCategories();
+    loadProductCounts();
+  }, []);
+
+  const loadCategories = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllCategories();
+      setCategories(data);
+    } catch (error) {
+      console.error("Error loading categories:", error);
+      toast.error("Error al cargar las categorías");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadProductCounts = async () => {
+    try {
+      const products = await getAllProducts();
+      const counts: Record<string, number> = {};
+      products.forEach((product) => {
+        counts[product.category] = (counts[product.category] || 0) + 1;
+      });
+      setProductCounts(counts);
+    } catch (error) {
+      console.error("Error loading product counts:", error);
+    }
+  };
+
+  const handleCreate = () => {
+    setEditingCategory(null);
+    reset({
+      name: "",
+      description: "",
+      order: categories.length,
+      imageUrl: "",
+    });
+    setShowForm(true);
+  };
+
+  const handleEdit = (category: Category) => {
+    setEditingCategory(category);
+    reset({
+      name: category.name,
+      description: category.description,
+      order: category.order,
+      imageUrl: category.imageUrl || "",
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (category: Category) => {
+    const productCount = productCounts[category.name] || 0;
+
+    if (productCount > 0) {
+      toast.error(
+        `No se puede eliminar. Hay ${productCount} producto(s) en esta categoría`,
+      );
+      return;
+    }
+
+    if (
+      !confirm(`¿Estás segura de eliminar la categoría "${category.name}"?`)
+    ) {
+      return;
+    }
+
+    try {
+      await deleteCategory(category.id);
+      toast.success("Categoría eliminada exitosamente");
+      loadCategories();
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      toast.error("Error al eliminar la categoría");
+    }
+  };
+
+  const onSubmit = async (data: CategoryFormData) => {
+    try {
+      if (editingCategory) {
+        await updateCategory(editingCategory.id, data);
+        toast.success("Categoría actualizada exitosamente");
+      } else {
+        await createCategory({
+          ...data,
+          imageUrl: data.imageUrl || "",
+        });
+        toast.success("Categoría creada exitosamente");
+      }
+      setShowForm(false);
+      loadCategories();
+      reset();
+    } catch (error) {
+      console.error("Error saving category:", error);
+      toast.error("Error al guardar la categoría");
+    }
+  };
+
+  const handleCancel = () => {
+    setShowForm(false);
+    setEditingCategory(null);
+    reset();
+  };
+
+  if (showForm) {
+    return (
+      <>
+        <AdminJoyride page="categories" />
+        <div className="py-8 px-4">
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-center gap-4 mb-8">
+              <button
+                onClick={handleCancel}
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                <ArrowLeftIcon className="h-5 w-5" />
+                <span className="hidden sm:inline">Volver</span>
+              </button>
+            </div>
+
+            <h1 className="text-3xl font-bold text-gray-800 mb-8">
+              {editingCategory ? "Editar Categoría" : "Nueva Categoría"}
+            </h1>
+
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre *
+                  </label>
+                  <input
+                    {...register("name")}
+                    type="text"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                    placeholder="Ej: Almohadas"
+                  />
+                  {errors.name && (
+                    <p className="text-red-600 text-sm mt-1">
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Descripción *
+                  </label>
+                  <textarea
+                    {...register("description")}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                    placeholder="Describe esta categoría..."
+                  />
+                  {errors.description && (
+                    <p className="text-red-600 text-sm mt-1">
+                      {errors.description.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Orden de visualización *
+                  </label>
+                  <input
+                    {...register("order", { valueAsNumber: true })}
+                    type="number"
+                    min="0"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                  />
+                  {errors.order && (
+                    <p className="text-red-600 text-sm mt-1">
+                      {errors.order.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    URL de imagen (opcional)
+                  </label>
+                  <input
+                    {...register("imageUrl")}
+                    type="url"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                    placeholder="https://..."
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-[#2391C3] hover:bg-[#1A6B8E] text-white py-3 rounded-lg font-semibold transition-colors"
+                  >
+                    {editingCategory ? "Actualizar" : "Crear"} Categoría
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -75,7 +294,7 @@ export default function AdminCategories() {
               </p>
             </div>
             <button
-              onClick={() => toast.success("Función próximamente disponible")}
+              onClick={handleCreate}
               className="flex items-center gap-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
               data-tour="categories-create"
             >
@@ -84,57 +303,77 @@ export default function AdminCategories() {
             </button>
           </div>
 
-          {/* Grid de categorías */}
-          <div
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            data-tour="categories-list"
-          >
-            {categories.map((category) => (
-              <div
-                key={category.id}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow"
+          {loading ? (
+            <div className="bg-white rounded-lg shadow-md p-12 text-center">
+              <div className="text-4xl mb-4">⏳</div>
+              <p className="text-gray-600">Cargando categorías...</p>
+            </div>
+          ) : categories.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-md p-12 text-center">
+              <div className="text-6xl mb-4">🏷️</div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                No hay categorías todavía
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Crea tu primera categoría para organizar tus productos
+              </p>
+              <button
+                onClick={handleCreate}
+                className="inline-flex items-center gap-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">
-                      {category.name}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      {category.description}
-                    </p>
-                  </div>
-                </div>
+                <PlusIcon className="h-5 w-5" />
+                Crear Primera Categoría
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Grid de categorías */}
+              <div
+                className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                data-tour="categories-list"
+              >
+                {categories.map((category) => (
+                  <div
+                    key={category.id}
+                    className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-800 mb-2">
+                          {category.name}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          {category.description}
+                        </p>
+                      </div>
+                    </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                  <span className="text-sm text-gray-500">
-                    {category.productCount} productos
-                  </span>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() =>
-                        toast.success("Función próximamente disponible")
-                      }
-                      className="text-[#2391C3] hover:text-[#1A6B8E] transition-colors p-2"
-                      title="Editar"
-                    >
-                      <PencilIcon className="h-5 w-5" />
-                    </button>
-                    <button
-                      onClick={() =>
-                        toast.success(
-                          "No se puede eliminar una categoría con productos",
-                        )
-                      }
-                      className="text-[#D7322D] hover:text-[#B32824] transition-colors p-2"
-                      title="Eliminar"
-                    >
-                      <TrashIcon className="h-5 w-5" />
-                    </button>
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                      <span className="text-sm text-gray-500">
+                        {productCounts[category.name] || 0} producto(s)
+                      </span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEdit(category)}
+                          className="text-[#2391C3] hover:text-[#1A6B8E] transition-colors p-2"
+                          title="Editar"
+                        >
+                          <PencilIcon className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(category)}
+                          className="text-[#D7322D] hover:text-[#B32824] transition-colors p-2"
+                          title="Eliminar"
+                        >
+                          <TrashIcon className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
 
           {/* Info card */}
           <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">

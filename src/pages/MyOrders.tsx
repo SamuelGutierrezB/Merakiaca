@@ -1,0 +1,200 @@
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import Layout from "@/components/layout/Layout";
+import { useAuthStore } from "@/store/authStore";
+import { getUserOrders } from "@/services/orders.service";
+import { formatPrice } from "@/utils/formatters";
+import type { Order } from "@/types/order.types";
+import toast from "react-hot-toast";
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: "Pendiente",
+  processing: "Procesando",
+  shipped: "Enviado",
+  delivered: "Entregado",
+  cancelled: "Cancelado",
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  pending: "bg-yellow-100 text-yellow-800",
+  processing: "bg-blue-100 text-blue-800",
+  shipped: "bg-purple-100 text-purple-800",
+  delivered: "bg-green-100 text-green-800",
+  cancelled: "bg-red-100 text-red-800",
+};
+
+export default function MyOrders() {
+  const { user } = useAuthStore();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      loadOrders();
+    }
+  }, [user]);
+
+  const loadOrders = async () => {
+    if (!user) return;
+
+    try {
+      setLoading(true);
+      const data = await getUserOrders(user.uid);
+      setOrders(data);
+    } catch (error) {
+      console.error("Error loading orders:", error);
+      toast.error("Error al cargar tus órdenes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (timestamp: any) => {
+    if (!timestamp) return "N/A";
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString("es-MX", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  if (!user) {
+    return (
+      <Layout>
+        <div className="max-w-7xl mx-auto px-4 py-16 text-center">
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">Mis Órdenes</h1>
+          <p className="text-gray-600 mb-8">
+            Debes iniciar sesión para ver tus órdenes
+          </p>
+          <Link
+            to="/login"
+            className="inline-block bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+          >
+            Iniciar Sesión
+          </Link>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <div className="max-w-7xl mx-auto px-4 py-8 sm:py-16">
+        <h1
+          className="text-3xl sm:text-4xl font-bold mb-8"
+          style={{ color: "#2391C3" }}
+        >
+          Mis Órdenes
+        </h1>
+
+        {loading ? (
+          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+            <div className="text-4xl mb-4">⏳</div>
+            <p className="text-gray-600">Cargando tus órdenes...</p>
+          </div>
+        ) : orders.length === 0 ? (
+          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+            <div className="text-6xl mb-4">📦</div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              No tienes órdenes todavía
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Cuando realices una compra, tus órdenes aparecerán aquí
+            </p>
+            <Link
+              to="/productos"
+              className="inline-flex items-center gap-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            >
+              Ver Productos
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {orders.map((order) => (
+              <div
+                key={order.id}
+                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+              >
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-4 border-b">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-800">
+                      Orden #{order.id.slice(0, 8)}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {formatDate(order.createdAt)}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span
+                      className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                        STATUS_COLORS[order.status] ||
+                        "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {STATUS_LABELS[order.status] || order.status}
+                    </span>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-600">Total</p>
+                      <p className="text-xl font-bold text-[#D7322D]">
+                        {formatPrice(order.total)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Lista de productos */}
+                <div className="space-y-2 mb-4">
+                  <p className="text-sm font-semibold text-gray-700">
+                    Productos:
+                  </p>
+                  {order.items.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center text-sm"
+                    >
+                      <div>
+                        <span className="text-gray-800">
+                          {item.productName}
+                        </span>
+                        <span className="text-gray-500 ml-2">
+                          ({item.fabricName})
+                        </span>
+                      </div>
+                      <div className="text-gray-600">
+                        {item.quantity} × {formatPrice(item.unitPrice)} ={" "}
+                        {formatPrice(item.totalPrice)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Dirección de envío */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm font-semibold text-gray-700 mb-2">
+                    Dirección de Envío:
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {order.shippingAddress.fullName}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {order.shippingAddress.street}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
+                    {order.shippingAddress.zipCode}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Tel: {order.shippingAddress.phone}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </Layout>
+  );
+}

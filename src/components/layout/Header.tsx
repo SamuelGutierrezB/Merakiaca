@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useAuthStore } from "@/store/authStore";
 import { useCartStore } from "@/store/cartStore";
+import { ROUTES } from "@/utils/constants";
 import logo from "@/assets/logo.png";
 
 export default function Header() {
@@ -70,6 +71,13 @@ export default function Header() {
                       {itemCount}
                     </span>
                   )}
+                </Link>
+
+                <Link
+                  to={ROUTES.MY_ORDERS}
+                  className="text-[#2391C3] hover:text-[#1A6B8E] font-semibold transition-colors"
+                >
+                  📦 Mis Órdenes
                 </Link>
 
                 {user.role === "admin" && (
@@ -160,6 +168,14 @@ export default function Header() {
                     👨‍💼 Admin
                   </Link>
                 )}
+
+                <Link
+                  to={ROUTES.MY_ORDERS}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 font-semibold transition-colors"
+                >
+                  📦 Mis Órdenes
+                </Link>
 
                 <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between">
                   <div className="flex items-center gap-3">

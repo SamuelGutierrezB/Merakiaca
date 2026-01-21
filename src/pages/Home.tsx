@@ -88,18 +88,16 @@ export default function Home() {
               bienestar.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <a
+                href="#productos"
+                className=" border-[#2391C3] text-[#2391C3] hover:bg-[#2391C3] hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-colors text-center"
+              ></a>
               <Link
                 to="/productos"
                 className="bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-colors shadow-lg text-center"
               >
                 Ver Productos
               </Link>
-              <a
-                href="#productos"
-                className="bg-white border-2 border-[#2391C3] text-[#2391C3] hover:bg-[#2391C3] hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-colors text-center"
-              >
-                Conocer Más
-              </a>
             </div>
           </div>
 

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import AdminJoyride from "@/components/admin/AdminJoyride";
 import { getAllOrders } from "@/services/orders.service";
+import { deleteOrder } from "@/services/orders.service";
 import { formatPrice } from "@/utils/formatters";
 import type { Order } from "@/types/order.types";
 import toast from "react-hot-toast";
@@ -27,6 +28,7 @@ export default function AdminOrders() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     loadOrders();
@@ -55,6 +57,25 @@ export default function AdminOrders() {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const handleDelete = async (order: Order, event: React.MouseEvent) => {
+    event.stopPropagation();
+
+    if (
+      !confirm(`¿Estás segura de eliminar la orden #${order.id.slice(0, 8)}?`)
+    ) {
+      return;
+    }
+
+    try {
+      await deleteOrder(order.id);
+      toast.success("Orden eliminada exitosamente");
+      loadOrders();
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      toast.error("Error al eliminar la orden");
+    }
   };
 
   return (
@@ -139,19 +160,17 @@ export default function AdminOrders() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Fecha
                       </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Acciones
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {orders.map((order) => (
                       <tr
                         key={order.id}
+                        onClick={() => setSelectedOrder(order)}
                         className="hover:bg-gray-50 cursor-pointer"
-                        onClick={() => {
-                          // Por ahora solo mostramos un toast, luego podemos crear modal de detalles
-                          toast.success(
-                            "Funcionalidad de detalles próximamente",
-                          );
-                        }}
                       >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
@@ -200,6 +219,15 @@ export default function AdminOrders() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {formatDate(order.createdAt)}
                         </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <button
+                            onClick={(e) => handleDelete(order, e)}
+                            className="text-red-600 hover:text-red-900 transition-colors"
+                            title="Eliminar orden"
+                          >
+                            <TrashIcon className="h-5 w-5" />
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -222,6 +250,151 @@ export default function AdminOrders() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Detalles de la Orden */}
+      {selectedOrder && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedOrder(null)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header del Modal */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Orden #{selectedOrder.id.slice(0, 8)}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  {formatDate(selectedOrder.createdAt)}
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedOrder(null)}
+                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Contenido del Modal */}
+            <div className="p-6 space-y-6">
+              {/* Estado */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 mb-2">
+                  Estado
+                </h3>
+                <span
+                  className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    STATUS_COLORS[selectedOrder.status] ||
+                    "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {STATUS_LABELS[selectedOrder.status] || selectedOrder.status}
+                </span>
+              </div>
+
+              {/* Dirección de Envío */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 mb-2">
+                  📍 Dirección de Envío
+                </h3>
+                <div className="bg-gray-50 rounded-lg p-4 space-y-1">
+                  <p className="font-semibold text-gray-800">
+                    {selectedOrder.shippingAddress.fullName}
+                  </p>
+                  <p className="text-gray-700">
+                    {selectedOrder.shippingAddress.street}
+                  </p>
+                  <p className="text-gray-700">
+                    {selectedOrder.shippingAddress.city},{" "}
+                    {selectedOrder.shippingAddress.state}{" "}
+                    {selectedOrder.shippingAddress.zipCode}
+                  </p>
+                  <p className="text-gray-700">
+                    📱 {selectedOrder.shippingAddress.phone}
+                  </p>
+                  {selectedOrder.shippingAddress.email && (
+                    <p className="text-gray-700">
+                      ✉️ {selectedOrder.shippingAddress.email}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Productos */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 mb-2">
+                  🛍️ Productos
+                </h3>
+                <div className="bg-gray-50 rounded-lg divide-y divide-gray-200">
+                  {selectedOrder.items.map((item, index) => (
+                    <div key={index} className="p-4 flex justify-between">
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-800">
+                          {item.productName}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Tela: {item.fabricName}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Cantidad: {item.quantity}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold text-[#D7322D]">
+                          {formatPrice(item.totalPrice)}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          c/u: {formatPrice(item.unitPrice)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Totales */}
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-700">Subtotal:</span>
+                  <span className="font-semibold">
+                    {formatPrice(selectedOrder.subtotal)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-700">Envío:</span>
+                  <span className="font-semibold">
+                    {selectedOrder.shipping}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-lg border-t border-gray-200 pt-2">
+                  <span className="font-bold text-gray-800">Total:</span>
+                  <span className="font-bold text-[#D7322D]">
+                    {formatPrice(selectedOrder.total)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Botón de Eliminar */}
+              <div className="border-t border-gray-200 pt-4">
+                <button
+                  onClick={(e) => {
+                    handleDelete(selectedOrder, e);
+                    setSelectedOrder(null);
+                  }}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                  <TrashIcon className="h-5 w-5" />
+                  Eliminar Orden
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

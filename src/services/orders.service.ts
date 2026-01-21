@@ -2,6 +2,8 @@ import {
   collection,
   addDoc,
   getDocs,
+  deleteDoc,
+  doc,
   query,
   where,
   orderBy,
@@ -81,5 +83,15 @@ export async function getAllOrders(): Promise<Order[]> {
   } catch (error) {
     console.error("Error fetching all orders:", error);
     throw new Error("Error al obtener las órdenes");
+  }
+}
+
+export async function deleteOrder(orderId: string): Promise<void> {
+  try {
+    const orderRef = doc(db, FIREBASE_COLLECTIONS.ORDERS, orderId);
+    await deleteDoc(orderRef);
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    throw new Error("Error al eliminar la orden");
   }
 }
