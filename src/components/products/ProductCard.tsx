@@ -95,9 +95,6 @@ export default function ProductCard({ product }: ProductCardProps) {
             <span className="text-xl sm:text-2xl font-bold text-[#D7322D]">
               {formatPrice(product.basePrice)}
             </span>
-            {product.fabrics.some((f) => f.priceModifier !== 0) && (
-              <span className="text-xs text-gray-500 ml-1">desde</span>
-            )}
           </div>
 
           <span className="px-3 py-1 bg-[#E8DFCA] text-gray-800 rounded-full text-xs font-semibold">

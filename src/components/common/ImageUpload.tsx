@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useId } from "react";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { uploadProductImage } from "@/services/storage.service";
 import toast from "react-hot-toast";
@@ -18,6 +18,7 @@ export default function ImageUpload({
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const inputId = useId();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -89,12 +90,12 @@ export default function ImageUpload({
             <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
             <div className="flex text-sm text-gray-600">
               <label
-                htmlFor="file-upload"
+                htmlFor={inputId}
                 className="relative cursor-pointer bg-white rounded-md font-medium text-[#2391C3] hover:text-[#1A6B8E] focus-within:outline-none"
               >
                 <span>Seleccionar archivo</span>
                 <input
-                  id="file-upload"
+                  id={inputId}
                   type="file"
                   accept="image/*"
                   multiple={multiple}

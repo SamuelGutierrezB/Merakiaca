@@ -151,7 +151,6 @@ export default function ProductDetail() {
 
             <div className="text-2xl sm:text-3xl font-bold text-[#D7322D]">
               {formatPrice(product.basePrice)}
-              <span className="text-sm text-gray-500 ml-2">desde</span>
             </div>
 
             <div className="prose max-w-none">
