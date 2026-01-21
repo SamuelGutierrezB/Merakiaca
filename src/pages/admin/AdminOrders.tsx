@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Loader2, Package, MapPin, Phone, ShoppingBag } from "lucide-react";
 import AdminJoyride from "@/components/admin/AdminJoyride";
 import { getAllOrders } from "@/services/orders.service";
 import { deleteOrder } from "@/services/orders.service";
@@ -109,7 +110,7 @@ export default function AdminOrders() {
 
           {loading ? (
             <div className="bg-white rounded-lg shadow-md p-12 text-center">
-              <div className="text-4xl mb-4">⏳</div>
+              <Loader2 className="h-16 w-16 mx-auto mb-4 text-[#2391C3] animate-spin" />
               <p className="text-gray-600">Cargando órdenes...</p>
             </div>
           ) : orders.length === 0 ? (
@@ -118,7 +119,7 @@ export default function AdminOrders() {
               className="bg-white rounded-lg shadow-md p-12 text-center"
               data-tour="orders-empty"
             >
-              <div className="text-6xl mb-4">📦</div>
+              <Package className="h-24 w-24 mx-auto mb-4 text-gray-400" />
               <h2 className="text-2xl font-bold text-gray-800 mb-2">
                 No hay órdenes todavía
               </h2>
@@ -298,8 +299,9 @@ export default function AdminOrders() {
 
               {/* Dirección de Envío */}
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">
-                  📍 Dirección de Envío
+                <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  Dirección de Envío
                 </h3>
                 <div className="bg-gray-50 rounded-lg p-4 space-y-1">
                   <p className="font-semibold text-gray-800">
@@ -313,16 +315,18 @@ export default function AdminOrders() {
                     {selectedOrder.shippingAddress.state}{" "}
                     {selectedOrder.shippingAddress.zipCode}
                   </p>
-                  <p className="text-gray-700">
-                    📱 {selectedOrder.shippingAddress.phone}
+                  <p className="text-gray-700 flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    {selectedOrder.shippingAddress.phone}
                   </p>
                 </div>
               </div>
 
               {/* Productos */}
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">
-                  🛍️ Productos
+                <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
+                  <ShoppingBag className="h-4 w-4" />
+                  Productos
                 </h3>
                 <div className="bg-gray-50 rounded-lg divide-y divide-gray-200">
                   {selectedOrder.items.map((item, index) => (

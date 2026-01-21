@@ -5,6 +5,7 @@ import {
   XMarkIcon,
   ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
+import { ShoppingCart, Package, UserCog } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { useCartStore } from "@/store/cartStore";
 import { ROUTES } from "@/utils/constants";
@@ -63,9 +64,10 @@ export default function Header() {
               <>
                 <Link
                   to="/carrito"
-                  className="relative text-[#2391C3] hover:text-[#1A6B8E] font-semibold transition-colors flex items-center gap-1"
+                  className="relative text-[#2391C3] hover:text-[#1A6B8E] font-semibold transition-colors flex items-center gap-2"
                 >
-                  🛒 Carrito
+                  <ShoppingCart className="h-5 w-5" />
+                  Carrito
                   {itemCount > 0 && (
                     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                       {itemCount}
@@ -75,17 +77,19 @@ export default function Header() {
 
                 <Link
                   to={ROUTES.MY_ORDERS}
-                  className="text-[#2391C3] hover:text-[#1A6B8E] font-semibold transition-colors"
+                  className="text-[#2391C3] hover:text-[#1A6B8E] font-semibold transition-colors flex items-center gap-2"
                 >
-                  📦 Mis Órdenes
+                  <Package className="h-5 w-5" />
+                  Mis Órdenes
                 </Link>
 
                 {user.role === "admin" && (
                   <Link
                     to="/admin"
-                    className="bg-[#8A4A86] hover:bg-[#6A3A66] text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                    className="bg-[#8A4A86] hover:bg-[#6A3A66] text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
                   >
-                    👨‍💼 Admin
+                    <UserCog className="h-5 w-5" />
+                    Admin
                   </Link>
                 )}
 
@@ -151,7 +155,10 @@ export default function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 font-semibold transition-colors flex items-center justify-between"
                 >
-                  <span>🛒 Carrito</span>
+                  <span className="flex items-center gap-2">
+                    <ShoppingCart className="h-5 w-5" />
+                    Carrito
+                  </span>
                   {itemCount > 0 && (
                     <span className="bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
                       {itemCount}
@@ -163,18 +170,20 @@ export default function Header() {
                   <Link
                     to="/admin"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-4 py-3 text-[#8A4A86] hover:bg-gray-50 font-semibold transition-colors"
+                    className="px-4 py-3 text-[#8A4A86] hover:bg-gray-50 font-semibold transition-colors flex items-center gap-2"
                   >
-                    👨‍💼 Admin
+                    <UserCog className="h-5 w-5" />
+                    Admin
                   </Link>
                 )}
 
                 <Link
                   to={ROUTES.MY_ORDERS}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 font-semibold transition-colors"
+                  className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 font-semibold transition-colors flex items-center gap-2"
                 >
-                  📦 Mis Órdenes
+                  <Package className="h-5 w-5" />
+                  Mis Órdenes
                 </Link>
 
                 <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between">

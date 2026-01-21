@@ -6,6 +6,7 @@ import {
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { Loader2, FolderTree } from "lucide-react";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -305,12 +306,12 @@ export default function AdminCategories() {
 
           {loading ? (
             <div className="bg-white rounded-lg shadow-md p-12 text-center">
-              <div className="text-4xl mb-4">⏳</div>
+              <Loader2 className="h-16 w-16 mx-auto mb-4 text-[#2391C3] animate-spin" />
               <p className="text-gray-600">Cargando categorías...</p>
             </div>
           ) : categories.length === 0 ? (
             <div className="bg-white rounded-lg shadow-md p-12 text-center">
-              <div className="text-6xl mb-4">🏷️</div>
+              <FolderTree className="h-24 w-24 mx-auto mb-4 text-gray-400" />
               <h2 className="text-2xl font-bold text-gray-800 mb-2">
                 No hay categorías todavía
               </h2>

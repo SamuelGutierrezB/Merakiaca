@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { Loader2, Package } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { useAuthStore } from "@/store/authStore";
 import { getUserOrders } from "@/services/orders.service";
@@ -94,12 +95,12 @@ export default function MyOrders() {
 
         {loading ? (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <div className="text-4xl mb-4">⏳</div>
+            <Loader2 className="h-16 w-16 mx-auto mb-4 text-[#2391C3] animate-spin" />
             <p className="text-gray-600">Cargando tus órdenes...</p>
           </div>
         ) : orders.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <div className="text-6xl mb-4">📦</div>
+            <Package className="h-24 w-24 mx-auto mb-4 text-gray-400" />
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
               No tienes órdenes todavía
             </h2>

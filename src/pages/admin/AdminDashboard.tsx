@@ -1,5 +1,6 @@
 import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
+import { Package, ShoppingBag, FolderTree } from "lucide-react";
 import AdminJoyride from "@/components/admin/AdminJoyride";
 
 export default function AdminDashboard() {
@@ -22,7 +23,7 @@ export default function AdminDashboard() {
             className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
             data-tour="dashboard-products"
           >
-            <div className="text-5xl mb-4">📦</div>
+            <Package className="h-20 w-20 mx-auto mb-4 text-[#2391C3]" />
             <h2 className="text-2xl font-bold mb-2">Productos</h2>
             <p className="text-gray-600">Gestionar catálogo de productos</p>
           </Link>
@@ -32,7 +33,7 @@ export default function AdminDashboard() {
             className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
             data-tour="dashboard-orders"
           >
-            <div className="text-5xl mb-4">📋</div>
+            <ShoppingBag className="h-20 w-20 mx-auto mb-4 text-[#D7322D]" />
             <h2 className="text-2xl font-bold mb-2">Órdenes</h2>
             <p className="text-gray-600">Ver y gestionar órdenes</p>
           </Link>
@@ -42,7 +43,7 @@ export default function AdminDashboard() {
             className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
             data-tour="dashboard-categories"
           >
-            <div className="text-5xl mb-4">🏷️</div>
+            <FolderTree className="h-20 w-20 mx-auto mb-4 text-[#8A4A86]" />
             <h2 className="text-2xl font-bold mb-2">Categorías</h2>
             <p className="text-gray-600">Gestionar categorías</p>
           </Link>

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { TrashIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { ShoppingCart } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { useCartStore } from "@/store/cartStore";
 import { formatPrice } from "@/utils/formatters";
@@ -23,7 +24,7 @@ export default function Cart() {
           </p>
 
           <div className="text-center bg-white p-8 sm:p-12 rounded-2xl shadow-lg">
-            <div className="text-5xl sm:text-6xl mb-4 sm:mb-6">🛒</div>
+            <ShoppingCart className="h-20 w-20 sm:h-24 sm:w-24 mx-auto mb-4 sm:mb-6 text-gray-400" />
             <p className="text-lg sm:text-xl text-gray-600 mb-4 sm:mb-6">
               Aún no has agregado productos a tu carrito
             </p>
