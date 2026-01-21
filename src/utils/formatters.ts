@@ -9,6 +9,11 @@ export const formatCurrency = (amount: number): string => {
 };
 
 /**
+ * Alias para formatCurrency - Formatea un precio
+ */
+export const formatPrice = formatCurrency;
+
+/**
  * Formatea una fecha usando date-fns
  */
 export const formatDate = (date: Date | number): string => {

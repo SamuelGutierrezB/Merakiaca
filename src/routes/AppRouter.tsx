@@ -7,6 +7,7 @@ import { ROUTES } from "@/utils/constants";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import Products from "@/pages/Products";
+import ProductDetail from "@/pages/ProductDetail";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -21,6 +22,7 @@ export const AppRouter = () => {
         <Route path={ROUTES.HOME} element={<Home />} />
         <Route path={ROUTES.LOGIN} element={<Login />} />
         <Route path={ROUTES.PRODUCTS} element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/debug" element={<DebugAuth />} />
 
         {/* Rutas privadas */}

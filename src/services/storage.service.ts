@@ -31,6 +31,47 @@ export const uploadImage = async (
 };
 
 /**
+ * Sube una imagen de producto a Firebase Storage
+ */
+export const uploadProductImage = async (
+  file: File,
+  productId?: string,
+): Promise<string> => {
+  try {
+    const timestamp = Date.now();
+    const filename = `${timestamp}_${file.name}`;
+    const folder = productId ? `products/${productId}` : "products/temp";
+    const path = `${folder}/${filename}`;
+
+    return await uploadImage(file, path);
+  } catch (error) {
+    console.error("Error al subir imagen de producto:", error);
+    throw error;
+  }
+};
+
+/**
+ * Sube una imagen de patrón/tela a Firebase Storage
+ */
+export const uploadFabricImage = async (
+  file: File,
+  productId: string,
+  fabricId?: string,
+): Promise<string> => {
+  try {
+    const timestamp = Date.now();
+    const filename = `${timestamp}_${file.name}`;
+    const folder = `fabrics/${productId}${fabricId ? `/${fabricId}` : ""}`;
+    const path = `${folder}/${filename}`;
+
+    return await uploadImage(file, path);
+  } catch (error) {
+    console.error("Error al subir imagen de tela:", error);
+    throw error;
+  }
+};
+
+/**
  * Sube múltiples imágenes
  */
 export const uploadMultipleImages = async (
