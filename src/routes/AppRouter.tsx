@@ -13,6 +13,7 @@ import Checkout from "@/pages/Checkout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminProducts from "@/pages/admin/AdminProducts";
 import AdminOrders from "@/pages/admin/AdminOrders";
+import AdminCategories from "@/pages/admin/AdminCategories";
 import DebugAuth from "@/pages/DebugAuth";
 export const AppRouter = () => {
   return (
@@ -65,6 +66,14 @@ export const AppRouter = () => {
           element={
             <AdminRoute>
               <AdminOrders />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path={ROUTES.ADMIN.CATEGORIES}
+          element={
+            <AdminRoute>
+              <AdminCategories />
             </AdminRoute>
           }
         />

@@ -114,11 +114,32 @@ export default function ProductForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Imagen principal */}
-      <ImageUpload
-        productId={productId}
-        onImageUploaded={handleImageUploaded}
-        label="Imagen principal del producto"
-      />
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Imagen principal del producto
+        </label>
+
+        {/* Preview de imagen actual */}
+        {mainImageUrl && (
+          <div className="mb-4">
+            <p className="text-sm text-gray-600 mb-2">Imagen actual:</p>
+            <div className="w-full max-w-md bg-gray-100 rounded-lg overflow-hidden">
+              <img
+                src={mainImageUrl}
+                alt="Imagen del producto"
+                className="w-full h-48 object-cover"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Subir nueva imagen */}
+        <ImageUpload
+          productId={productId}
+          onImageUploaded={handleImageUploaded}
+          label={mainImageUrl ? "Cambiar imagen" : "Subir imagen"}
+        />
+      </div>
 
       <div>
         <label

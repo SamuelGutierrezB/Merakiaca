@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:prod": "tsc -b && vite build --mode production",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build:prod && firebase deploy --only hosting",
+    "deploy:preview": "npm run build:prod && firebase hosting:channel:deploy preview"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
@@ -22,6 +25,7 @@
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.71.1",
     "react-hot-toast": "^2.6.0",
+    "react-joyride": "^2.9.3",
     "react-router-dom": "^7.12.0",
     "zod": "^4.3.5",
     "zustand": "^5.0.10"

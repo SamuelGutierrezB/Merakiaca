@@ -10,4 +10,39 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (
+              id.includes("react") ||
+              id.includes("react-dom") ||
+              id.includes("react-router")
+            ) {
+              return "vendor";
+            }
+            if (id.includes("firebase")) {
+              return "firebase";
+            }
+            if (id.includes("@heroicons")) {
+              return "ui";
+            }
+            if (
+              id.includes("react-hook-form") ||
+              id.includes("zod") ||
+              id.includes("@hookform")
+            ) {
+              return "forms";
+            }
+            if (id.includes("zustand")) {
+              return "state";
+            }
+            return "vendor-other";
+          }
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
 });
