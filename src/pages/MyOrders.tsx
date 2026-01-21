@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { useAuthStore } from "@/store/authStore";
@@ -28,13 +28,7 @@ export default function MyOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) {
-      loadOrders();
-    }
-  }, [user]);
-
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -47,11 +41,19 @@ export default function MyOrders() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
-  const formatDate = (timestamp: any) => {
+  useEffect(() => {
+    if (user) {
+      loadOrders();
+    }
+  }, [user, loadOrders]);
+
+  const formatDate = (timestamp: unknown) => {
     if (!timestamp) return "N/A";
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const date = (timestamp as any).toDate
+      ? (timestamp as any).toDate()
+      : new Date(timestamp as any);
     return date.toLocaleDateString("es-MX", {
       day: "2-digit",
       month: "2-digit",

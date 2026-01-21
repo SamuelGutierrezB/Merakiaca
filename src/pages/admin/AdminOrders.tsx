@@ -316,11 +316,6 @@ export default function AdminOrders() {
                   <p className="text-gray-700">
                     📱 {selectedOrder.shippingAddress.phone}
                   </p>
-                  {selectedOrder.shippingAddress.email && (
-                    <p className="text-gray-700">
-                      ✉️ {selectedOrder.shippingAddress.email}
-                    </p>
-                  )}
                 </div>
               </div>
 
