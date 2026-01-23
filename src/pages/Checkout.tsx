@@ -139,7 +139,7 @@ export default function Checkout() {
         phone: data.whatsapp,
       };
 
-      await createOrder(user.uid, {
+      const orderId = await createOrder(user.uid, {
         items: orderItems,
         shippingAddress: pickupAddress,
         subtotal,
@@ -149,8 +149,11 @@ export default function Checkout() {
       });
 
       clearCart();
-      toast.success("¡Pedido realizado con éxito!");
-      navigate("/");
+
+      // Redirigir al simulador de pago
+      navigate(
+        `/payment-simulator?orderId=${orderId}&total=${total.toFixed(2)}`,
+      );
     } catch (error) {
       console.error("Error al procesar el pedido:", error);
       toast.error("Error al procesar el pedido. Intenta nuevamente.");
@@ -181,7 +184,7 @@ export default function Checkout() {
       }));
 
       // Crear la orden
-      await createOrder(user.uid, {
+      const orderId = await createOrder(user.uid, {
         items: orderItems,
         shippingAddress: data as Address,
         subtotal,
@@ -193,11 +196,10 @@ export default function Checkout() {
       // Limpiar el carrito
       clearCart();
 
-      // Mostrar mensaje de éxito
-      toast.success("¡Pedido realizado con éxito!");
-
-      // Redirigir a página de confirmación
-      navigate("/");
+      // Redirigir al simulador de pago
+      navigate(
+        `/payment-simulator?orderId=${orderId}&total=${total.toFixed(2)}`,
+      );
     } catch (error) {
       console.error("Error al procesar el pedido:", error);
       toast.error("Error al procesar el pedido. Intenta nuevamente.");

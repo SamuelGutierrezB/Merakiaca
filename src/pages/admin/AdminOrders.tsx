@@ -3,18 +3,29 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Loader2, Package, MapPin, Phone, ShoppingBag } from "lucide-react";
 import AdminJoyride from "@/components/admin/AdminJoyride";
-import { getAllOrders } from "@/services/orders.service";
+import {
+  getAllOrders,
+  updateOrderStatus,
+  updateOrderPaymentStatus,
+} from "@/services/orders.service";
 import { deleteOrder } from "@/services/orders.service";
 import { formatPrice } from "@/utils/formatters";
-import type { Order } from "@/types/order.types";
+import type { Order, OrderStatus, PaymentStatus } from "@/types/order.types";
 import toast from "react-hot-toast";
 
 const STATUS_LABELS: Record<string, string> = {
-  pending: "Pendiente",
+  pending: "Pendiente de pago",
   processing: "Procesando",
   shipped: "Enviado",
   delivered: "Entregado",
   cancelled: "Cancelado",
+};
+
+const PAYMENT_STATUS_LABELS: Record<string, string> = {
+  pending: "Pago pendiente",
+  approved: "Pago aprobado",
+  rejected: "Pago rechazado",
+  cancelled: "Pago cancelado",
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -23,6 +34,13 @@ const STATUS_COLORS: Record<string, string> = {
   shipped: "bg-purple-100 text-purple-800",
   delivered: "bg-green-100 text-green-800",
   cancelled: "bg-red-100 text-red-800",
+};
+
+const PAYMENT_STATUS_COLORS: Record<string, string> = {
+  pending: "bg-orange-100 text-orange-800",
+  approved: "bg-green-100 text-green-800",
+  rejected: "bg-red-100 text-red-800",
+  cancelled: "bg-gray-100 text-gray-800",
 };
 
 export default function AdminOrders() {
@@ -76,6 +94,44 @@ export default function AdminOrders() {
     } catch (error) {
       console.error("Error deleting order:", error);
       toast.error("Error al eliminar la orden");
+    }
+  };
+
+  const handleStatusChange = async (
+    orderId: string,
+    newStatus: OrderStatus,
+  ) => {
+    try {
+      await updateOrderStatus(orderId, newStatus);
+      toast.success("Estado actualizado exitosamente");
+      loadOrders();
+
+      // Actualizar la orden seleccionada si está abierta
+      if (selectedOrder && selectedOrder.id === orderId) {
+        setSelectedOrder({ ...selectedOrder, status: newStatus });
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Error al actualizar el estado");
+    }
+  };
+
+  const handlePaymentStatusChange = async (
+    orderId: string,
+    newPaymentStatus: PaymentStatus,
+  ) => {
+    try {
+      await updateOrderPaymentStatus(orderId, newPaymentStatus);
+      toast.success("Estado de pago actualizado exitosamente");
+      loadOrders();
+
+      // Actualizar la orden seleccionada si está abierta
+      if (selectedOrder && selectedOrder.id === orderId) {
+        setSelectedOrder({ ...selectedOrder, paymentStatus: newPaymentStatus });
+      }
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+      toast.error("Error al actualizar el estado de pago");
     }
   };
 
@@ -208,14 +264,25 @@ export default function AdminOrders() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              STATUS_COLORS[order.status] ||
-                              "bg-gray-100 text-gray-800"
-                            }`}
-                          >
-                            {STATUS_LABELS[order.status] || order.status}
-                          </span>
+                          <div className="flex flex-col gap-1">
+                            <span
+                              className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-center ${
+                                PAYMENT_STATUS_COLORS[order.paymentStatus] ||
+                                "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {PAYMENT_STATUS_LABELS[order.paymentStatus] ||
+                                order.paymentStatus}
+                            </span>
+                            <span
+                              className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-center ${
+                                STATUS_COLORS[order.status] ||
+                                "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {STATUS_LABELS[order.status] || order.status}
+                            </span>
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {formatDate(order.createdAt)}
@@ -282,19 +349,58 @@ export default function AdminOrders() {
 
             {/* Contenido del Modal */}
             <div className="p-6 space-y-6">
-              {/* Estado */}
-              <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">
-                  Estado
-                </h3>
-                <span
-                  className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    STATUS_COLORS[selectedOrder.status] ||
-                    "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {STATUS_LABELS[selectedOrder.status] || selectedOrder.status}
-                </span>
+              {/* Estados */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 mb-2">
+                    Estado de Pago
+                  </h3>
+                  <select
+                    value={selectedOrder.paymentStatus}
+                    onChange={(e) =>
+                      handlePaymentStatusChange(
+                        selectedOrder.id,
+                        e.target.value as PaymentStatus,
+                      )
+                    }
+                    className="px-3 py-1 text-xs font-semibold rounded-full border-2 border-gray-300 focus:border-[#2391C3] focus:outline-none"
+                  >
+                    <option value="pending">Pago pendiente</option>
+                    <option value="approved">Pago aprobado</option>
+                    <option value="rejected">Pago rechazado</option>
+                    <option value="cancelled">Pago cancelado</option>
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Cambiar a "Pago aprobado" para órdenes por WhatsApp
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500 mb-2">
+                    Estado del Pedido
+                  </h3>
+                  <select
+                    value={selectedOrder.status}
+                    onChange={(e) =>
+                      handleStatusChange(
+                        selectedOrder.id,
+                        e.target.value as OrderStatus,
+                      )
+                    }
+                    className="px-3 py-1 text-xs font-semibold rounded-full border-2 border-gray-300 focus:border-[#2391C3] focus:outline-none"
+                    disabled={selectedOrder.paymentStatus !== "approved"}
+                  >
+                    <option value="pending">Pendiente de pago</option>
+                    <option value="processing">Procesando</option>
+                    <option value="shipped">Enviado</option>
+                    <option value="delivered">Entregado</option>
+                    <option value="cancelled">Cancelado</option>
+                  </select>
+                  {selectedOrder.paymentStatus !== "approved" && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Solo se puede cambiar cuando el pago esté aprobado
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* Dirección de Envío */}

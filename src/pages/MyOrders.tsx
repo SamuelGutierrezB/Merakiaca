@@ -9,11 +9,18 @@ import type { Order } from "@/types/order.types";
 import toast from "react-hot-toast";
 
 const STATUS_LABELS: Record<string, string> = {
-  pending: "Pendiente",
+  pending: "Pendiente de pago",
   processing: "Procesando",
   shipped: "Enviado",
   delivered: "Entregado",
   cancelled: "Cancelado",
+};
+
+const PAYMENT_STATUS_LABELS: Record<string, string> = {
+  pending: "Pago pendiente",
+  approved: "Pago aprobado",
+  rejected: "Pago rechazado",
+  cancelled: "Pago cancelado",
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -22,6 +29,13 @@ const STATUS_COLORS: Record<string, string> = {
   shipped: "bg-purple-100 text-purple-800",
   delivered: "bg-green-100 text-green-800",
   cancelled: "bg-red-100 text-red-800",
+};
+
+const PAYMENT_STATUS_COLORS: Record<string, string> = {
+  pending: "bg-orange-100 text-orange-800",
+  approved: "bg-green-100 text-green-800",
+  rejected: "bg-red-100 text-red-800",
+  cancelled: "bg-gray-100 text-gray-800",
 };
 
 export default function MyOrders() {
@@ -130,15 +144,26 @@ export default function MyOrders() {
                       {formatDate(order.createdAt)}
                     </p>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span
-                      className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        STATUS_COLORS[order.status] ||
-                        "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {STATUS_LABELS[order.status] || order.status}
-                    </span>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+                    <div className="flex flex-col gap-2">
+                      <span
+                        className={`px-3 py-1 text-xs font-semibold rounded-full text-center ${
+                          PAYMENT_STATUS_COLORS[order.paymentStatus] ||
+                          "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {PAYMENT_STATUS_LABELS[order.paymentStatus] ||
+                          order.paymentStatus}
+                      </span>
+                      <span
+                        className={`px-3 py-1 text-xs font-semibold rounded-full text-center ${
+                          STATUS_COLORS[order.status] ||
+                          "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {STATUS_LABELS[order.status] || order.status}
+                      </span>
+                    </div>
                     <div className="text-right">
                       <p className="text-sm text-gray-600">Total</p>
                       <p className="text-xl font-bold text-[#D7322D]">

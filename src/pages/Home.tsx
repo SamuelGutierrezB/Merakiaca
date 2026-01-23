@@ -410,7 +410,7 @@ export default function Home() {
             className="text-3xl sm:text-4xl font-bold text-center mb-4"
             style={{ color: "#2391C3" }}
           >
-            Nuestras Sucursales
+            Casa Blanca Sucursales
           </h2>
           <p className="text-center text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
             Entregas locales en Casa Blanca. Recoge tu pedido en la sucursal más

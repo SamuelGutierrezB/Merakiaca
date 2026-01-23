@@ -1,11 +1,21 @@
 Por hacer:
 
--Confirmar con dialogos de la librería tremor react
-
 En progreso:
 
 Terminado:
 
+- Simulador de pago de Mercado Pago ✅
+  - Página de simulación con estados de pago
+  - Actualización automática del estado de la orden
+  - 90% de probabilidad de éxito en la simulación
+  - Reducción de stock solo cuando el pago es aprobado
+  - Redirecciones automáticas según resultado
+- Gestión mejorada del estado "Pendiente" ✅
+  - Estado de pago separado del estado de la orden
+  - Estados de pago: pendiente, aprobado, rechazado, cancelado
+  - Estados de orden: pendiente de pago, procesando, enviado, entregado, cancelado
+  - Los administradores pueden cambiar el estado de la orden
+  - Solo se permite cambiar estado cuando el pago está aprobado
 - Sistema de comentarios y calificaciones con estrellas (1-5) ✅
   - Máximo 3 comentarios por usuario por producto
   - Solo usuarios que han comprado el producto pueden comentar
