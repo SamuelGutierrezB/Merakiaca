@@ -358,12 +358,6 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
 
       {/* Lista de reseñas */}
       <div className="space-y-4">
-        {console.log(
-          "🎨 [Render] Renderizando lista con",
-          reviews.length,
-          "reseñas:",
-          reviews,
-        )}
         {reviews.length === 0 ? (
           <p className="text-center text-gray-500 py-8">
             Aún no hay reseñas para este producto. ¡Sé el primero en opinar!
@@ -386,14 +380,16 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                     {formatDate(review.createdAt)}
                   </p>
                 </div>
-                {user && user.uid === review.userId && (
-                  <button
-                    onClick={() => handleDeleteReview(review.id)}
-                    className="text-red-500 hover:text-red-700 text-sm"
-                  >
-                    Eliminar
-                  </button>
-                )}
+                {user &&
+                  (user.uid === review.userId || user.role === "admin") && (
+                    <button
+                      onClick={() => handleDeleteReview(review.id)}
+                      className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
+                      title="Eliminar reseña"
+                    >
+                      Eliminar
+                    </button>
+                  )}
               </div>
               <p className="text-gray-700">{review.comment}</p>
             </div>
