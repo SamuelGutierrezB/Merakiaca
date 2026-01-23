@@ -167,7 +167,7 @@ export default function MyOrders() {
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-gray-600">Total</p>
-                      <p className="text-xl font-bold text-[#D7322D]">
+                      <p className="text-xl font-bold text-gray-900">
                         {formatPrice(order.total)}
                       </p>
                     </div>

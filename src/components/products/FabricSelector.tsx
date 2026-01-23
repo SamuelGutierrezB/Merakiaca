@@ -28,7 +28,7 @@ export default function FabricSelector({
           <p className="text-xs sm:text-sm text-gray-600">
             <span className="font-medium">{selectedFabric.name}</span>
             {selectedFabric.priceModifier !== 0 && (
-              <span className="ml-2 text-[#D7322D]">
+              <span className="ml-2 text-gray-900">
                 ({selectedFabric.priceModifier > 0 ? "+" : ""}
                 {formatPrice(selectedFabric.priceModifier)})
               </span>
@@ -112,7 +112,7 @@ export default function FabricSelector({
             <span className="text-sm sm:text-base text-gray-600">
               Precio final:
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-[#D7322D]">
+            <span className="text-xl sm:text-2xl font-bold text-gray-900">
               {formatPrice(basePrice + selectedFabric.priceModifier)}
             </span>
           </div>

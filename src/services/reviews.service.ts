@@ -8,7 +8,6 @@ import {
   query,
   where,
   orderBy,
-  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import type { Review, ReviewFormData } from "@/types";
@@ -21,18 +20,44 @@ export const getProductReviews = async (
   productId: string,
 ): Promise<Review[]> => {
   try {
+    console.log(
+      "🔍 [getProductReviews] Buscando reseñas para productId:",
+      productId,
+    );
     const reviewsRef = collection(db, FIREBASE_COLLECTIONS.REVIEWS);
     const q = query(
       reviewsRef,
       where("productId", "==", productId),
       orderBy("createdAt", "desc"),
     );
+    console.log("📡 [getProductReviews] Ejecutando query...");
     const snapshot = await getDocs(q);
+    console.log("📦 [getProductReviews] Documentos obtenidos:", snapshot.size);
 
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Review[];
+    const reviews = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      console.log("📄 [getProductReviews] Doc raw data:", doc.id, data);
+      const review = {
+        id: doc.id,
+        ...data,
+        // Convertir timestamps de Firestore a Date si es necesario
+        createdAt: data.createdAt?.toDate
+          ? data.createdAt.toDate()
+          : data.createdAt,
+        updatedAt: data.updatedAt?.toDate
+          ? data.updatedAt.toDate()
+          : data.updatedAt,
+      };
+      console.log("✅ [getProductReviews] Review procesada:", review);
+      return review;
+    }) as Review[];
+
+    console.log(
+      "🎯 [getProductReviews] Total reviews encontradas:",
+      reviews.length,
+      reviews,
+    );
+    return reviews;
   } catch (error) {
     console.error("Error al obtener reseñas:", error);
     throw error;
@@ -55,10 +80,19 @@ export const getUserProductReviews = async (
     );
     const snapshot = await getDocs(q);
 
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Review[];
+    return snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate
+          ? data.createdAt.toDate()
+          : data.createdAt,
+        updatedAt: data.updatedAt?.toDate
+          ? data.updatedAt.toDate()
+          : data.updatedAt,
+      };
+    }) as Review[];
   } catch (error) {
     console.error("Error al obtener reseñas del usuario:", error);
     throw error;
@@ -76,14 +110,15 @@ export const createReview = async (
 ): Promise<string> => {
   try {
     const reviewsRef = collection(db, FIREBASE_COLLECTIONS.REVIEWS);
+    const now = new Date();
     const docRef = await addDoc(reviewsRef, {
       productId,
       userId,
       userName,
       rating: data.rating,
       comment: data.comment,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
+      createdAt: now,
+      updatedAt: now,
     });
 
     return docRef.id;
@@ -104,7 +139,7 @@ export const updateReview = async (
     const reviewRef = doc(db, FIREBASE_COLLECTIONS.REVIEWS, reviewId);
     await updateDoc(reviewRef, {
       ...data,
-      updatedAt: serverTimestamp(),
+      updatedAt: new Date(),
     });
   } catch (error) {
     console.error("Error al actualizar reseña:", error);

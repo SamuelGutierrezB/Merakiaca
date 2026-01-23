@@ -132,7 +132,7 @@ export default function AdminDashboard() {
               className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
               data-tour="dashboard-orders"
             >
-              <ShoppingBag className="h-20 w-20 mx-auto mb-4 text-[#D7322D]" />
+              <ShoppingBag className="h-20 w-20 mx-auto mb-4 text-[#E85D5D]" />
               <h2 className="text-2xl font-bold mb-2">Órdenes</h2>
               <p className="text-gray-600">Ver y gestionar órdenes</p>
             </Link>

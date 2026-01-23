@@ -277,7 +277,7 @@ export default function AdminOrders() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-bold text-[#D7322D]">
+                            <div className="text-sm font-bold text-gray-900">
                               {formatPrice(order.total)}
                             </div>
                           </td>
@@ -374,7 +374,7 @@ export default function AdminOrders() {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Total:</span>
-                        <span className="text-lg font-bold text-[#D7322D]">
+                        <span className="text-lg font-bold text-gray-900">
                           {formatPrice(order.total)}
                         </span>
                       </div>
@@ -552,7 +552,7 @@ export default function AdminOrders() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-[#D7322D]">
+                        <p className="font-semibold text-gray-900">
                           {formatPrice(item.totalPrice)}
                         </p>
                         <p className="text-sm text-gray-600">
@@ -580,7 +580,7 @@ export default function AdminOrders() {
                 </div>
                 <div className="flex justify-between items-center text-lg border-t border-gray-200 pt-2">
                   <span className="font-bold text-gray-800">Total:</span>
-                  <span className="font-bold text-[#D7322D]">
+                  <span className="font-bold text-gray-900">
                     {formatPrice(selectedOrder.total)}
                   </span>
                 </div>

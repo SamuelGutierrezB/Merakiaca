@@ -283,10 +283,10 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 gap-8 mb-8">
             {/* Uso en Caliente */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-[#D7322D]/20">
+            <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-[#E85D5D]/20">
               <div className="flex items-center gap-3 mb-4">
                 <div className="text-4xl">🔥</div>
-                <h3 className="text-2xl font-bold text-[#D7322D]">
+                <h3 className="text-2xl font-bold text-[#E85D5D]">
                   Uso en caliente:
                 </h3>
               </div>

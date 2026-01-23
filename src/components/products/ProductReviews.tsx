@@ -36,10 +36,24 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
 
   const loadReviews = useCallback(async () => {
     try {
+      console.log(
+        "🔄 [loadReviews] Iniciando carga para productId:",
+        productId,
+      );
       const data = await getProductReviews(productId);
+      console.log(
+        "✨ [loadReviews] Reseñas recibidas del servicio:",
+        data.length,
+        data,
+      );
       setReviews(data);
+      console.log(
+        "💾 [loadReviews] Estado actualizado con",
+        data.length,
+        "reseñas",
+      );
     } catch (error) {
-      console.error("Error al cargar reseñas:", error);
+      console.error("❌ [loadReviews] Error al cargar reseñas:", error);
     }
   }, [productId]);
 
@@ -148,6 +162,10 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
       toast.success("¡Reseña publicada exitosamente!");
       setRating(0);
       setComment("");
+
+      // Esperar un poco para que Firestore procese el serverTimestamp
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       loadReviews();
       loadUserReviews();
       loadProductRating();
@@ -218,9 +236,16 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
     );
   };
 
-  const formatDate = (timestamp: { toDate: () => Date }) => {
+  const formatDate = (timestamp: any) => {
     if (!timestamp) return "";
-    const date = timestamp.toDate();
+
+    // Si es un Timestamp de Firestore, convertir a Date
+    const date = timestamp.toDate
+      ? timestamp.toDate()
+      : timestamp instanceof Date
+        ? timestamp
+        : new Date(timestamp);
+
     return new Intl.DateTimeFormat("es-MX", {
       year: "numeric",
       month: "long",
@@ -333,6 +358,12 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
 
       {/* Lista de reseñas */}
       <div className="space-y-4">
+        {console.log(
+          "🎨 [Render] Renderizando lista con",
+          reviews.length,
+          "reseñas:",
+          reviews,
+        )}
         {reviews.length === 0 ? (
           <p className="text-center text-gray-500 py-8">
             Aún no hay reseñas para este producto. ¡Sé el primero en opinar!

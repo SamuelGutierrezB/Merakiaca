@@ -579,7 +579,7 @@ export default function Checkout() {
                   <span className="text-lg font-bold text-gray-800">
                     Total:
                   </span>
-                  <span className="text-2xl font-bold text-[#D7322D]">
+                  <span className="text-2xl font-bold text-gray-900">
                     {formatPrice(total)}
                   </span>
                 </div>

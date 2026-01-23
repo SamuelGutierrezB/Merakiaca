@@ -218,7 +218,7 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <div className="text-2xl sm:text-3xl font-bold text-[#D7322D]">
+            <div className="text-2xl sm:text-3xl font-bold text-gray-900">
               {formatPrice(product.basePrice)}
             </div>
 

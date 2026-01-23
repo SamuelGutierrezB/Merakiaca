@@ -124,7 +124,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         <div className="flex items-center justify-between pt-2">
           <div>
-            <span className="text-xl sm:text-2xl font-bold text-[#D7322D]">
+            <span className="text-xl sm:text-2xl font-bold text-gray-900">
               {formatPrice(product.basePrice)}
             </span>
           </div>

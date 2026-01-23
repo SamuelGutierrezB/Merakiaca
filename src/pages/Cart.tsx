@@ -92,7 +92,7 @@ export default function Cart() {
                       Tela:{" "}
                       <span className="font-medium">{item.fabricName}</span>
                     </p>
-                    <p className="text-base sm:text-lg font-bold text-[#D7322D] mb-3">
+                    <p className="text-base sm:text-lg font-bold text-gray-900 mb-3">
                       {formatPrice(item.priceAtAdd)}
                     </p>
 
@@ -180,7 +180,7 @@ export default function Cart() {
                 </div>
                 <div className="border-t border-gray-200 pt-3 flex justify-between text-lg font-bold">
                   <span>Total:</span>
-                  <span className="text-[#D7322D]">
+                  <span className="text-gray-900">
                     {formatPrice(getTotal())}
                   </span>
                 </div>

@@ -171,7 +171,7 @@ export default function Wishlist() {
                   </p>
 
                   <div className="flex items-center justify-between pt-2">
-                    <span className="text-2xl font-bold text-[#D7322D]">
+                    <span className="text-2xl font-bold text-gray-900">
                       {formatPrice(product.basePrice)}
                     </span>
 

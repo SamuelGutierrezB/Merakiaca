@@ -288,7 +288,7 @@ export default function AdminProducts() {
                             </button>
                             <button
                               onClick={() => handleDelete(product)}
-                              className="text-[#D7322D] hover:text-[#B32824] transition-colors"
+                              className="text-[#E85D5D] hover:text-[#D7322D] transition-colors"
                               title="Eliminar"
                             >
                               <TrashIcon className="h-5 w-5" />

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PrivateRoute } from "./PrivateRoute";
 import { AdminRoute } from "./AdminRoute";
 import { ROUTES } from "@/utils/constants";
+import { ScrollToTop } from "@/components/common/ScrollToTop";
 
 // Páginas - por ahora usaremos placeholders
 import Home from "@/pages/Home";
@@ -20,6 +21,7 @@ import DebugAuth from "@/pages/DebugAuth";
 export const AppRouter = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Rutas públicas */}
         <Route path={ROUTES.HOME} element={<Home />} />

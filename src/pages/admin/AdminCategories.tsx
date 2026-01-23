@@ -352,7 +352,7 @@ export default function AdminCategories() {
                         </button>
                         <button
                           onClick={() => handleDelete(category)}
-                          className="text-[#D7322D] hover:text-[#B32824] transition-colors p-2"
+                          className="text-[#E85D5D] hover:text-[#D7322D] transition-colors p-2"
                           title="Eliminar"
                         >
                           <TrashIcon className="h-5 w-5" />
