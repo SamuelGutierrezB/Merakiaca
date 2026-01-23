@@ -1,0 +1,9 @@
+-La categoría no se carga cuando se edita un producto
+-Scroll automático cuando se presiona sobre agregar una tela
+-Mostrar stock siempre en lado de cliente
+-Confirmar con dialogos de la librería tremor react
+-que se puedan poner Varias categorías en un solo producto
+-Sección de comentarios(max 3 comentarios por usuario por producto) y estrellas
+-Multiple fotos de un producto
+-El stock se va definir con las telas, quita el input que esta ahorita , en la lista de productos Stock que sume la cantidad de telas
+-Imagenes se estiran, deben mostrar la imagen completa sin deformar en el espacio asignado

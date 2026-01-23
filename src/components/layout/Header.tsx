@@ -40,7 +40,7 @@ export default function Header() {
           >
             <img
               src={logo}
-              alt="Meraki ACA Logo"
+              alt="Meraki aca Logo"
               className="h-10 sm:h-16 w-auto"
             />
           </Link>

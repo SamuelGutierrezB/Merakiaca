@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/products/ProductCard";
+import BranchMap from "@/components/common/BranchMap";
 import { getActiveProducts } from "@/services/products.service";
 import type { Product } from "@/types";
 import logo from "@/assets/logo.png";
@@ -12,6 +13,7 @@ export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [itemsPerView, setItemsPerView] = useState(3);
+  const [selectedBranch, setSelectedBranch] = useState<string>("");
 
   useEffect(() => {
     loadProducts();
@@ -73,7 +75,8 @@ export default function Home() {
               className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4"
               style={{ color: "#2391C3" }}
             >
-              Meraki ACA
+              Meraki{" "}
+              <span className="text-3xl sm:text-4xl lg:text-5xl">aca®</span>
             </h1>
             <p
               className="text-xl sm:text-2xl mb-4 sm:mb-6"
@@ -84,7 +87,7 @@ export default function Home() {
             <p className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8 leading-relaxed">
               Experimenta el bienestar natural con nuestros cojines herbales
               artesanales. Cada pieza está creada con dedicación y amor,
-              utilizando ingredientes 100% naturales para tu relajación y
+              utilizando semillas y hierbas 100% naturales para tu relajación y
               bienestar.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
@@ -105,7 +108,7 @@ export default function Home() {
           <div className="bg-white rounded-3xl shadow-2xl border-4 border-[#F5E63C]">
             <img
               src={logo}
-              alt="Cojines Herbales Meraki ACA"
+              alt="Cojines Herbales Meraki aca"
               className="rounded-2xl w-full h-64 sm:h-80 md:h-96 object-cover"
             />
           </div>
@@ -119,7 +122,7 @@ export default function Home() {
             className="text-3xl sm:text-4xl font-bold text-center mb-4"
             style={{ color: "#2391C3" }}
           >
-            ¿Por qué Meraki ACA?
+            ¿Por qué Meraki <span className="text-2xl sm:text-3xl">aca</span>?
           </h2>
           <p className="text-center text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
             Creamos cada cojín herbal con dedicación, usando ingredientes
@@ -131,8 +134,8 @@ export default function Home() {
               <div className="text-5xl mb-4">🌱</div>
               <h3 className="text-2xl font-bold mb-3">100% Natural</h3>
               <p>
-                Ingredientes herbales cuidadosamente seleccionados para tu
-                bienestar
+                Hierbas y semillas cuidadosamente seleccionadas, 100% naturales
+                para tu bienestar
               </p>
             </div>
 
@@ -140,8 +143,8 @@ export default function Home() {
               <div className="text-5xl mb-4">💆‍♀️</div>
               <h3 className="text-2xl font-bold mb-3">Relajación</h3>
               <p>
-                Aromerapia natural que ayuda a reducir el estrés y mejorar tu
-                descanso
+                Aroma natural pensado para acompañar momentos de relajación y
+                descanso.
               </p>
             </div>
 
@@ -262,6 +265,164 @@ export default function Home() {
               en formato PDF
             </a>
           </p>
+        </div>
+      </section>
+
+      {/* Instrucciones de Uso */}
+      <section className="bg-gradient-to-br from-[#E8DFCA] to-[#F5E63C]/20 py-12 sm:py-16">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2
+            className="text-3xl sm:text-4xl font-bold text-center mb-4"
+            style={{ color: "#2391C3" }}
+          >
+            Instrucciones de Uso
+          </h2>
+          <p className="text-center text-gray-700 mb-8 sm:mb-12 max-w-2xl mx-auto text-base font-medium">
+            Cojín Herbal (compresa para masaje)
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            {/* Uso en Caliente */}
+            <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-[#D7322D]/20">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="text-4xl">🔥</div>
+                <h3 className="text-2xl font-bold text-[#D7322D]">
+                  Uso en caliente:
+                </h3>
+              </div>
+              <ul className="space-y-3 text-gray-700">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2391C3] font-bold">•</span>
+                  <span>
+                    Calentar en microondas en intervalos de 30 segundos a 1
+                    minuto.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2391C3] font-bold">•</span>
+                  <span>
+                    Revisar la temperatura antes de aplicar sobre la piel.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#2391C3] font-bold">•</span>
+                  <span>
+                    Usar preferentemente con una funda o tela intermedia.
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Uso en Frío */}
+            <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-[#2391C3]/20">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="text-4xl">❄️</div>
+                <h3 className="text-2xl font-bold text-[#2391C3]">
+                  Uso en frío:
+                </h3>
+              </div>
+              <ul className="space-y-3 text-gray-700">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#8A4A86] font-bold">•</span>
+                  <span>
+                    Colocar la almohadilla en una bolsa plástica sellada.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#8A4A86] font-bold">•</span>
+                  <span>Guardar en el congelador por al menos 1 hora.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#8A4A86] font-bold">•</span>
+                  <span>Aplicar sobre la zona deseada.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Precauciones */}
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-6 mb-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Precauciones
+            </h3>
+            <ul className="space-y-2 text-gray-700">
+              <li className="flex items-start gap-2">
+                <span>•</span>
+                <span>
+                  No sobrecalentar (riesgo de quemaduras o daño al producto).
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span>•</span>
+                <span>
+                  No mojar ni introducir al microondas si presenta humedad.
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span>•</span>
+                <span>Supervisar el uso en niños y adultos mayores.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span>•</span>
+                <span>No usar sobre piel lesionada o irritada.</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Información Comercial */}
+          <div className="text-center bg-white rounded-2xl p-6 shadow-lg">
+            <p className="text-gray-700 mb-4">
+              <strong className="text-[#2391C3]">
+                Hecho en México por Meraki aca®
+              </strong>
+            </p>
+            <p className="text-sm text-gray-600 mb-4">
+              Materiales: Semillas, hierbas naturales y tela de algodón
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a
+                href="https://instagram.com/MerakiACA"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-[#8A4A86] hover:text-[#6A3A66] font-semibold transition-colors"
+              >
+                <span className="text-2xl">📱</span>
+                @MerakiACA
+              </a>
+              <a
+                href="https://wa.me/523312251720"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-[#25D366] hover:text-[#20BA5A] font-semibold transition-colors"
+              >
+                <span className="text-2xl">💬</span>
+                33-12-25-17-20
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sección de Sucursales */}
+      <section className="bg-white py-12 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2
+            className="text-3xl sm:text-4xl font-bold text-center mb-4"
+            style={{ color: "#2391C3" }}
+          >
+            Nuestras Sucursales
+          </h2>
+          <p className="text-center text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
+            Entregas locales en Casa Blanca. Recoge tu pedido en la sucursal más
+            cercana
+          </p>
+
+          <BranchMap
+            showTitle={false}
+            className="max-w-5xl mx-auto"
+            selectedBranchId={selectedBranch}
+            onSelectBranch={setSelectedBranch}
+          />
         </div>
       </section>
     </Layout>
