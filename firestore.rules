@@ -123,6 +123,23 @@ service cloud.firestore {
     }
     
     // ============================================
+    // COLECCIÓN: wishlists
+    // ============================================
+    match /wishlists/{userId} {
+      // Los usuarios solo pueden leer su propia lista de favoritos
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Los usuarios pueden crear su propia lista de favoritos
+      allow create: if isSignedIn() && userId == request.auth.uid;
+      
+      // Los usuarios pueden actualizar su propia lista de favoritos
+      allow update: if isOwner(userId);
+      
+      // Los usuarios pueden eliminar su propia lista de favoritos
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    // ============================================
     // REGLA POR DEFECTO: DENEGAR TODO
     // ============================================
     // Cualquier colección no especificada explícitamente será denegada

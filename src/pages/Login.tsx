@@ -1,15 +1,19 @@
 import { useAuthStore } from "@/store/authStore";
+import { useWishlistStore } from "@/store/wishlistStore";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function Login() {
   const { signIn, user, loading, error } = useAuthStore();
+  const { loadWishlist } = useWishlistStore();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (user) {
+      // Cargar wishlist del usuario
+      loadWishlist(user.uid);
       toast.success(`¡Bienvenido ${user.displayName}!`);
       navigate("/", { replace: true });
     }

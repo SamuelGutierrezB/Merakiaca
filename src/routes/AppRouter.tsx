@@ -11,6 +11,7 @@ import ProductDetail from "@/pages/ProductDetail";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
 import MyOrders from "@/pages/MyOrders";
+import Wishlist from "@/pages/Wishlist";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminProducts from "@/pages/admin/AdminProducts";
 import AdminOrders from "@/pages/admin/AdminOrders";
@@ -49,6 +50,14 @@ export const AppRouter = () => {
           element={
             <PrivateRoute>
               <MyOrders />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path={ROUTES.WISHLIST}
+          element={
+            <PrivateRoute>
+              <Wishlist />
             </PrivateRoute>
           }
         />

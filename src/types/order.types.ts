@@ -8,6 +8,20 @@ export type OrderStatus =
   | "cancelled";
 export type PaymentStatus = "pending" | "approved" | "rejected" | "cancelled";
 
+export interface StatusHistory {
+  status: OrderStatus;
+  changedAt: Timestamp;
+  changedBy?: string; // userId del admin que hizo el cambio, undefined si fue automático
+  note?: string; // nota opcional del cambio
+}
+
+export interface PaymentStatusHistory {
+  paymentStatus: PaymentStatus;
+  changedAt: Timestamp;
+  changedBy?: string;
+  note?: string;
+}
+
 export interface OrderItem {
   productId: string;
   productName: string;
@@ -38,6 +52,8 @@ export interface Order {
   total: number;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
+  statusHistory?: StatusHistory[]; // Historial de cambios de estado
+  paymentStatusHistory?: PaymentStatusHistory[]; // Historial de cambios de pago
   shippingAddress: Address;
   paymentMethod: "mercadopago";
   mercadoPagoPaymentId?: string;

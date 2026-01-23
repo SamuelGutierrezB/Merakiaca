@@ -4,6 +4,7 @@ import { ArrowLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Loader2, Package, MapPin, Phone, ShoppingBag } from "lucide-react";
 import AdminJoyride from "@/components/admin/AdminJoyride";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
+import OrderHistory from "@/components/common/OrderHistory";
 import {
   getAllOrders,
   updateOrderStatus,
@@ -12,6 +13,7 @@ import {
 import { deleteOrder } from "@/services/orders.service";
 import { formatPrice } from "@/utils/formatters";
 import type { Order, OrderStatus, PaymentStatus } from "@/types/order.types";
+import { useAuthStore } from "@/store/authStore";
 import toast from "react-hot-toast";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -46,6 +48,7 @@ const PAYMENT_STATUS_COLORS: Record<string, string> = {
 
 export default function AdminOrders() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -109,7 +112,7 @@ export default function AdminOrders() {
     newStatus: OrderStatus,
   ) => {
     try {
-      await updateOrderStatus(orderId, newStatus);
+      await updateOrderStatus(orderId, newStatus, user?.uid);
       toast.success("Estado actualizado exitosamente");
       loadOrders();
 
@@ -128,7 +131,12 @@ export default function AdminOrders() {
     newPaymentStatus: PaymentStatus,
   ) => {
     try {
-      await updateOrderPaymentStatus(orderId, newPaymentStatus);
+      await updateOrderPaymentStatus(
+        orderId,
+        newPaymentStatus,
+        undefined,
+        user?.uid,
+      );
       toast.success("Estado de pago actualizado exitosamente");
       loadOrders();
 
@@ -155,7 +163,9 @@ export default function AdminOrders() {
               data-tour="orders-back"
             >
               <ArrowLeftIcon className="h-5 w-5" />
-              <span className="hidden sm:inline">Volver al Dashboard</span>
+              <span className="hidden sm:inline">
+                Volver al Panel de Administración
+              </span>
             </button>
           </div>
 
@@ -574,6 +584,14 @@ export default function AdminOrders() {
                     {formatPrice(selectedOrder.total)}
                   </span>
                 </div>
+              </div>
+
+              {/* Historial de Cambios */}
+              <div className="border-t border-gray-200 pt-6">
+                <OrderHistory
+                  statusHistory={selectedOrder.statusHistory}
+                  paymentStatusHistory={selectedOrder.paymentStatusHistory}
+                />
               </div>
 
               {/* Botón de Eliminar */}

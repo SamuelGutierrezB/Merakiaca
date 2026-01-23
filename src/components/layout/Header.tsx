@@ -5,7 +5,7 @@ import {
   XMarkIcon,
   ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
-import { ShoppingCart, Package, UserCog } from "lucide-react";
+import { ShoppingCart, Package, UserCog, Heart } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { useCartStore } from "@/store/cartStore";
 import { ROUTES } from "@/utils/constants";
@@ -73,6 +73,14 @@ export default function Header() {
                       {itemCount}
                     </span>
                   )}
+                </Link>
+
+                <Link
+                  to={ROUTES.WISHLIST}
+                  className="text-[#2391C3] hover:text-[#1A6B8E] font-semibold transition-colors flex items-center gap-2"
+                >
+                  <Heart className="h-5 w-5" />
+                  Favoritos
                 </Link>
 
                 <Link
@@ -164,6 +172,15 @@ export default function Header() {
                       {itemCount}
                     </span>
                   )}
+                </Link>
+
+                <Link
+                  to={ROUTES.WISHLIST}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 font-semibold transition-colors flex items-center gap-2"
+                >
+                  <Heart className="h-5 w-5" />
+                  Favoritos
                 </Link>
 
                 {user.role === "admin" && (

@@ -161,7 +161,7 @@ const tours: Record<string, Step[]> = {
     {
       target: "[data-tour='products-back']",
       content:
-        "Madre, este botón te regresa al dashboard principal. Úsalo cuando termines aquí.",
+        "Madre, este botón te regresa al Panel de Administración. Úsalo cuando termines aquí.",
       disableBeacon: true,
     },
     {
@@ -183,7 +183,7 @@ const tours: Record<string, Step[]> = {
   orders: [
     {
       target: "[data-tour='orders-back']",
-      content: "Madre, este botón te regresa al dashboard.",
+      content: "Madre, este botón te regresa al Panel de Administración.",
       disableBeacon: true,
     },
     {
@@ -199,7 +199,7 @@ const tours: Record<string, Step[]> = {
   categories: [
     {
       target: "[data-tour='categories-back']",
-      content: "Madre, este botón te regresa al dashboard.",
+      content: "Madre, este botón te regresa al Panel de Administración.",
       disableBeacon: true,
     },
     {

@@ -40,6 +40,13 @@ Este archivo documenta las reglas de seguridad configuradas para Firestore y Sto
 - **Lectura**: Usuario dueño del carrito
 - **Escritura**: Usuario dueño del carrito
 
+### Colección: `wishlists`
+
+- **Lectura**: Usuario dueño de la lista de favoritos o admins
+- **Creación**: Usuario autenticado (su propia lista)
+- **Actualización**: Usuario dueño de la lista
+- **Eliminación**: Usuario dueño de la lista o admins
+
 ## 🖼️ Reglas de Storage
 
 ### Carpeta: `products/`

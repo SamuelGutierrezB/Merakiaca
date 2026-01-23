@@ -4,6 +4,22 @@ En progreso:
 
 Terminado:
 
+- Sistema de favoritos/wishlist ✅
+  - Tipos WishlistItem y Wishlist creados
+  - Servicio wishlist.service.ts con CRUD completo
+  - Store wishlistStore con Zustand y persistencia
+  - Botón de corazón en ProductCard y ProductDetail
+  - Página Wishlist con grid de productos favoritos
+  - Link en Header (desktop y mobile)
+  - Carga automática de favoritos al iniciar sesión
+  - Colección "wishlists" en Firestore
+- Dashboard con estadísticas y gráficas ✅
+  - Servicio stats.service.ts con cálculo de métricas
+  - Cards de métricas: ingresos, órdenes, pendientes, completadas
+  - Gráfica de línea: ingresos de últimos 6 meses
+  - Gráfica de pastel: órdenes por estado
+  - Gráfica de barras: top 5 productos más vendidos
+  - Instalada librería recharts para visualización
 - Diálogos de confirmación con Headless UI ✅
   - Reemplazados todos los confirm() nativos
   - Componente ConfirmDialog reutilizable
@@ -19,6 +35,13 @@ Terminado:
   - 90% de probabilidad de éxito en la simulación
   - Reducción de stock solo cuando el pago es aprobado
   - Redirecciones automáticas según resultado
+- Historial de cambios de estado en órdenes ✅
+  - Tipos StatusHistory y PaymentStatusHistory agregados
+  - Servicio actualizado para guardar historial automáticamente
+  - Componente OrderHistory con timeline visual
+  - Integrado en AdminOrders (panel de detalles)
+  - Integrado en MyOrders (vista de cliente)
+  - Se registra quién hizo el cambio (admin) y timestamp
 - Gestión mejorada del estado "Pendiente" ✅
   - Estado de pago separado del estado de la orden
   - Estados de pago: pendiente, aprobado, rechazado, cancelado

@@ -1,52 +1,296 @@
+import { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
-import { Package, ShoppingBag, FolderTree } from "lucide-react";
+import {
+  Package,
+  ShoppingBag,
+  FolderTree,
+  TrendingUp,
+  DollarSign,
+  ShoppingCart,
+  CheckCircle,
+  AlertTriangle,
+  Loader2,
+} from "lucide-react";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import AdminJoyride from "@/components/admin/AdminJoyride";
+import {
+  getDashboardStats,
+  getRevenueByMonth,
+  getTopProducts,
+  getOrdersByStatus,
+} from "@/services/stats.service";
+import { formatPrice } from "@/utils/formatters";
+import type {
+  DashboardStats,
+  RevenueByMonth,
+  TopProduct,
+  OrdersByStatus,
+} from "@/services/stats.service";
+import toast from "react-hot-toast";
+
+const STATUS_COLORS = ["#2391C3", "#8A4A86", "#D7322D", "#4CAF50", "#FF9800"];
+const STATUS_LABELS: Record<string, string> = {
+  pending: "Pendiente",
+  processing: "Procesando",
+  shipped: "Enviado",
+  delivered: "Entregado",
+  cancelled: "Cancelado",
+};
 
 export default function AdminDashboard() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [revenueData, setRevenueData] = useState<RevenueByMonth[]>([]);
+  const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
+  const [ordersByStatus, setOrdersByStatus] = useState<OrdersByStatus[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      const [statsData, revenue, products, orders] = await Promise.all([
+        getDashboardStats(),
+        getRevenueByMonth(6),
+        getTopProducts(5),
+        getOrdersByStatus(),
+      ]);
+
+      setStats(statsData);
+      setRevenueData(revenue);
+      setTopProducts(products);
+      setOrdersByStatus(orders);
+    } catch (error) {
+      console.error("Error loading dashboard data:", error);
+      toast.error("Error al cargar las estadísticas");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="max-w-7xl mx-auto px-4 py-16 flex justify-center items-center min-h-[60vh]">
+          <Loader2 className="h-12 w-12 text-[#2391C3] animate-spin" />
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <AdminJoyride page="dashboard" />
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div data-tour="dashboard-welcome">
-          <h1 className="text-4xl font-bold mb-2" style={{ color: "#2391C3" }}>
+      <div className="max-w-7xl mx-auto px-4 py-8 sm:py-16">
+        <div data-tour="dashboard-welcome" className="mb-8">
+          <h1
+            className="text-3xl sm:text-4xl font-bold mb-2"
+            style={{ color: "#2391C3" }}
+          >
             Panel de Administración
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600">
             Bienvenida Madre, gestiona tu tienda desde aquí
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          <Link
-            to="/admin/productos"
-            className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
-            data-tour="dashboard-products"
-          >
-            <Package className="h-20 w-20 mx-auto mb-4 text-[#2391C3]" />
-            <h2 className="text-2xl font-bold mb-2">Productos</h2>
-            <p className="text-gray-600">Gestionar catálogo de productos</p>
-          </Link>
+        {/* Enlaces rápidos */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Accesos Rápidos
+          </h3>
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <Link
+              to="/admin/productos"
+              className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
+              data-tour="dashboard-products"
+            >
+              <Package className="h-20 w-20 mx-auto mb-4 text-[#2391C3]" />
+              <h2 className="text-2xl font-bold mb-2">Productos</h2>
+              <p className="text-gray-600">Gestionar catálogo de productos</p>
+            </Link>
 
-          <Link
-            to="/admin/ordenes"
-            className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
-            data-tour="dashboard-orders"
-          >
-            <ShoppingBag className="h-20 w-20 mx-auto mb-4 text-[#D7322D]" />
-            <h2 className="text-2xl font-bold mb-2">Órdenes</h2>
-            <p className="text-gray-600">Ver y gestionar órdenes</p>
-          </Link>
+            <Link
+              to="/admin/ordenes"
+              className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
+              data-tour="dashboard-orders"
+            >
+              <ShoppingBag className="h-20 w-20 mx-auto mb-4 text-[#D7322D]" />
+              <h2 className="text-2xl font-bold mb-2">Órdenes</h2>
+              <p className="text-gray-600">Ver y gestionar órdenes</p>
+            </Link>
 
-          <Link
-            to="/admin/categorias"
-            className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
-            data-tour="dashboard-categories"
-          >
-            <FolderTree className="h-20 w-20 mx-auto mb-4 text-[#8A4A86]" />
-            <h2 className="text-2xl font-bold mb-2">Categorías</h2>
-            <p className="text-gray-600">Gestionar categorías</p>
-          </Link>
+            <Link
+              to="/admin/categorias"
+              className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
+              data-tour="dashboard-categories"
+            >
+              <FolderTree className="h-20 w-20 mx-auto mb-4 text-[#8A4A86]" />
+              <h2 className="text-2xl font-bold mb-2">Categorías</h2>
+              <p className="text-gray-600">Gestionar categorías</p>
+            </Link>
+          </div>
+        </div>
+
+        {/* Tarjetas de métricas principales */}
+        {stats && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-[#2391C3]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Ingresos Totales</p>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {formatPrice(stats.totalRevenue)}
+                  </p>
+                </div>
+                <DollarSign className="h-12 w-12 text-[#2391C3] opacity-80" />
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-green-500">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Órdenes Pagadas</p>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {stats.totalOrders}
+                  </p>
+                </div>
+                <ShoppingCart className="h-12 w-12 text-green-500 opacity-80" />
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-orange-500">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">
+                    Órdenes Pendientes
+                  </p>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {stats.pendingOrders}
+                  </p>
+                </div>
+                <AlertTriangle className="h-12 w-12 text-orange-500 opacity-80" />
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-[#8A4A86]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">
+                    Órdenes Entregadas
+                  </p>
+                  <p className="text-2xl font-bold text-gray-800">
+                    {stats.completedOrders}
+                  </p>
+                </div>
+                <CheckCircle className="h-12 w-12 text-[#8A4A86] opacity-80" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Gráficas */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Gráfica de ingresos por mes */}
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-[#2391C3]" />
+              Ingresos de los Últimos 6 Meses
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={revenueData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip
+                  formatter={(value: number | undefined) =>
+                    value ? formatPrice(value) : "$0"
+                  }
+                  labelStyle={{ color: "#000" }}
+                />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#2391C3"
+                  strokeWidth={2}
+                  name="Ingresos"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Gráfica de órdenes por estado */}
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Órdenes por Estado
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={ordersByStatus}
+                  dataKey="count"
+                  nameKey="status"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label={(entry: any) =>
+                    STATUS_LABELS[entry.status] || entry.status
+                  }
+                >
+                  {ordersByStatus.map((_, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={STATUS_COLORS[index % STATUS_COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Productos más vendidos */}
+        <div className="bg-white p-6 rounded-xl shadow-md mb-8">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Top 5 Productos Más Vendidos
+          </h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={topProducts}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="productName" />
+              <YAxis />
+              <Tooltip
+                formatter={(
+                  value: number | undefined,
+                  name: string | undefined,
+                ) =>
+                  value ? (name === "revenue" ? formatPrice(value) : value) : 0
+                }
+              />
+              <Legend />
+              <Bar dataKey="sales" fill="#2391C3" name="Unidades Vendidas" />
+              <Bar dataKey="revenue" fill="#8A4A86" name="Ingresos" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </Layout>

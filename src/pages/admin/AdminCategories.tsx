@@ -28,7 +28,6 @@ const categorySchema = z.object({
     .string()
     .min(5, "La descripción debe tener al menos 5 caracteres"),
   order: z.number().min(0, "El orden debe ser un número positivo"),
-  imageUrl: z.string().optional(),
 });
 
 type CategoryFormData = z.infer<typeof categorySchema>;
@@ -93,7 +92,6 @@ export default function AdminCategories() {
       name: "",
       description: "",
       order: categories.length,
-      imageUrl: "",
     });
     setShowForm(true);
   };
@@ -104,7 +102,6 @@ export default function AdminCategories() {
       name: category.name,
       description: category.description,
       order: category.order,
-      imageUrl: category.imageUrl || "",
     });
     setShowForm(true);
   };
@@ -141,10 +138,7 @@ export default function AdminCategories() {
         await updateCategory(editingCategory.id, data);
         toast.success("Categoría actualizada exitosamente");
       } else {
-        await createCategory({
-          ...data,
-          imageUrl: data.imageUrl || "",
-        });
+        await createCategory(data);
         toast.success("Categoría creada exitosamente");
       }
       setShowForm(false);
@@ -235,18 +229,6 @@ export default function AdminCategories() {
                   )}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    URL de imagen (opcional)
-                  </label>
-                  <input
-                    {...register("imageUrl")}
-                    type="url"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
-                    placeholder="https://..."
-                  />
-                </div>
-
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
@@ -283,7 +265,9 @@ export default function AdminCategories() {
               data-tour="categories-back"
             >
               <ArrowLeftIcon className="h-5 w-5" />
-              <span className="hidden sm:inline">Volver al Dashboard</span>
+              <span className="hidden sm:inline">
+                Volver al Panel de Administración
+              </span>
             </button>
           </div>
 

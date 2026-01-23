@@ -1,14 +1,28 @@
 import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 import type { Product } from "@/types";
 import { formatPrice } from "@/utils/formatters";
 import { isBaseColor } from "@/utils/fabricColors";
+import { useAuthStore } from "@/store/authStore";
+import { useWishlistStore } from "@/store/wishlistStore";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { user } = useAuthStore();
+  const { isInWishlist, toggleWishlist } = useWishlistStore();
+  const isFavorite = isInWishlist(product.id);
   const hasStock = product.fabrics.some((f) => f.stock > 0);
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (user) {
+      toggleWishlist(user.uid, product.id);
+    }
+  };
 
   return (
     <Link
@@ -27,6 +41,25 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className="flex items-center justify-center h-full text-gray-400">
             Sin imagen
           </div>
+        )}
+
+        {/* Botón de favorito */}
+        {user && (
+          <button
+            onClick={handleToggleFavorite}
+            className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform z-10"
+            aria-label={
+              isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"
+            }
+          >
+            <Heart
+              className={`h-5 w-5 transition-colors ${
+                isFavorite
+                  ? "fill-red-500 text-red-500"
+                  : "text-gray-600 hover:text-red-500"
+              }`}
+            />
+          </button>
         )}
 
         {!hasStock && (

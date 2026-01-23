@@ -126,7 +126,9 @@ export default function AdminProducts() {
               data-tour="products-back"
             >
               <ArrowLeftIcon className="h-5 w-5" />
-              <span className="hidden sm:inline">Volver al Dashboard</span>
+              <span className="hidden sm:inline">
+                Volver al Panel de Administración
+              </span>
             </button>
           </div>
 

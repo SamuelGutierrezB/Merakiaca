@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { Heart } from "lucide-react";
 import toast from "react-hot-toast";
 import Layout from "@/components/layout/Layout";
 import type { Product, FabricOption } from "@/types";
@@ -8,11 +9,15 @@ import { getProductById } from "@/services/products.service";
 import FabricSelector from "@/components/products/FabricSelector";
 import ProductReviews from "@/components/products/ProductReviews";
 import { useCartStore } from "@/store/cartStore";
+import { useAuthStore } from "@/store/authStore";
+import { useWishlistStore } from "@/store/wishlistStore";
 import { formatPrice } from "@/utils/formatters";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const { isInWishlist, toggleWishlist } = useWishlistStore();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFabric, setSelectedFabric] = useState<
@@ -93,6 +98,14 @@ export default function ProductDetail() {
     toast.success("Producto agregado al carrito");
   };
 
+  const handleToggleFavorite = () => {
+    if (!product || !user) {
+      toast.error("Debes iniciar sesión para agregar favoritos");
+      return;
+    }
+    toggleWishlist(user.uid, product.id);
+  };
+
   if (isLoading) {
     return (
       <Layout>
@@ -166,9 +179,30 @@ export default function ProductDetail() {
           {/* Información y Opciones */}
           <div className="space-y-4 sm:space-y-6">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
-                {product.name}
-              </h1>
+              <div className="flex items-start justify-between gap-4 mb-2">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+                  {product.name}
+                </h1>
+                {user && (
+                  <button
+                    onClick={handleToggleFavorite}
+                    className="flex-shrink-0 w-12 h-12 rounded-full bg-white border-2 border-gray-200 shadow-md flex items-center justify-center hover:scale-110 transition-transform"
+                    aria-label={
+                      isInWishlist(product.id)
+                        ? "Quitar de favoritos"
+                        : "Agregar a favoritos"
+                    }
+                  >
+                    <Heart
+                      className={`h-6 w-6 transition-colors ${
+                        isInWishlist(product.id)
+                          ? "fill-red-500 text-red-500"
+                          : "text-gray-600 hover:text-red-500"
+                      }`}
+                    />
+                  </button>
+                )}
+              </div>
               <div className="flex items-center gap-2 flex-wrap">
                 {(product.categories && product.categories.length > 0
                   ? product.categories

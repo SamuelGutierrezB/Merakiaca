@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Loader2, Package } from "lucide-react";
 import Layout from "@/components/layout/Layout";
+import OrderHistory from "@/components/common/OrderHistory";
 import { useAuthStore } from "@/store/authStore";
 import { getUserOrders } from "@/services/orders.service";
 import { formatPrice } from "@/utils/formatters";
@@ -198,6 +199,17 @@ export default function MyOrders() {
                     </div>
                   ))}
                 </div>
+
+                {/* Historial de cambios */}
+                {order.statusHistory?.length ||
+                order.paymentStatusHistory?.length ? (
+                  <div className="border-t border-gray-200 pt-4 mt-4">
+                    <OrderHistory
+                      statusHistory={order.statusHistory}
+                      paymentStatusHistory={order.paymentStatusHistory}
+                    />
+                  </div>
+                ) : null}
 
                 {/* Dirección de envío */}
                 <div className="bg-gray-50 rounded-lg p-4">

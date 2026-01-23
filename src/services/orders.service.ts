@@ -10,6 +10,7 @@ import {
   orderBy,
   Timestamp,
   serverTimestamp,
+  arrayUnion,
 } from "firebase/firestore";
 import { db } from "@/services/firebase";
 import { FIREBASE_COLLECTIONS } from "@/utils/constants";
@@ -113,12 +114,25 @@ export async function updateOrderPaymentStatus(
   orderId: string,
   paymentStatus: PaymentStatus,
   mercadoPagoPaymentId?: string,
+  changedBy?: string,
+  note?: string,
 ): Promise<void> {
   try {
     const orderRef = doc(db, FIREBASE_COLLECTIONS.ORDERS, orderId);
+
+    // Crear entrada de historial usando Date en lugar de Timestamp para arrayUnion
+    const now = new Date();
+    const historyEntry: any = {
+      paymentStatus,
+      changedAt: now,
+      changedBy: changedBy || null,
+      note: note || null,
+    };
+
     const updateData: any = {
       paymentStatus,
       updatedAt: serverTimestamp(),
+      paymentStatusHistory: arrayUnion(historyEntry),
     };
 
     if (mercadoPagoPaymentId) {
@@ -128,6 +142,15 @@ export async function updateOrderPaymentStatus(
     // Si el pago es aprobado, actualizar el estado de la orden
     if (paymentStatus === "approved") {
       updateData.status = "processing";
+
+      // Agregar entrada en historial de estado también
+      const statusHistoryEntry: any = {
+        status: "processing",
+        changedAt: now,
+        changedBy: null,
+        note: "Estado actualizado automáticamente al aprobar el pago",
+      };
+      updateData.statusHistory = arrayUnion(statusHistoryEntry);
     }
 
     await updateDoc(orderRef, updateData);
@@ -159,12 +182,24 @@ export async function updateOrderPaymentStatus(
 export async function updateOrderStatus(
   orderId: string,
   status: OrderStatus,
+  changedBy?: string,
+  note?: string,
 ): Promise<void> {
   try {
     const orderRef = doc(db, FIREBASE_COLLECTIONS.ORDERS, orderId);
+
+    // Crear entrada de historial usando Date en lugar de Timestamp para arrayUnion
+    const historyEntry: any = {
+      status,
+      changedAt: new Date(),
+      changedBy: changedBy || null,
+      note: note || null,
+    };
+
     await updateDoc(orderRef, {
       status,
       updatedAt: serverTimestamp(),
+      statusHistory: arrayUnion(historyEntry),
     });
   } catch (error) {
     console.error("Error updating order status:", error);
