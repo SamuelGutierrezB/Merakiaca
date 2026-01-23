@@ -39,25 +39,60 @@ export default function BranchMap({
     console.log("🗺️ Iniciando carga de Google Maps...");
     console.log("📍 Número de sucursales:", branches.length);
 
-    // Cargar el script de Google Maps
-    if (!window.google) {
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&language=es`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => {
-        console.log("✅ Google Maps script cargado");
+    // Función para verificar y actualizar el estado cuando Maps esté listo
+    const checkAndSetMapReady = () => {
+      if (window.google?.maps) {
+        console.log("✅ Google Maps está disponible");
         setMapLoaded(true);
-      };
-      script.onerror = () => {
-        console.error("❌ Error al cargar Google Maps script");
-      };
-      document.head.appendChild(script);
-    } else {
-      console.log("✅ Google Maps ya estaba cargado");
-      // Usar setTimeout para evitar el warning de setState en efecto
-      setTimeout(() => setMapLoaded(true), 0);
+        return true;
+      }
+      return false;
+    };
+
+    // Si ya está cargado, activar inmediatamente
+    if (checkAndSetMapReady()) {
+      return;
     }
+
+    // Verificar si el script ya existe
+    const existingScript = document.querySelector(
+      `script[src*="maps.googleapis.com"]`,
+    );
+
+    if (existingScript) {
+      console.log("⏳ Script de Google Maps ya existe, esperando carga...");
+      // Intentar inmediatamente
+      if (checkAndSetMapReady()) {
+        return;
+      }
+
+      // Esperar a que el script se cargue
+      const checkInterval = setInterval(() => {
+        if (checkAndSetMapReady()) {
+          clearInterval(checkInterval);
+        }
+      }, 100);
+
+      // Cleanup
+      return () => clearInterval(checkInterval);
+    }
+
+    // Cargar el script de Google Maps por primera vez
+    console.log("📥 Cargando script de Google Maps...");
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&language=es`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      console.log("✅ Google Maps script cargado exitosamente");
+      checkAndSetMapReady();
+    };
+    script.onerror = () => {
+      console.error("❌ Error al cargar Google Maps script");
+    };
+    document.head.appendChild(script);
+
+    // Cleanup: no remover el script porque puede ser usado por otros componentes
   }, []);
 
   useEffect(() => {
@@ -208,6 +243,7 @@ export default function BranchMap({
         {branches.map((branch) => (
           <button
             key={branch.id}
+            type="button"
             onClick={() => {
               console.log("🖱️ Click en tarjeta:", branch.name, branch.id);
               if (onSelectBranch) {

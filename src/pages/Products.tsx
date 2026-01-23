@@ -42,7 +42,13 @@ export default function Products() {
   const filteredProducts =
     selectedCategory === "all"
       ? products
-      : products.filter((p) => p.category === selectedCategory);
+      : products.filter((p) => {
+          // Soportar tanto el array categories como el campo category antiguo
+          if (p.categories && p.categories.length > 0) {
+            return p.categories.includes(selectedCategory);
+          }
+          return p.category === selectedCategory;
+        });
 
   return (
     <Layout>

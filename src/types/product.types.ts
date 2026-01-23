@@ -13,7 +13,8 @@ export interface Product {
   name: string;
   description: string;
   basePrice: number;
-  category: string;
+  category: string; // Mantener por compatibilidad con datos existentes
+  categories?: string[]; // Nueva propiedad para múltiples categorías
   mainImage: string;
   images: string[];
   fabrics: FabricOption[];
@@ -26,6 +27,7 @@ export interface ProductFormData {
   name: string;
   description: string;
   basePrice: number;
-  category: string;
+  category: string; // Mantener por compatibilidad
+  categories?: string[]; // Nueva propiedad para múltiples categorías
   isActive: boolean;
 }

@@ -8,8 +8,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const hasStock =
-    product.fabrics.some((f) => f.stock > 0) || product.stock > 0;
+  const hasStock = product.fabrics.some((f) => f.stock > 0);
 
   return (
     <Link
@@ -97,9 +96,19 @@ export default function ProductCard({ product }: ProductCardProps) {
             </span>
           </div>
 
-          <span className="px-3 py-1 bg-[#E8DFCA] text-gray-800 rounded-full text-xs font-semibold">
-            {product.category}
-          </span>
+          <div className="flex flex-wrap gap-1 justify-end">
+            {(product.categories && product.categories.length > 0
+              ? product.categories
+              : [product.category]
+            ).map((cat, idx) => (
+              <span
+                key={idx}
+                className="px-2 py-1 bg-[#E8DFCA] text-gray-800 rounded-full text-xs font-semibold"
+              >
+                {cat}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </Link>

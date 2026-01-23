@@ -13,19 +13,60 @@ import type { OrderItem, Address } from "@/types/order.types";
 import BranchMap from "@/components/common/BranchMap";
 
 const pickupSchema = z.object({
-  fullName: z.string().min(3, "Ingresa tu nombre completo"),
-  whatsapp: z.string().min(10, "Ingresa un número de WhatsApp válido"),
+  fullName: z
+    .string()
+    .min(3, "Ingresa tu nombre completo")
+    .max(100, "El nombre es demasiado largo")
+    .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, "El nombre solo puede contener letras"),
+  whatsapp: z
+    .string()
+    .min(10, "El número debe tener al menos 10 dígitos")
+    .max(15, "El número es demasiado largo")
+    .regex(
+      /^[0-9\s\-\+\(\)]+$/,
+      "Solo números, espacios, guiones y paréntesis permitidos",
+    )
+    .transform((val) => val.replace(/[\s\-\(\)]/g, ""))
+    .refine((val) => val.length >= 10, "Debe contener al menos 10 dígitos"),
   branchId: z.string().min(1, "Selecciona una sucursal"),
 });
 
 const addressSchema = z.object({
-  fullName: z.string().min(3, "Ingresa tu nombre completo"),
-  street: z.string().min(5, "Ingresa tu dirección completa"),
-  city: z.string().min(2, "Ingresa tu ciudad"),
-  state: z.string().min(2, "Ingresa tu estado"),
-  zipCode: z.string().min(4, "Ingresa tu código postal"),
+  fullName: z
+    .string()
+    .min(3, "Ingresa tu nombre completo")
+    .max(100, "El nombre es demasiado largo")
+    .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, "El nombre solo puede contener letras"),
+  street: z
+    .string()
+    .min(5, "Ingresa tu dirección completa")
+    .max(200, "La dirección es demasiado larga"),
+  city: z
+    .string()
+    .min(2, "Ingresa tu ciudad")
+    .max(50, "El nombre de la ciudad es demasiado largo")
+    .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, "La ciudad solo puede contener letras"),
+  state: z
+    .string()
+    .min(2, "Ingresa tu estado")
+    .max(50, "El nombre del estado es demasiado largo")
+    .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, "El estado solo puede contener letras"),
+  zipCode: z
+    .string()
+    .min(4, "El código postal debe tener al menos 4 dígitos")
+    .max(10, "El código postal es demasiado largo")
+    .regex(/^[0-9]+$/, "El código postal solo puede contener números"),
   country: z.string(),
-  phone: z.string().min(10, "Ingresa un teléfono válido"),
+  phone: z
+    .string()
+    .min(10, "El teléfono debe tener al menos 10 dígitos")
+    .max(15, "El número es demasiado largo")
+    .regex(
+      /^[0-9\s\-\+\(\)]+$/,
+      "Solo números, espacios, guiones y paréntesis permitidos",
+    )
+    .transform((val) => val.replace(/[\s\-\(\)]/g, ""))
+    .refine((val) => val.length >= 10, "Debe contener al menos 10 dígitos"),
 });
 
 type PickupFormData = z.infer<typeof pickupSchema>;

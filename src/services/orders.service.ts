@@ -12,6 +12,7 @@ import {
 import { db } from "@/services/firebase";
 import { FIREBASE_COLLECTIONS } from "@/utils/constants";
 import type { Order, CreateOrderData } from "@/types/order.types";
+import { reduceProductFabricStock } from "./products.service";
 
 export async function createOrder(
   userId: string,
@@ -39,6 +40,15 @@ export async function createOrder(
       collection(db, FIREBASE_COLLECTIONS.ORDERS),
       order,
     );
+
+    // Reducir el stock de cada item en la orden
+    for (const item of orderData.items) {
+      await reduceProductFabricStock(
+        item.productId,
+        item.fabricId,
+        item.quantity,
+      );
+    }
 
     return docRef.id;
   } catch (error) {

@@ -210,9 +210,19 @@ export default function AdminProducts() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] text-gray-800">
-                          {product.category}
-                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {(product.categories && product.categories.length > 0
+                            ? product.categories
+                            : [product.category]
+                          ).map((cat, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] text-gray-800"
+                            >
+                              {cat}
+                            </span>
+                          ))}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatPrice(product.basePrice)}

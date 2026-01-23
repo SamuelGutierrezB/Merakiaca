@@ -6,6 +6,7 @@ import Layout from "@/components/layout/Layout";
 import type { Product, FabricOption } from "@/types";
 import { getProductById } from "@/services/products.service";
 import FabricSelector from "@/components/products/FabricSelector";
+import ProductReviews from "@/components/products/ProductReviews";
 import { useCartStore } from "@/store/cartStore";
 import { formatPrice } from "@/utils/formatters";
 
@@ -18,7 +19,13 @@ export default function ProductDetail() {
     FabricOption | undefined
   >();
   const [quantity, setQuantity] = useState(1);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const addToCart = useCartStore((state) => state.addItem);
+
+  // Combinar mainImage con images para tener todas las imágenes
+  const allImages = product
+    ? [product.mainImage, ...(product.images || [])].filter(Boolean)
+    : [];
 
   useEffect(() => {
     if (!id) {
@@ -114,12 +121,13 @@ export default function ProductDetail() {
     <Layout>
       <div className="max-w-7xl mx-auto py-4 sm:py-8 px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          {/* Imagen del producto */}
-          <div>
+          {/* Galería de imágenes del producto */}
+          <div className="space-y-4">
+            {/* Imagen principal */}
             <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square">
-              {product.mainImage ? (
+              {allImages.length > 0 ? (
                 <img
-                  src={product.mainImage}
+                  src={allImages[selectedImageIndex]}
                   alt={product.name}
                   className="w-full h-full object-contain"
                 />
@@ -129,6 +137,30 @@ export default function ProductDetail() {
                 </div>
               )}
             </div>
+
+            {/* Miniaturas */}
+            {allImages.length > 1 && (
+              <div className="grid grid-cols-4 gap-2">
+                {allImages.map((image, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => setSelectedImageIndex(index)}
+                    className={`bg-gray-100 rounded-lg overflow-hidden aspect-square border-2 transition-all ${
+                      selectedImageIndex === index
+                        ? "border-[#2391C3] ring-2 ring-[#2391C3]"
+                        : "border-transparent hover:border-gray-300"
+                    }`}
+                  >
+                    <img
+                      src={image}
+                      alt={`${product.name} - Vista ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Información y Opciones */}
@@ -138,9 +170,17 @@ export default function ProductDetail() {
                 {product.name}
               </h1>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3 py-1 bg-[#E8DFCA] text-gray-800 rounded-full text-sm font-semibold">
-                  {product.category}
-                </span>
+                {(product.categories && product.categories.length > 0
+                  ? product.categories
+                  : [product.category]
+                ).map((cat, idx) => (
+                  <span
+                    key={idx}
+                    className="px-3 py-1 bg-[#E8DFCA] text-gray-800 rounded-full text-sm font-semibold"
+                  >
+                    {cat}
+                  </span>
+                ))}
               </div>
             </div>
 
@@ -232,7 +272,7 @@ export default function ProductDetail() {
               <input
                 type="number"
                 min="1"
-                max={selectedFabric?.stock || product.stock}
+                max={selectedFabric?.stock || 1}
                 value={quantity}
                 onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
                 className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
@@ -257,6 +297,11 @@ export default function ProductDetail() {
               <p>✓ Productos 100% naturales</p>
             </div>
           </div>
+        </div>
+
+        {/* Sección de reseñas */}
+        <div className="mt-12">
+          <ProductReviews productId={product.id} />
         </div>
       </div>
     </Layout>

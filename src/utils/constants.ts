@@ -23,6 +23,7 @@ export const FIREBASE_COLLECTIONS = {
   CATEGORIES: "categories",
   CARTS: "carts",
   ORDERS: "orders",
+  REVIEWS: "reviews",
 };
 
 export const ADMIN_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(",") || [];

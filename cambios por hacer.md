@@ -1,15 +1,20 @@
 Por hacer:
 
 -Confirmar con dialogos de la librería tremor react
--que se puedan poner Varias categorías en un solo producto
--Sección de comentarios(max 3 comentarios por usuario por producto) y estrellas
--Multiple fotos de un producto
--hay que restar al stock una vez hecha la orden
 
 En progreso:
 
 Terminado:
 
+- Sistema de comentarios y calificaciones con estrellas (1-5) ✅
+  - Máximo 3 comentarios por usuario por producto
+  - Solo usuarios que han comprado el producto pueden comentar
+  - Sistema de calificación promedio
+  - Posibilidad de eliminar comentarios propios
+- Múltiples fotos por producto con galería y miniaturas ✅
+- Múltiples categorías por producto con selector de checkboxes ✅
+- Validaciones de inputs completas (teléfono, nombre, dirección, precios, etc.) ✅
+- El stock se resta automáticamente cuando se crea una orden ✅
 - El stock se define con las telas, se quitó el input de stock del formulario ✅
 - Stock ahora se calcula sumando la cantidad de todas las telas ✅
 - La categoría se carga correctamente cuando se edita un producto ✅

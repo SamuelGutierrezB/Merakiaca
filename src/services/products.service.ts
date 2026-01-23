@@ -192,18 +192,33 @@ export const getProductsByCategory = async (
 ): Promise<Product[]> => {
   try {
     const productsRef = collection(db, FIREBASE_COLLECTIONS.PRODUCTS);
-    const q = query(
-      productsRef,
-      where("category", "==", category),
-      where("isActive", "==", true),
-      orderBy("createdAt", "desc"),
-    );
+
+    // Primero obtenemos todos los productos activos
+    const q = query(productsRef, where("isActive", "==", true));
     const snapshot = await getDocs(q);
 
-    return snapshot.docs.map((doc) => ({
+    // Filtramos en el cliente para soportar tanto category como categories
+    const products = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as Product[];
+
+    // Filtrar productos que tienen la categoría buscada
+    return products
+      .filter((product) => {
+        // Verificar si tiene el array categories
+        if (product.categories && product.categories.length > 0) {
+          return product.categories.includes(category);
+        }
+        // Fallback al campo category antiguo
+        return product.category === category;
+      })
+      .sort((a, b) => {
+        // Ordenar por fecha de creación (más recientes primero)
+        const timeA = a.createdAt?.toMillis?.() || 0;
+        const timeB = b.createdAt?.toMillis?.() || 0;
+        return timeB - timeA;
+      });
   } catch (error) {
     console.error("Error al buscar productos por categoría:", error);
     throw error;
@@ -225,6 +240,38 @@ export const updateProductFabrics = async (
     });
   } catch (error) {
     console.error("Error al actualizar opciones de tela:", error);
+    throw error;
+  }
+};
+
+/**
+ * Reduce el stock de una tela específica de un producto
+ */
+export const reduceProductFabricStock = async (
+  productId: string,
+  fabricId: string,
+  quantity: number,
+): Promise<void> => {
+  try {
+    // Obtener el producto actual
+    const product = await getProductById(productId);
+    if (!product) {
+      throw new Error("Producto no encontrado");
+    }
+
+    // Buscar la tela y reducir su stock
+    const updatedFabrics = product.fabrics.map((fabric) => {
+      if (fabric.id === fabricId) {
+        const newStock = Math.max(0, fabric.stock - quantity);
+        return { ...fabric, stock: newStock };
+      }
+      return fabric;
+    });
+
+    // Actualizar el producto con los nuevos stocks
+    await updateProductFabrics(productId, updatedFabrics);
+  } catch (error) {
+    console.error("Error al reducir stock de tela:", error);
     throw error;
   }
 };
