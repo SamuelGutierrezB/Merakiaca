@@ -12,6 +12,7 @@ import { getAllProducts, deleteProduct } from "@/services/products.service";
 import ProductForm from "@/components/admin/ProductForm";
 import { formatPrice } from "@/utils/formatters";
 import AdminJoyride from "@/components/admin/AdminJoyride";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
 
 export default function AdminProducts() {
   const navigate = useNavigate();
@@ -19,6 +20,10 @@ export default function AdminProducts() {
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | undefined>();
+  const [deleteDialog, setDeleteDialog] = useState<{
+    isOpen: boolean;
+    product: Product | null;
+  }>({ isOpen: false, product: null });
 
   useEffect(() => {
     loadProducts();
@@ -47,11 +52,15 @@ export default function AdminProducts() {
     setShowForm(true);
   };
 
-  const handleDelete = async (product: Product) => {
-    if (!confirm(`¿Estás seguro de eliminar "${product.name}"?`)) return;
+  const handleDelete = (product: Product) => {
+    setDeleteDialog({ isOpen: true, product });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteDialog.product) return;
 
     try {
-      await deleteProduct(product.id);
+      await deleteProduct(deleteDialog.product.id);
       toast.success("Producto eliminado");
       loadProducts();
     } catch (error) {
@@ -151,83 +160,185 @@ export default function AdminProducts() {
               </button>
             </div>
           ) : (
-            <div
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-              data-tour="products-table"
-            >
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Imagen
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Producto
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Categoría
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Precio
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Stock
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Estado
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Acciones
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {products.map((product) => (
-                    <tr key={product.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                          {product.mainImage ? (
-                            <img
-                              src={product.mainImage}
-                              alt={product.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                              Sin imagen
+            <>
+              {/* Vista de tabla para desktop */}
+              <div
+                className="hidden md:block bg-white rounded-lg shadow-md overflow-hidden"
+                data-tour="products-table"
+              >
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Imagen
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Producto
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Categoría
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Precio
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Stock
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Estado
+                      </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Acciones
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {products.map((product) => (
+                      <tr key={product.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                            {product.mainImage ? (
+                              <img
+                                src={product.mainImage}
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                                Sin imagen
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {product.name}
                             </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {product.name}
+                            <div className="text-sm text-gray-500 truncate max-w-xs">
+                              {product.description}
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-500 truncate max-w-xs">
-                            {product.description}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex flex-wrap gap-1">
+                            {(product.categories &&
+                            product.categories.length > 0
+                              ? product.categories
+                              : [product.category]
+                            ).map((cat, idx) => (
+                              <span
+                                key={idx}
+                                className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] text-gray-800"
+                              >
+                                {cat}
+                              </span>
+                            ))}
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex flex-wrap gap-1">
-                          {(product.categories && product.categories.length > 0
-                            ? product.categories
-                            : [product.category]
-                          ).map((cat, idx) => (
-                            <span
-                              key={idx}
-                              className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] text-gray-800"
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {formatPrice(product.basePrice)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              (product.fabrics?.reduce(
+                                (sum, f) => sum + (f.stock || 0),
+                                0,
+                              ) || 0) > 10
+                                ? "bg-green-100 text-green-800"
+                                : (product.fabrics?.reduce(
+                                      (sum, f) => sum + (f.stock || 0),
+                                      0,
+                                    ) || 0) > 0
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {product.fabrics?.reduce(
+                              (sum, f) => sum + (f.stock || 0),
+                              0,
+                            ) || 0}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              product.isActive
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {product.isActive ? "Activo" : "Inactivo"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div
+                            className="flex justify-end gap-2"
+                            data-tour="products-actions"
+                          >
+                            <button
+                              onClick={() => handleEdit(product)}
+                              className="text-[#2391C3] hover:text-[#1A6B8E] transition-colors"
+                              title="Editar"
                             >
-                              {cat}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatPrice(product.basePrice)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                              <PencilIcon className="h-5 w-5" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(product)}
+                              className="text-[#D7322D] hover:text-[#B32824] transition-colors"
+                              title="Eliminar"
+                            >
+                              <TrashIcon className="h-5 w-5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Vista de tarjetas para móvil */}
+              <div className="md:hidden space-y-4">
+                {products.map((product) => (
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-lg shadow-md p-4"
+                  >
+                    <div className="flex gap-4 mb-3">
+                      <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                        {product.mainImage ? (
+                          <img
+                            src={product.mainImage}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                            Sin imagen
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-lg font-bold text-gray-900 truncate">
+                          {product.name}
+                        </h3>
+                        <p className="text-sm text-gray-500 line-clamp-2">
+                          {product.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mb-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Precio:</span>
+                        <span className="text-sm font-semibold text-gray-900">
+                          {formatPrice(product.basePrice)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Stock:</span>
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             (product.fabrics?.reduce(
@@ -248,8 +359,9 @@ export default function AdminProducts() {
                             0,
                           ) || 0}
                         </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Estado:</span>
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             product.isActive
@@ -259,36 +371,60 @@ export default function AdminProducts() {
                         >
                           {product.isActive ? "Activo" : "Inactivo"}
                         </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div
-                          className="flex justify-end gap-2"
-                          data-tour="products-actions"
-                        >
-                          <button
-                            onClick={() => handleEdit(product)}
-                            className="text-[#2391C3] hover:text-[#1A6B8E] transition-colors"
-                            title="Editar"
-                          >
-                            <PencilIcon className="h-5 w-5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(product)}
-                            className="text-[#D7322D] hover:text-[#B32824] transition-colors"
-                            title="Eliminar"
-                          >
-                            <TrashIcon className="h-5 w-5" />
-                          </button>
+                      </div>
+                      <div className="flex justify-between items-start">
+                        <span className="text-sm text-gray-600">
+                          Categorías:
+                        </span>
+                        <div className="flex flex-wrap gap-1 justify-end max-w-[60%]">
+                          {(product.categories && product.categories.length > 0
+                            ? product.categories
+                            : [product.category]
+                          ).map((cat, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] text-gray-800"
+                            >
+                              {cat}
+                            </span>
+                          ))}
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 pt-3 border-t border-gray-200">
+                      <button
+                        onClick={() => handleEdit(product)}
+                        className="flex-1 flex items-center justify-center gap-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                      >
+                        <PencilIcon className="h-4 w-4" />
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product)}
+                        className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={() => setDeleteDialog({ isOpen: false, product: null })}
+        onConfirm={confirmDelete}
+        title="Eliminar Producto"
+        message={`¿Estás seguro de eliminar "${deleteDialog.product?.name}"? Esta acción no se puede deshacer.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
     </>
   );
 }

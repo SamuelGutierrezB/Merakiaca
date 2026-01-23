@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Loader2, Package, MapPin, Phone, ShoppingBag } from "lucide-react";
 import AdminJoyride from "@/components/admin/AdminJoyride";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
 import {
   getAllOrders,
   updateOrderStatus,
@@ -48,6 +49,10 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<{
+    isOpen: boolean;
+    order: Order | null;
+  }>({ isOpen: false, order: null });
 
   useEffect(() => {
     loadOrders();
@@ -78,19 +83,21 @@ export default function AdminOrders() {
     });
   };
 
-  const handleDelete = async (order: Order, event: React.MouseEvent) => {
+  const handleDelete = (order: Order, event: React.MouseEvent) => {
     event.stopPropagation();
+    setDeleteDialog({ isOpen: true, order });
+  };
 
-    if (
-      !confirm(`¿Estás segura de eliminar la orden #${order.id.slice(0, 8)}?`)
-    ) {
-      return;
-    }
+  const confirmDelete = async () => {
+    if (!deleteDialog.order) return;
 
     try {
-      await deleteOrder(order.id);
+      await deleteOrder(deleteDialog.order.id);
       toast.success("Orden eliminada exitosamente");
       loadOrders();
+      if (selectedOrder?.id === deleteDialog.order.id) {
+        setSelectedOrder(null);
+      }
     } catch (error) {
       console.error("Error deleting order:", error);
       toast.error("Error al eliminar la orden");
@@ -190,118 +197,204 @@ export default function AdminOrders() {
               </button>
             </div>
           ) : (
-            /* Tabla de órdenes */
-            <div
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-              data-tour="orders-table"
-            >
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Orden
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Cliente
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Productos
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Total
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Estado
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Fecha
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Acciones
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {orders.map((order) => (
-                      <tr
-                        key={order.id}
-                        onClick={() => setSelectedOrder(order)}
-                        className="hover:bg-gray-50 cursor-pointer"
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            #{order.id.slice(0, 8)}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            {order.shippingAddress.fullName}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {order.shippingAddress.city},{" "}
-                            {order.shippingAddress.state}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900">
-                            {order.items.length} producto
-                            {order.items.length !== 1 ? "s" : ""}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {order.items
-                              .map((item) => item.productName)
-                              .join(", ")
-                              .slice(0, 50)}
-                            {order.items
-                              .map((item) => item.productName)
-                              .join(", ").length > 50 && "..."}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-bold text-[#D7322D]">
-                            {formatPrice(order.total)}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex flex-col gap-1">
-                            <span
-                              className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-center ${
-                                PAYMENT_STATUS_COLORS[order.paymentStatus] ||
-                                "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {PAYMENT_STATUS_LABELS[order.paymentStatus] ||
-                                order.paymentStatus}
-                            </span>
-                            <span
-                              className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-center ${
-                                STATUS_COLORS[order.status] ||
-                                "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {STATUS_LABELS[order.status] || order.status}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {formatDate(order.createdAt)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <button
-                            onClick={(e) => handleDelete(order, e)}
-                            className="text-red-600 hover:text-red-900 transition-colors"
-                            title="Eliminar orden"
-                          >
-                            <TrashIcon className="h-5 w-5" />
-                          </button>
-                        </td>
+            <>
+              {/* Tabla de órdenes para desktop */}
+              <div
+                className="hidden lg:block bg-white rounded-lg shadow-md overflow-hidden"
+                data-tour="orders-table"
+              >
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Orden
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Cliente
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Productos
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Total
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Estado
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Fecha
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Acciones
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {orders.map((order) => (
+                        <tr
+                          key={order.id}
+                          onClick={() => setSelectedOrder(order)}
+                          className="hover:bg-gray-50 cursor-pointer"
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">
+                              #{order.id.slice(0, 8)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">
+                              {order.shippingAddress.fullName}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {order.shippingAddress.city},{" "}
+                              {order.shippingAddress.state}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="text-sm text-gray-900">
+                              {order.items.length} producto
+                              {order.items.length !== 1 ? "s" : ""}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {order.items
+                                .map((item) => item.productName)
+                                .join(", ")
+                                .slice(0, 50)}
+                              {order.items
+                                .map((item) => item.productName)
+                                .join(", ").length > 50 && "..."}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-bold text-[#D7322D]">
+                              {formatPrice(order.total)}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex flex-col gap-1">
+                              <span
+                                className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-center ${
+                                  PAYMENT_STATUS_COLORS[order.paymentStatus] ||
+                                  "bg-gray-100 text-gray-800"
+                                }`}
+                              >
+                                {PAYMENT_STATUS_LABELS[order.paymentStatus] ||
+                                  order.paymentStatus}
+                              </span>
+                              <span
+                                className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-center ${
+                                  STATUS_COLORS[order.status] ||
+                                  "bg-gray-100 text-gray-800"
+                                }`}
+                              >
+                                {STATUS_LABELS[order.status] || order.status}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {formatDate(order.createdAt)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button
+                              onClick={(e) => handleDelete(order, e)}
+                              className="text-red-600 hover:text-red-900 transition-colors"
+                              title="Eliminar orden"
+                            >
+                              <TrashIcon className="h-5 w-5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+
+              {/* Vista de tarjetas para móvil/tablet */}
+              <div className="lg:hidden space-y-4">
+                {orders.map((order) => (
+                  <div
+                    key={order.id}
+                    onClick={() => setSelectedOrder(order)}
+                    className="bg-white rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow"
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          Orden #{order.id.slice(0, 8)}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {formatDate(order.createdAt)}
+                        </p>
+                      </div>
+                      <button
+                        onClick={(e) => handleDelete(order, e)}
+                        className="text-red-600 hover:text-red-900 transition-colors p-1"
+                        title="Eliminar orden"
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-2 mb-3">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Cliente:</span>
+                        <span className="text-sm font-medium text-gray-900 text-right">
+                          {order.shippingAddress.fullName}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">
+                          Ubicación:
+                        </span>
+                        <span className="text-sm text-gray-900 text-right">
+                          {order.shippingAddress.city},{" "}
+                          {order.shippingAddress.state}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">
+                          Productos:
+                        </span>
+                        <span className="text-sm text-gray-900">
+                          {order.items.length} producto
+                          {order.items.length !== 1 ? "s" : ""}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Total:</span>
+                        <span className="text-lg font-bold text-[#D7322D]">
+                          {formatPrice(order.total)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2 pt-3 border-t border-gray-200">
+                      <div className="flex gap-2">
+                        <span
+                          className={`flex-1 px-2 py-1 text-xs leading-5 font-semibold rounded-full text-center ${
+                            PAYMENT_STATUS_COLORS[order.paymentStatus] ||
+                            "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {PAYMENT_STATUS_LABELS[order.paymentStatus] ||
+                            order.paymentStatus}
+                        </span>
+                        <span
+                          className={`flex-1 px-2 py-1 text-xs leading-5 font-semibold rounded-full text-center ${
+                            STATUS_COLORS[order.status] ||
+                            "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {STATUS_LABELS[order.status] || order.status}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
 
           {/* Info card */}
@@ -488,7 +581,6 @@ export default function AdminOrders() {
                 <button
                   onClick={(e) => {
                     handleDelete(selectedOrder, e);
-                    setSelectedOrder(null);
                   }}
                   className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                 >
@@ -500,6 +592,16 @@ export default function AdminOrders() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={() => setDeleteDialog({ isOpen: false, order: null })}
+        onConfirm={confirmDelete}
+        title="Eliminar Orden"
+        message={`¿Estás segura de eliminar la orden #${deleteDialog.order?.id.slice(0, 8)}? Esta acción no se puede deshacer.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
     </>
   );
 }

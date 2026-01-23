@@ -11,7 +11,6 @@ import ProductDetail from "@/pages/ProductDetail";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
 import MyOrders from "@/pages/MyOrders";
-import PaymentSimulator from "@/pages/PaymentSimulator";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminProducts from "@/pages/admin/AdminProducts";
 import AdminOrders from "@/pages/admin/AdminOrders";
@@ -50,14 +49,6 @@ export const AppRouter = () => {
           element={
             <PrivateRoute>
               <MyOrders />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/payment-simulator"
-          element={
-            <PrivateRoute>
-              <PaymentSimulator />
             </PrivateRoute>
           }
         />

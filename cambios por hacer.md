@@ -4,6 +4,15 @@ En progreso:
 
 Terminado:
 
+- Diálogos de confirmación con Headless UI ✅
+  - Reemplazados todos los confirm() nativos
+  - Componente ConfirmDialog reutilizable
+  - Diálogos en: eliminación de categorías, productos, órdenes y reseñas
+  - UI consistente con animaciones y transiciones
+- Eliminado simulador de pago ✅
+  - Flujo simplificado: orden → confirmación → mis órdenes
+  - Admin gestiona pagos manualmente por WhatsApp
+  - Admin puede cambiar estado de pago y estado de orden
 - Simulador de pago de Mercado Pago ✅
   - Página de simulación con estados de pago
   - Actualización automática del estado de la orden

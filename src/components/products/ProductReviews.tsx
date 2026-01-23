@@ -4,6 +4,7 @@ import { StarIcon as StarOutlineIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import type { Review } from "@/types";
 import { useAuthStore } from "@/store/authStore";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
 import {
   getProductReviews,
   getUserProductReviews,
@@ -27,6 +28,10 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
   const [canReview, setCanReview] = useState(false);
   const [isLoadingPermission, setIsLoadingPermission] = useState(true);
   const [productRating, setProductRating] = useState({ average: 0, count: 0 });
+  const [deleteDialog, setDeleteDialog] = useState<{
+    isOpen: boolean;
+    reviewId: string | null;
+  }>({ isOpen: false, reviewId: null });
   const { user } = useAuthStore();
 
   const loadReviews = useCallback(async () => {
@@ -155,11 +160,15 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
     }
   };
 
-  const handleDeleteReview = async (reviewId: string) => {
-    if (!confirm("¿Estás seguro de eliminar esta reseña?")) return;
+  const handleDeleteReview = (reviewId: string) => {
+    setDeleteDialog({ isOpen: true, reviewId });
+  };
+
+  const confirmDeleteReview = async () => {
+    if (!deleteDialog.reviewId) return;
 
     try {
-      await deleteReview(reviewId);
+      await deleteReview(deleteDialog.reviewId);
       toast.success("Reseña eliminada");
       loadReviews();
       loadUserReviews();
@@ -360,6 +369,16 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
           ))
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={() => setDeleteDialog({ isOpen: false, reviewId: null })}
+        onConfirm={confirmDeleteReview}
+        title="Eliminar Reseña"
+        message="¿Estás seguro de eliminar esta reseña? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import AdminJoyride from "@/components/admin/AdminJoyride";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
 import {
   getAllCategories,
   createCategory,
@@ -41,6 +42,10 @@ export default function AdminCategories() {
   const [productCounts, setProductCounts] = useState<Record<string, number>>(
     {},
   );
+  const [deleteDialog, setDeleteDialog] = useState<{
+    isOpen: boolean;
+    category: Category | null;
+  }>({ isOpen: false, category: null });
 
   const {
     register,
@@ -104,7 +109,7 @@ export default function AdminCategories() {
     setShowForm(true);
   };
 
-  const handleDelete = async (category: Category) => {
+  const handleDelete = (category: Category) => {
     const productCount = productCounts[category.name] || 0;
 
     if (productCount > 0) {
@@ -114,14 +119,14 @@ export default function AdminCategories() {
       return;
     }
 
-    if (
-      !confirm(`¿Estás segura de eliminar la categoría "${category.name}"?`)
-    ) {
-      return;
-    }
+    setDeleteDialog({ isOpen: true, category });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteDialog.category) return;
 
     try {
-      await deleteCategory(category.id);
+      await deleteCategory(deleteDialog.category.id);
       toast.success("Categoría eliminada exitosamente");
       loadCategories();
     } catch (error) {
@@ -389,6 +394,16 @@ export default function AdminCategories() {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={() => setDeleteDialog({ isOpen: false, category: null })}
+        onConfirm={confirmDelete}
+        title="Eliminar Categoría"
+        message={`¿Estás segura de eliminar la categoría "${deleteDialog.category?.name}"? Esta acción no se puede deshacer.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
     </>
   );
 }
