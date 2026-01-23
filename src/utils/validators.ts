@@ -7,7 +7,6 @@ export const productSchema = z.object({
     .string()
     .min(10, "La descripción debe tener al menos 10 caracteres"),
   basePrice: z.number().min(0, "El precio debe ser mayor a 0"),
-  stock: z.number().int().min(0, "El stock debe ser 0 o mayor"),
   category: z.string().min(1, "Selecciona una categoría"),
   isActive: z.boolean(),
 });

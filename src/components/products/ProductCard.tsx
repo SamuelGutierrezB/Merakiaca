@@ -22,7 +22,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <img
             src={product.mainImage}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="flex items-center justify-center h-full text-gray-400">

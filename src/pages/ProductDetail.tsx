@@ -121,7 +121,7 @@ export default function ProductDetail() {
                 <img
                   src={product.mainImage}
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-400">
@@ -141,11 +141,6 @@ export default function ProductDetail() {
                 <span className="px-3 py-1 bg-[#E8DFCA] text-gray-800 rounded-full text-sm font-semibold">
                   {product.category}
                 </span>
-                {product.stock === 0 && (
-                  <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
-                    Agotado
-                  </span>
-                )}
               </div>
             </div>
 

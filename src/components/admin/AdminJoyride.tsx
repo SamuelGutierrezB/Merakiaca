@@ -3,7 +3,7 @@ import type { Step, CallBackProps, TooltipRenderProps } from "react-joyride";
 import { useState, useEffect } from "react";
 
 interface AdminJoyrideProps {
-  page: "dashboard" | "products" | "orders" | "categories";
+  page: "dashboard" | "products" | "orders" | "categories" | "product-form";
 }
 
 // Tooltip personalizado en español
@@ -216,6 +216,63 @@ const tours: Record<string, Step[]> = {
       target: "[data-tour='categories-create']",
       content:
         "Con este botón puedes crear nuevas categorías cuando necesites organizar mejor tus productos.",
+    },
+  ],
+  "product-form": [
+    {
+      target: "[data-tour='form-back']",
+      content: "Madre, este botón te regresa a la lista de productos.",
+      disableBeacon: true,
+    },
+    {
+      target: "[data-tour='form-title']",
+      content:
+        "Aquí crearás o editarás tus productos. Vamos a ver cada campo paso a paso.",
+    },
+    {
+      target: "[data-tour='form-image']",
+      content:
+        "Primero, sube una imagen de tu producto. Esta será la foto principal que verán los clientes.",
+    },
+    {
+      target: "[data-tour='form-name']",
+      content:
+        "Ponle un nombre atractivo a tu producto. Por ejemplo: 'Cojín Herbal Relajante de Lavanda'.",
+    },
+    {
+      target: "[data-tour='form-description']",
+      content:
+        "Describe tu producto: qué hierbas tiene, para qué sirve, cómo se usa. ¡Sé detallada!",
+    },
+    {
+      target: "[data-tour='form-price']",
+      content:
+        "Establece el precio base del producto. Luego podrás ajustar precios según la tela.",
+    },
+    {
+      target: "[data-tour='form-category']",
+      content:
+        "Elige la categoría donde aparecerá tu producto. Si no ves la categoría que necesitas, créala desde el módulo de Categorías.",
+    },
+    {
+      target: "[data-tour='form-active']",
+      content:
+        "Con esta casilla decides si el producto está visible para los clientes. Desmárcala si aún no lo quieres publicar.",
+    },
+    {
+      target: "[data-tour='form-submit']",
+      content:
+        "Cuando termines de llenar todo, haz clic aquí para guardar. Si es un producto nuevo, después podrás agregar las opciones de tela.",
+    },
+    {
+      target: "[data-tour='form-fabrics']",
+      content:
+        "Una vez creado el producto, aquí podrás agregar diferentes opciones de tela: colores base, patrones personalizados, y configurar el precio y stock de cada uno.",
+    },
+    {
+      target: "[data-tour='form-add-fabric']",
+      content:
+        "Con este botón agregas nuevas telas personalizadas. Puedes usar un color sólido con el picker o subir una imagen de patrón.",
     },
   ],
 };

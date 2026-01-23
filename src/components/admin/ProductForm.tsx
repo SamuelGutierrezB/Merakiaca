@@ -59,7 +59,6 @@ export default function ProductForm({
           name: product.name,
           description: product.description,
           basePrice: product.basePrice,
-          stock: product.stock,
           category: product.category,
           isActive: product.isActive,
         }
@@ -67,7 +66,6 @@ export default function ProductForm({
           name: "",
           description: "",
           basePrice: 0,
-          stock: 0,
           category: "",
           isActive: true,
         },
@@ -130,7 +128,7 @@ export default function ProductForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Imagen principal */}
-      <div>
+      <div data-tour="form-image">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Imagen principal del producto
         </label>
@@ -157,7 +155,7 @@ export default function ProductForm({
         />
       </div>
 
-      <div>
+      <div data-tour="form-name">
         <label
           htmlFor="name"
           className="block text-sm font-medium text-gray-700 mb-2"
@@ -176,7 +174,7 @@ export default function ProductForm({
         )}
       </div>
 
-      <div>
+      <div data-tour="form-description">
         <label
           htmlFor="description"
           className="block text-sm font-medium text-gray-700 mb-2"
@@ -197,7 +195,7 @@ export default function ProductForm({
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div data-tour="form-price">
         <div>
           <label
             htmlFor="basePrice"
@@ -219,28 +217,9 @@ export default function ProductForm({
             </p>
           )}
         </div>
-
-        <div>
-          <label
-            htmlFor="stock"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Stock *
-          </label>
-          <input
-            {...register("stock", { valueAsNumber: true })}
-            type="number"
-            id="stock"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
-            placeholder="0"
-          />
-          {errors.stock && (
-            <p className="text-red-500 text-sm mt-1">{errors.stock.message}</p>
-          )}
-        </div>
       </div>
 
-      <div>
+      <div data-tour="form-category">
         <label
           htmlFor="category"
           className="block text-sm font-medium text-gray-700 mb-2"
@@ -250,6 +229,7 @@ export default function ProductForm({
         <select
           {...register("category")}
           id="category"
+          value={product?.category || ""}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
         >
           <option value="">Selecciona una categoría</option>
@@ -275,7 +255,7 @@ export default function ProductForm({
         )}
       </div>
 
-      <div className="flex items-center">
+      <div className="flex items-center" data-tour="form-active">
         <input
           {...register("isActive")}
           type="checkbox"
@@ -289,7 +269,7 @@ export default function ProductForm({
 
       {/* Opciones de tela - Solo mostrar si el producto ya fue creado */}
       {productId && (
-        <div className="pt-6 border-t border-gray-200">
+        <div className="pt-6 border-t border-gray-200" data-tour="form-fabrics">
           <FabricOptionForm
             productId={productId}
             fabrics={fabrics}
@@ -312,6 +292,7 @@ export default function ProductForm({
           type="submit"
           disabled={isSubmitting}
           className="flex-1 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          data-tour="form-submit"
         >
           {isSubmitting
             ? "Guardando..."

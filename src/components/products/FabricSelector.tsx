@@ -105,7 +105,7 @@ export default function FabricSelector({
         })}
       </div>
 
-      {/* Precio final */}
+      {/* Precio final y stock */}
       {selectedFabric && (
         <div className="pt-3 sm:pt-4 border-t border-gray-200">
           <div className="flex justify-between items-center">
@@ -116,11 +116,23 @@ export default function FabricSelector({
               {formatPrice(basePrice + selectedFabric.priceModifier)}
             </span>
           </div>
-          {selectedFabric.stock > 0 && selectedFabric.stock < 10 && (
-            <p className="text-xs sm:text-sm text-yellow-600 mt-2">
-              ⚠️ Solo quedan {selectedFabric.stock} unidades de esta tela
-            </p>
-          )}
+
+          {/* Stock disponible */}
+          <div className="mt-2 flex items-center justify-between">
+            <span className="text-sm text-gray-600">Stock disponible:</span>
+            <span
+              className={`text-sm font-semibold ${
+                selectedFabric.stock === 0
+                  ? "text-red-600"
+                  : selectedFabric.stock < 10
+                    ? "text-yellow-600"
+                    : "text-green-600"
+              }`}
+            >
+              {selectedFabric.stock}{" "}
+              {selectedFabric.stock === 1 ? "unidad" : "unidades"}
+            </span>
+          </div>
         </div>
       )}
 

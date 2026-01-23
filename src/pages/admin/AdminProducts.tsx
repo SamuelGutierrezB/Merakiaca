@@ -73,27 +73,34 @@ export default function AdminProducts() {
 
   if (showForm) {
     return (
-      <div className="max-w-3xl mx-auto py-8 px-4">
-        <div className="flex items-center gap-4 mb-4">
-          <button
-            onClick={handleFormCancel}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+      <>
+        <AdminJoyride page="product-form" />
+        <div className="max-w-3xl mx-auto py-8 px-4">
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={handleFormCancel}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+              data-tour="form-back"
+            >
+              <ArrowLeftIcon className="h-5 w-5" />
+              <span className="hidden sm:inline">Volver a Productos</span>
+            </button>
+          </div>
+          <h1
+            className="text-3xl font-bold text-gray-800 mb-8"
+            data-tour="form-title"
           >
-            <ArrowLeftIcon className="h-5 w-5" />
-            <span className="hidden sm:inline">Volver a Productos</span>
-          </button>
+            {editingProduct ? "Editar Producto" : "Crear Nuevo Producto"}
+          </h1>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <ProductForm
+              product={editingProduct}
+              onSuccess={handleFormSuccess}
+              onCancel={handleFormCancel}
+            />
+          </div>
         </div>
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">
-          {editingProduct ? "Editar Producto" : "Crear Nuevo Producto"}
-        </h1>
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <ProductForm
-            product={editingProduct}
-            onSuccess={handleFormSuccess}
-            onCancel={handleFormCancel}
-          />
-        </div>
-      </div>
+      </>
     );
   }
 
@@ -213,14 +220,23 @@ export default function AdminProducts() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            product.stock > 10
+                            (product.fabrics?.reduce(
+                              (sum, f) => sum + (f.stock || 0),
+                              0,
+                            ) || 0) > 10
                               ? "bg-green-100 text-green-800"
-                              : product.stock > 0
+                              : (product.fabrics?.reduce(
+                                    (sum, f) => sum + (f.stock || 0),
+                                    0,
+                                  ) || 0) > 0
                                 ? "bg-yellow-100 text-yellow-800"
                                 : "bg-red-100 text-red-800"
                           }`}
                         >
-                          {product.stock}
+                          {product.fabrics?.reduce(
+                            (sum, f) => sum + (f.stock || 0),
+                            0,
+                          ) || 0}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
