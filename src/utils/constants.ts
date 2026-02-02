@@ -26,6 +26,7 @@ export const FIREBASE_COLLECTIONS = {
   ORDERS: "orders",
   REVIEWS: "reviews",
   WISHLISTS: "wishlists",
+  FREQUENT_CUSTOMER_CODES: "frequentCustomerCodes",
 };
 
 export const ADMIN_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(",") || [];

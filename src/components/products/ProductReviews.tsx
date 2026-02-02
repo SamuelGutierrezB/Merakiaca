@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import type { Review } from "@/types";
 import { useAuthStore } from "@/store/authStore";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
+import FrequentCustomerDialog from "@/components/common/FrequentCustomerDialog";
 import {
   getProductReviews,
   getUserProductReviews,
@@ -13,6 +14,7 @@ import {
   getProductRating,
 } from "@/services/reviews.service";
 import { getUserOrders } from "@/services/orders.service";
+import { registerCodeUsage } from "@/services/frequentCustomer.service";
 
 interface ProductReviewsProps {
   productId: string;
@@ -32,6 +34,11 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
     isOpen: boolean;
     reviewId: string | null;
   }>({ isOpen: false, reviewId: null });
+  const [frequentCustomerDialog, setFrequentCustomerDialog] = useState(false);
+  const [validatedCode, setValidatedCode] = useState<{
+    codeId: string;
+    code: string;
+  } | null>(null);
   const { user } = useAuthStore();
 
   const loadReviews = useCallback(async () => {
@@ -154,14 +161,27 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
 
     try {
       setIsSubmitting(true);
-      await createReview(productId, user.uid, user.displayName || "Usuario", {
-        rating,
-        comment: comment.trim(),
-      });
+
+      // Si está usando código de cliente frecuente, registrar su uso
+      if (validatedCode) {
+        await registerCodeUsage(validatedCode.codeId, user.uid);
+      }
+
+      await createReview(
+        productId,
+        user.uid,
+        user.displayName || "Usuario",
+        {
+          rating,
+          comment: comment.trim(),
+        },
+        validatedCode?.code,
+      );
 
       toast.success("¡Reseña publicada exitosamente!");
       setRating(0);
       setComment("");
+      setValidatedCode(null);
 
       // Esperar un poco para que Firestore procese el serverTimestamp
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -196,6 +216,11 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
       console.error("Error al eliminar reseña:", error);
       toast.error("Error al eliminar la reseña");
     }
+  };
+
+  const handleCodeValidated = (codeId: string, code: string) => {
+    setValidatedCode({ codeId, code });
+    setCanReview(true);
   };
 
   const renderStars = (
@@ -292,6 +317,14 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                 Has escrito {userReviews.length} de 3 reseñas permitidas para
                 este producto
               </p>
+              {validatedCode && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <p className="text-sm text-green-800">
+                    ✓ Código de cliente frecuente validado:{" "}
+                    <strong>{validatedCode.code}</strong>
+                  </p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -333,17 +366,28 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
               </p>
             </div>
           ) : (
-            <div className="text-center py-4">
+            <div className="text-center py-4 space-y-3">
               <p className="text-gray-600">
                 Debes comprar este producto para poder dejar una reseña
               </p>
+              <div className="border-t pt-3">
+                <p className="text-sm text-gray-600 mb-2">
+                  ¿Eres cliente frecuente?
+                </p>
+                <button
+                  onClick={() => setFrequentCustomerDialog(true)}
+                  className="text-[#2391C3] hover:text-[#1A6B8E] font-medium text-sm hover:underline"
+                >
+                  Comenta con código de cliente frecuente →
+                </button>
+              </div>
             </div>
           )}
         </div>
       )}
 
       {!user && (
-        <div className="bg-blue-50 p-6 rounded-lg text-center">
+        <div className="bg-blue-50 p-6 rounded-lg text-center space-y-3">
           <p className="text-gray-700">
             <a
               href="/login"
@@ -353,6 +397,19 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
             </a>{" "}
             para dejar una reseña
           </p>
+          <div className="border-t border-blue-200 pt-3">
+            <p className="text-sm text-gray-600 mb-2">
+              ¿Eres cliente frecuente?
+            </p>
+            <button
+              onClick={() => {
+                toast.error("Debes iniciar sesión primero");
+              }}
+              className="text-[#2391C3] hover:text-[#1A6B8E] font-medium text-sm hover:underline"
+            >
+              Comenta con código de cliente frecuente →
+            </button>
+          </div>
         </div>
       )}
 
@@ -373,9 +430,16 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                   <div className="flex items-center gap-2">
                     {renderStars(review.rating, false, "h-4 w-4")}
                   </div>
-                  <p className="font-semibold text-gray-800">
-                    {review.userName}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-gray-800">
+                      {review.userName}
+                    </p>
+                    {review.frequentCustomerCode && (
+                      <span className="text-xs bg-[#2391C3] text-white px-2 py-0.5 rounded-full">
+                        Cliente Frecuente
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-gray-500">
                     {formatDate(review.createdAt)}
                   </p>
@@ -405,6 +469,12 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
         message="¿Estás seguro de eliminar esta reseña? Esta acción no se puede deshacer."
         confirmText="Eliminar"
         cancelText="Cancelar"
+      />
+
+      <FrequentCustomerDialog
+        isOpen={frequentCustomerDialog}
+        onClose={() => setFrequentCustomerDialog(false)}
+        onCodeValidated={handleCodeValidated}
       />
     </div>
   );

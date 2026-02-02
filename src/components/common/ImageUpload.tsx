@@ -1,4 +1,4 @@
-import { useState, useId } from "react";
+import { useState, useId, useRef } from "react";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { uploadProductImage } from "@/services/storage.service";
 import toast from "react-hot-toast";
@@ -8,6 +8,7 @@ interface ImageUploadProps {
   onImageUploaded: (imageUrl: string) => void;
   multiple?: boolean;
   label?: string;
+  clearAfterUpload?: boolean;
 }
 
 export default function ImageUpload({
@@ -15,10 +16,12 @@ export default function ImageUpload({
   onImageUploaded,
   multiple = false,
   label = "Subir imagen",
+  clearAfterUpload = false,
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const inputId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -52,10 +55,22 @@ export default function ImageUpload({
       const imageUrl = await uploadProductImage(file, productId);
       onImageUploaded(imageUrl);
       toast.success("Imagen subida exitosamente");
+
+      // Limpiar input y preview si se solicita (útil para galería de imágenes)
+      if (clearAfterUpload) {
+        setPreview(null);
+        if (inputRef.current) {
+          inputRef.current.value = "";
+        }
+      }
     } catch (error) {
       console.error("Error al subir imagen:", error);
       toast.error("Error al subir la imagen");
       setPreview(null);
+      // Limpiar input en caso de error
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
     } finally {
       setIsUploading(false);
     }
@@ -63,6 +78,9 @@ export default function ImageUpload({
 
   const clearPreview = () => {
     setPreview(null);
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
 
   return (
@@ -96,6 +114,7 @@ export default function ImageUpload({
                 <span>Seleccionar archivo</span>
                 <input
                   id={inputId}
+                  ref={inputRef}
                   type="file"
                   accept="image/*"
                   multiple={multiple}

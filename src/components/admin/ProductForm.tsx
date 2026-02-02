@@ -265,6 +265,7 @@ export default function ProductForm({
             productId={productId}
             onImageUploaded={handleAdditionalImageUploaded}
             label="Agregar imagen a la galería"
+            clearAfterUpload={true}
           />
           <p className="text-xs text-gray-500 mt-2">
             💡 Puedes agregar múltiples imágenes para mostrar el producto desde

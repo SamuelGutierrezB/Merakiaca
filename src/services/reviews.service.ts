@@ -107,11 +107,12 @@ export const createReview = async (
   userId: string,
   userName: string,
   data: ReviewFormData,
+  frequentCustomerCode?: string,
 ): Promise<string> => {
   try {
     const reviewsRef = collection(db, FIREBASE_COLLECTIONS.REVIEWS);
     const now = new Date();
-    const docRef = await addDoc(reviewsRef, {
+    const reviewData: any = {
       productId,
       userId,
       userName,
@@ -119,7 +120,14 @@ export const createReview = async (
       comment: data.comment,
       createdAt: now,
       updatedAt: now,
-    });
+    };
+
+    // Solo agregar el código si fue proporcionado
+    if (frequentCustomerCode) {
+      reviewData.frequentCustomerCode = frequentCustomerCode;
+    }
+
+    const docRef = await addDoc(reviewsRef, reviewData);
 
     return docRef.id;
   } catch (error) {
