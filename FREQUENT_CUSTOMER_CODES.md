@@ -137,16 +137,58 @@ createFrequentCustomerCodes();
 Después de implementar estos cambios:
 
 1. **Actualizar reglas de Firestore**:
+   - **Opción A (Recomendada)**: Desde Firebase Console
+     - Ve a Firebase Console → Firestore Database → Rules
+     - Agrega esta regla en la sección apropiada:
+     ```javascript
+     match /frequentCustomerCodes/{codeId} {
+       allow read: if isSignedIn();
+       allow create, update, delete: if isAdmin() || isAdminEmail();
+     }
+     ```
 
-   ```bash
-   firebase deploy --only firestore:rules
-   ```
+     - Publica las reglas
+   - **Opción B**: Desde la terminal (requiere permisos)
+     ```bash
+     firebase deploy --only firestore:rules
+     ```
 
-2. **Crear códigos iniciales** en Firebase Console o usando el script anterior
+2. **Acceder a la interfaz de administración**:
+   - Inicia sesión como administrador
+   - Ve a `/admin` (Panel de Administración)
+   - Haz clic en "Códigos" en los accesos rápidos
+   - O navega directamente a `/admin/codigos-frecuentes`
 
-3. **Probar la funcionalidad**:
+3. **Crear códigos desde la interfaz**:
+   - Haz clic en el botón "Crear Código"
+   - Ingresa el código (ej: CLIENTE2024) - se convertirá automáticamente a mayúsculas
+   - Define los usos máximos (número de usuarios que pueden usar el código)
+   - Haz clic en "Crear Código"
+
+4. **Gestionar códigos existentes**:
+   - **Copiar**: Copia el código al portapapeles para compartir fácilmente
+   - **Compartir**: Usa Web Share API para compartir el código con mensaje personalizado
+   - **Activar/Desactivar**: Cambia el estado del código sin eliminarlo permanentemente
+   - **Eliminar**: Elimina permanentemente el código de la base de datos
+
+5. **Probar la funcionalidad**:
    - Visita un producto sin haberlo comprado
    - Haz clic en "Comenta con código de cliente frecuente"
-   - Ingresa un código válido
+   - Ingresa un código válido creado en el paso anterior
    - Verifica que puedas comentar
    - Verifica que puedas eliminar tu comentario
+
+## Interfaz de Administración
+
+La nueva interfaz incluye:
+
+✅ **Tarjetas visuales** para cada código con información completa
+✅ **Barra de progreso** para ver el porcentaje de uso
+✅ **Badges de estado** (Activo/Inactivo)
+✅ **Acciones rápidas**: Copiar, Compartir, Activar/Desactivar, Eliminar
+✅ **Formulario de creación** integrado
+✅ **Confirmación** antes de eliminar códigos
+✅ **Diseño responsive** que funciona en móviles y desktop
+
+- Verifica que puedas comentar
+- Verifica que puedas eliminar tu comentario

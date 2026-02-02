@@ -2,11 +2,14 @@ import {
   collection,
   doc,
   getDocs,
+  addDoc,
   updateDoc,
+  deleteDoc,
   query,
   where,
   arrayUnion,
   increment,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import type { FrequentCustomerCode } from "@/types";
@@ -122,6 +125,85 @@ export const getAllFrequentCustomerCodes = async (): Promise<
     })) as FrequentCustomerCode[];
   } catch (error) {
     console.error("Error al obtener códigos:", error);
+    throw error;
+  }
+};
+
+/**
+ * Crea un nuevo código de cliente frecuente (solo para admin)
+ */
+export const createFrequentCustomerCode = async (
+  code: string,
+  maxUses: number,
+): Promise<string> => {
+  try {
+    // Verificar que el código no exista
+    const codesRef = collection(
+      db,
+      FIREBASE_COLLECTIONS.FREQUENT_CUSTOMER_CODES,
+    );
+    const q = query(codesRef, where("code", "==", code.toUpperCase()));
+    const existing = await getDocs(q);
+
+    if (!existing.empty) {
+      throw new Error("Este código ya existe");
+    }
+
+    const docRef = await addDoc(codesRef, {
+      code: code.toUpperCase(),
+      isActive: true,
+      maxUses,
+      currentUses: 0,
+      usedBy: [],
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+
+    return docRef.id;
+  } catch (error) {
+    console.error("Error al crear código:", error);
+    throw error;
+  }
+};
+
+/**
+ * Elimina un código de cliente frecuente (solo para admin)
+ */
+export const deleteFrequentCustomerCode = async (
+  codeId: string,
+): Promise<void> => {
+  try {
+    const codeRef = doc(
+      db,
+      FIREBASE_COLLECTIONS.FREQUENT_CUSTOMER_CODES,
+      codeId,
+    );
+    await deleteDoc(codeRef);
+  } catch (error) {
+    console.error("Error al eliminar código:", error);
+    throw error;
+  }
+};
+
+/**
+ * Activa o desactiva un código de cliente frecuente (solo para admin)
+ */
+export const toggleFrequentCustomerCodeStatus = async (
+  codeId: string,
+  isActive: boolean,
+): Promise<void> => {
+  try {
+    const codeRef = doc(
+      db,
+      FIREBASE_COLLECTIONS.FREQUENT_CUSTOMER_CODES,
+      codeId,
+    );
+    await updateDoc(codeRef, {
+      isActive,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error("Error al actualizar estado del código:", error);
     throw error;
   }
 };

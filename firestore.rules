@@ -140,6 +140,28 @@ service cloud.firestore {
     }
     
     // ============================================
+    // COLECCIÓN: frequentCustomerCodes
+    // ============================================
+    match /frequentCustomerCodes/{codeId} {
+      // Los usuarios autenticados pueden leer códigos para validación
+      allow read: if isSignedIn();
+      
+      // Los usuarios pueden actualizar SOLO para registrar uso (incrementar currentUses y agregar a usedBy)
+      // Solo si están autenticados y el código está activo
+      allow update: if isSignedIn() && (
+        isAdmin() || 
+        isAdminEmail() ||
+        (resource.data.isActive == true && 
+         request.resource.data.isActive == resource.data.isActive &&
+         request.resource.data.code == resource.data.code &&
+         request.resource.data.maxUses == resource.data.maxUses)
+      );
+      
+      // Solo admins pueden crear o eliminar códigos
+      allow create, delete: if isAdmin() || isAdminEmail();
+    }
+    
+    // ============================================
     // REGLA POR DEFECTO: DENEGAR TODO
     // ============================================
     // Cualquier colección no especificada explícitamente será denegada

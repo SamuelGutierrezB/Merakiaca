@@ -15,6 +15,7 @@ export const ROUTES = {
     PRODUCTS: "/admin/productos",
     ORDERS: "/admin/ordenes",
     CATEGORIES: "/admin/categorias",
+    FREQUENT_CODES: "/admin/codigos-frecuentes",
   },
 };
 

@@ -116,7 +116,7 @@ export default function AdminDashboard() {
           <h3 className="text-lg font-semibold text-gray-800 mb-4">
             Accesos Rápidos
           </h3>
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Link
               to="/admin/productos"
               className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
@@ -145,6 +145,29 @@ export default function AdminDashboard() {
               <FolderTree className="h-20 w-20 mx-auto mb-4 text-[#8A4A86]" />
               <h2 className="text-2xl font-bold mb-2">Categorías</h2>
               <p className="text-gray-600">Gestionar categorías</p>
+            </Link>
+
+            <Link
+              to="/admin/codigos-frecuentes"
+              className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
+            >
+              <svg
+                className="h-20 w-20 mx-auto mb-4 text-[#FFB800]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"
+                />
+              </svg>
+              <h2 className="text-2xl font-bold mb-2">Códigos</h2>
+              <p className="text-gray-600">
+                Gestionar códigos de clientes frecuentes
+              </p>
             </Link>
           </div>
         </div>

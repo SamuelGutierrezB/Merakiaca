@@ -17,6 +17,7 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminProducts from "@/pages/admin/AdminProducts";
 import AdminOrders from "@/pages/admin/AdminOrders";
 import AdminCategories from "@/pages/admin/AdminCategories";
+import AdminFrequentCodes from "@/pages/admin/AdminFrequentCodes";
 import DebugAuth from "@/pages/DebugAuth";
 export const AppRouter = () => {
   return (
@@ -94,6 +95,14 @@ export const AppRouter = () => {
           element={
             <AdminRoute>
               <AdminCategories />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path={ROUTES.ADMIN.FREQUENT_CODES}
+          element={
+            <AdminRoute>
+              <AdminFrequentCodes />
             </AdminRoute>
           }
         />

@@ -3,7 +3,13 @@ import type { Step, CallBackProps, TooltipRenderProps } from "react-joyride";
 import { useState, useEffect } from "react";
 
 interface AdminJoyrideProps {
-  page: "dashboard" | "products" | "orders" | "categories" | "product-form";
+  page:
+    | "dashboard"
+    | "products"
+    | "orders"
+    | "categories"
+    | "product-form"
+    | "frequent-codes";
 }
 
 // Tooltip personalizado en español
@@ -273,6 +279,38 @@ const tours: Record<string, Step[]> = {
       target: "[data-tour='form-add-fabric']",
       content:
         "Con este botón agregas nuevas telas personalizadas. Puedes usar un color sólido con el picker o subir una imagen de patrón.",
+    },
+  ],
+  "frequent-codes": [
+    {
+      target: "[data-tour='codes-back']",
+      content: "Madre, este botón te regresa al Panel de Administración.",
+      disableBeacon: true,
+    },
+    {
+      target: "[data-tour='codes-title']",
+      content:
+        "Los códigos de cliente frecuente permiten que tus clientes leales comenten productos sin necesidad de haberlos comprado. ¡Es tu programa de fidelidad!",
+    },
+    {
+      target: "[data-tour='codes-create']",
+      content:
+        "Con este botón puedes crear nuevos códigos. Cada código puede tener un límite de usos personalizado.",
+    },
+    {
+      target: "[data-tour='codes-form']",
+      content:
+        "Aquí creas el código: elige un nombre memorable (se convertirá a mayúsculas) y define cuántos usuarios pueden usarlo. Por ejemplo: CLIENTE2024 con 100 usos.",
+    },
+    {
+      target: "[data-tour='codes-list']",
+      content:
+        "Aquí verás todos tus códigos activos e inactivos. Cada tarjeta muestra el estado, uso actual, y cuántos clientes lo han usado.",
+    },
+    {
+      target: "[data-tour='codes-actions']",
+      content:
+        "Puedes Copiar el código para compartirlo, usar el botón Compartir para enviarlo por WhatsApp u otra app, Activar/Desactivar sin eliminarlo, o Eliminarlo permanentemente si ya no lo necesitas.",
     },
   ],
 };
