@@ -9,6 +9,11 @@ interface AdminRouteProps {
 export const AdminRoute = ({ children }: AdminRouteProps) => {
   const { user, loading, initialized, isAdmin } = useAuthStore();
 
+  console.log("AdminRoute: user:", user);
+  console.log("AdminRoute: isAdmin():", isAdmin());
+  console.log("AdminRoute: loading:", loading);
+  console.log("AdminRoute: initialized:", initialized);
+
   if (!initialized || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">

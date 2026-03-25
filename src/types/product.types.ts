@@ -27,7 +27,7 @@ export interface ProductFormData {
   name: string;
   description: string;
   basePrice: number;
-  category: string; // Mantener por compatibilidad
+  category?: string; // Mantener por compatibilidad
   categories?: string[]; // Nueva propiedad para múltiples categorías
   isActive: boolean;
 }

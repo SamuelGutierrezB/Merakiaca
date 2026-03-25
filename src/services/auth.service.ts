@@ -44,6 +44,9 @@ export const signInWithGoogle = async (): Promise<User> => {
       const role: UserRole = ADMIN_EMAILS.includes(firebaseUser.email || "")
         ? "admin"
         : "customer";
+      console.log("signInWithGoogle: ADMIN_EMAILS:", ADMIN_EMAILS);
+      console.log("signInWithGoogle: user email:", firebaseUser.email);
+      console.log("signInWithGoogle: assigned role:", role);
 
       user = {
         uid: firebaseUser.uid,
@@ -86,12 +89,15 @@ export const getUserData = async (uid: string): Promise<User | null> => {
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      return userSnap.data() as User;
+      const user = userSnap.data() as User;
+      console.log("getUserData: user data:", user);
+      console.log("getUserData: user role:", user.role);
+      return user;
     }
 
     return null;
   } catch (error) {
-    console.error("Error al obtener datos del usuario:", error);
+    console.error("getUserData: Error al obtener datos del usuario:", error);
     return null;
   }
 };

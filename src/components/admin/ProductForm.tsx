@@ -40,31 +40,36 @@ export default function ProductForm({
   );
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    product?.categories || product?.category ? [product.category] : [],
+    product?.categories || (product?.category ? [product.category] : []),
   );
   const isEditing = !!product;
+
+  const loadCategories = async () => {
+    try {
+      console.log("ProductForm: loadCategories called");
+      const data = await getAllCategories();
+      console.log("ProductForm: categories loaded:", data);
+      setCategories(data);
+    } catch (error) {
+      console.error("ProductForm: Error loading categories:", error);
+      toast.error("Error al cargar categorías");
+    }
+  };
 
   useEffect(() => {
     loadCategories();
   }, []);
 
-  const loadCategories = async () => {
-    try {
-      const data = await getAllCategories();
-      setCategories(data);
-    } catch (error) {
-      console.error("Error loading categories:", error);
-      toast.error("Error al cargar categorías");
-    }
-  };
-
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
+    setValue,
+    getValues,
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
+    mode: "onChange", // Validar en cada cambio
     defaultValues: product
       ? {
           name: product.name,
@@ -84,7 +89,23 @@ export default function ProductForm({
         },
   });
 
-  const onSubmit = async (data: ProductFormData) => {
+  // Sincronizar selectedCategories con el form state
+  useEffect(() => {
+    console.log(
+      "ProductForm: syncing selectedCategories to form:",
+      selectedCategories,
+    );
+    setValue("categories", selectedCategories);
+    setValue("category", selectedCategories[0] || "");
+  }, [selectedCategories, setValue]);
+
+  const handleFormSubmit = async (data: ProductFormData) => {
+    console.log("ProductForm: handleFormSubmit called with data:", data);
+    console.log("ProductForm: current form values:", getValues());
+    console.log("ProductForm: form errors:", errors);
+    console.log("ProductForm: selectedCategories:", selectedCategories);
+    console.log("ProductForm: isSubmitting:", isSubmitting);
+    console.log("ProductForm: isValid:", isValid);
     setIsSubmitting(true);
     try {
       // Preparar datos con categorías
@@ -93,23 +114,32 @@ export default function ProductForm({
         categories: selectedCategories,
         category: selectedCategories[0] || "", // Mantener la primera como principal por compatibilidad
       };
+      console.log("ProductForm: prepared productData:", productData);
 
       if (isEditing && productId) {
+        console.log(
+          "ProductForm: updating existing product with id:",
+          productId,
+        );
         await updateProduct(productId, productData);
         toast.success("Producto actualizado exitosamente");
       } else {
+        console.log("ProductForm: creating new product");
         const newProductId = await createProduct(productData);
+        console.log("ProductForm: new product created with id:", newProductId);
         setProductId(newProductId);
         toast.success("Producto creado exitosamente");
 
         // Si ya hay imagen, actualizarla
         if (mainImageUrl) {
+          console.log("ProductForm: updating main image for new product");
           await updateProductMainImage(newProductId, mainImageUrl);
         }
       }
+      console.log("ProductForm: handleFormSubmit successful");
       onSuccess();
     } catch (error) {
-      console.error("Error al guardar producto:", error);
+      console.error("ProductForm: Error al guardar producto:", error);
       toast.error("Error al guardar el producto");
     } finally {
       setIsSubmitting(false);
@@ -185,8 +215,21 @@ export default function ProductForm({
     }
   };
 
+  console.log("ProductForm: rendering, errors:", errors);
+  console.log(
+    "ProductForm: selectedCategories length:",
+    selectedCategories.length,
+  );
+  console.log("ProductForm: isSubmitting:", isSubmitting);
+  console.log("ProductForm: isValid:", isValid);
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(handleFormSubmit, (errors) =>
+        console.log("ProductForm: Validation failed:", errors),
+      )}
+      className="space-y-6"
+    >
       {/* Imagen principal */}
       <div data-tour="form-image">
         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -352,7 +395,7 @@ export default function ProductForm({
         <Controller
           name="categories"
           control={control}
-          render={() => (
+          render={({ field }) => (
             <div className="space-y-2 p-4 border border-gray-300 rounded-lg max-h-48 overflow-y-auto">
               {categories.length === 0 ? (
                 <p className="text-sm text-gray-500">
@@ -372,18 +415,31 @@ export default function ProductForm({
                   >
                     <input
                       type="checkbox"
-                      checked={selectedCategories.includes(cat.name)}
+                      checked={field.value?.includes(cat.name) || false}
                       onChange={(e) => {
+                        console.log(
+                          "ProductForm: category checkbox changed:",
+                          cat.name,
+                          e.target.checked,
+                        );
+                        let newSelected: string[];
                         if (e.target.checked) {
-                          setSelectedCategories([
-                            ...selectedCategories,
-                            cat.name,
-                          ]);
+                          newSelected = [...(field.value || []), cat.name];
+                          console.log(
+                            "ProductForm: adding category, new selected:",
+                            newSelected,
+                          );
                         } else {
-                          setSelectedCategories(
-                            selectedCategories.filter((c) => c !== cat.name),
+                          newSelected = (field.value || []).filter(
+                            (c: string) => c !== cat.name,
+                          );
+                          console.log(
+                            "ProductForm: removing category, new selected:",
+                            newSelected,
                           );
                         }
+                        field.onChange(newSelected);
+                        setSelectedCategories(newSelected);
                       }}
                       className="h-4 w-4 text-[#2391C3] focus:ring-[#2391C3] border-gray-300 rounded"
                     />
@@ -399,6 +455,11 @@ export default function ProductForm({
             Selecciona al menos una categoría
           </p>
         )}
+        {errors.categories && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.categories.message}
+          </p>
+        )}
         {selectedCategories.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-2">
             {selectedCategories.map((cat) => (
@@ -409,11 +470,17 @@ export default function ProductForm({
                 {cat}
                 <button
                   type="button"
-                  onClick={() =>
-                    setSelectedCategories(
-                      selectedCategories.filter((c) => c !== cat),
-                    )
-                  }
+                  onClick={() => {
+                    console.log("ProductForm: removing category tag:", cat);
+                    const newSelected = selectedCategories.filter(
+                      (c) => c !== cat,
+                    );
+                    console.log(
+                      "ProductForm: new selected after remove:",
+                      newSelected,
+                    );
+                    setSelectedCategories(newSelected);
+                  }}
                   className="hover:bg-[#1A6B8E] rounded-full p-0.5"
                 >
                   ✕
@@ -462,6 +529,7 @@ export default function ProductForm({
           disabled={isSubmitting}
           className="flex-1 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           data-tour="form-submit"
+          onClick={() => console.log("ProductForm: Submit button clicked")}
         >
           {isSubmitting
             ? "Guardando..."

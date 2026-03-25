@@ -14,7 +14,7 @@ export const productSchema = z.object({
     .number()
     .min(0.01, "El precio debe ser mayor a 0")
     .max(999999, "El precio es demasiado alto"),
-  category: z.string().min(1, "Selecciona al menos una categoría"), // Mantener por compatibilidad
+  category: z.string().optional(), // Mantener por compatibilidad
   categories: z
     .array(z.string())
     .min(1, "Selecciona al menos una categoría")

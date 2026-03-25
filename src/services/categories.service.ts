@@ -14,17 +14,25 @@ import type { Category } from "@/types/category.types";
 
 export async function getAllCategories(): Promise<Category[]> {
   try {
+    console.log("getAllCategories: called");
     const q = query(
       collection(db, FIREBASE_COLLECTIONS.CATEGORIES),
       orderBy("order", "asc"),
     );
+    console.log("getAllCategories: query created");
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
+    console.log(
+      "getAllCategories: querySnapshot docs count:",
+      querySnapshot.docs.length,
+    );
+    const categories = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     })) as Category[];
+    console.log("getAllCategories: categories mapped:", categories);
+    return categories;
   } catch (error) {
-    console.error("Error fetching categories:", error);
+    console.error("getAllCategories: Error fetching categories:", error);
     throw new Error("Error al obtener las categorías");
   }
 }

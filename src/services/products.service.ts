@@ -91,7 +91,9 @@ export const createProduct = async (
   productData: ProductFormData,
 ): Promise<string> => {
   try {
+    console.log("createProduct: called with productData:", productData);
     const productsRef = collection(db, FIREBASE_COLLECTIONS.PRODUCTS);
+    console.log("createProduct: productsRef:", productsRef);
 
     const newProduct = {
       ...productData,
@@ -101,11 +103,13 @@ export const createProduct = async (
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
+    console.log("createProduct: newProduct object:", newProduct);
 
     const docRef = await addDoc(productsRef, newProduct);
+    console.log("createProduct: document added with id:", docRef.id);
     return docRef.id;
   } catch (error) {
-    console.error("Error al crear producto:", error);
+    console.error("createProduct: Error al crear producto:", error);
     throw error;
   }
 };
