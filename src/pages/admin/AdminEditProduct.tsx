@@ -7,14 +7,14 @@ import Layout from "@/components/layout/Layout";
 
 export default function AdminEditProduct() {
   const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<Product | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) return;
     if (id === "nuevo") {
-      setProduct(null);
+      setProduct(undefined);
       setLoading(false);
       return;
     }
@@ -40,7 +40,7 @@ export default function AdminEditProduct() {
     );
   }
 
-  if (!product && id !== "nuevo") {
+  if (typeof product === "undefined" && id !== "nuevo") {
     return (
       <Layout>
         <div className="text-center py-20">

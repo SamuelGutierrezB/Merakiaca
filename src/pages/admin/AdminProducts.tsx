@@ -9,7 +9,6 @@ import {
 import toast from "react-hot-toast";
 import type { Product } from "@/types";
 import { getAllProducts, deleteProduct } from "@/services/products.service";
-import ProductForm from "@/components/admin/ProductForm";
 import { formatPrice } from "@/utils/formatters";
 import AdminJoyride from "@/components/admin/AdminJoyride";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
@@ -215,7 +214,7 @@ export default function AdminProducts() {
                             <div className="text-sm font-medium text-gray-900">
                               {product.name}
                             </div>
-                            <div className="text-sm text-gray-500 truncate max-w-xs">
+                            <div className="text-sm text-gray-500 truncate max-w-xs whitespace-pre-line">
                               {product.description !== "sin descripcion"
                                 ? product.description
                                 : null}
@@ -326,7 +325,7 @@ export default function AdminProducts() {
                         <h3 className="text-lg font-bold text-gray-900 truncate">
                           {product.name}
                         </h3>
-                        <p className="text-sm text-gray-500 line-clamp-2">
+                        <p className="text-sm text-gray-500 line-clamp-2 whitespace-pre-line">
                           {product.description !== "sin descripcion"
                             ? product.description
                             : null}
