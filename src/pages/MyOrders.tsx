@@ -211,10 +211,14 @@ export default function MyOrders() {
                   </div>
                 ) : null}
 
-                {/* Dirección de envío */}
+                {/* Dirección de envío o recolección */}
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p className="text-sm font-semibold text-gray-700 mb-2">
-                    Dirección de Envío:
+                    {order.shippingAddress.street.startsWith(
+                      "Recolección en sucursal",
+                    )
+                      ? "Recolección en sucursal:"
+                      : "Dirección de Envío:"}
                   </p>
                   <p className="text-sm text-gray-600">
                     {order.shippingAddress.fullName}

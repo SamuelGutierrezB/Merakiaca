@@ -339,9 +339,8 @@ export default function ProductDetail() {
             </button>
 
             <div className="pt-4 border-t border-gray-200 space-y-2 text-sm text-gray-600">
-              <p>✓ Envío gratis en compras mayores a $500</p>
               <p>✓ Garantía de satisfacción</p>
-              <p>✓ Productos 100% naturales</p>
+              <p>✓ Semillas y hierbas 100% naturales</p>
             </div>
           </div>
         </div>

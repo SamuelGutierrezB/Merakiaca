@@ -1,3 +1,4 @@
+// ...existing code...
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -104,7 +105,8 @@ export default function Checkout() {
   }
 
   const subtotal = getTotal();
-  const shipping = 0; // A calcular después
+  // Lógica de envío
+  const shipping = deliveryType === "pickup" ? 0 : 150;
   const tax = 0; // Gratis por ahora
   const total = subtotal + shipping + tax;
 
@@ -563,8 +565,8 @@ export default function Checkout() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Envío:</span>
-                  <span className="font-semibold text-gray-500 italic">
-                    A calcular
+                  <span className="font-semibold">
+                    {deliveryType === "pickup" ? "$0" : formatPrice(150)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -588,18 +590,16 @@ export default function Checkout() {
               {/* Nota sobre envío */}
               <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                 <p className="text-xs text-gray-600">
-                  💡 El costo de envío se calculará y confirmará por WhatsApp
-                  después de realizar el pedido.
+                  {deliveryType === "pickup"
+                    ? "Las entregas locales no tienen costo."
+                    : "El costo de envío es de $150 pesos para envíos a domicilio."}
                 </p>
               </div>
 
               {/* Nota sobre pago */}
-              <div className="mt-3 p-3 bg-green-50 rounded-lg">
-                <p className="text-xs text-gray-600">
-                  ✨ Promoción especial: <strong>Envío gratuito</strong> en tu
-                  primer pedido
-                </p>
-              </div>
+              {/* <div className="mt-3 p-3 bg-green-50 rounded-lg">
+                <p className="text-xs text-gray-600"></p>
+              </div> */}
             </div>
           </div>
         </div>

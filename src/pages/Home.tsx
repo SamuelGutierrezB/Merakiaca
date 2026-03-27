@@ -109,7 +109,7 @@ export default function Home() {
             <img
               src={logo}
               alt="Cojines Herbales Meraki aca"
-              className="rounded-2xl w-full h-64 sm:h-80 md:h-96 object-cover"
+              className="rounded-2xl w-full h-full object-cover"
             />
           </div>
         </div>
@@ -125,7 +125,7 @@ export default function Home() {
             ¿Por qué Meraki <span className="text-2xl sm:text-3xl">aca</span>?
           </h2>
           <p className="text-center text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
-            Creamos cada cojín herbal con dedicación, usando ingredientes
+            Creamos cada cojín herbal con dedicación, usando SEMILLAS Y HERBAS
             naturales de la más alta calidad
           </p>
 

@@ -201,9 +201,7 @@ export default function Cart() {
               </Link>
 
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <p className="text-sm text-gray-600 text-center">
-                  ✓ Envío gratis en compras mayores a $500
-                </p>
+                <p className="text-sm text-gray-600 text-center"></p>
               </div>
             </div>
           </div>
