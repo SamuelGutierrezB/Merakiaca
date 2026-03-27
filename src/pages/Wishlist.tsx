@@ -167,7 +167,9 @@ export default function Wishlist() {
                   </Link>
 
                   <p className="text-sm text-gray-600 line-clamp-2">
-                    {product.description}
+                    {product.description !== "sin descripcion"
+                      ? product.description
+                      : null}
                   </p>
 
                   <div className="flex items-center justify-between pt-2">

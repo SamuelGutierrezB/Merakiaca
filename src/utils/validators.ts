@@ -6,10 +6,7 @@ export const productSchema = z.object({
     .string()
     .min(3, "El nombre debe tener al menos 3 caracteres")
     .max(150, "El nombre es demasiado largo"),
-  description: z
-    .string()
-    .min(10, "La descripción debe tener al menos 10 caracteres")
-    .max(1000, "La descripción es demasiado larga"),
+  description: z.string().max(1000, "La descripción es demasiado larga"),
   basePrice: z
     .number()
     .min(0.01, "El precio debe ser mayor a 0")
@@ -86,7 +83,7 @@ export const categorySchema = z.object({
     ),
   description: z
     .string()
-    .min(10, "La descripción es requerida")
+    .min(1, "La descripción es requerida")
     .max(500, "La descripción es demasiado larga"),
   order: z
     .number()

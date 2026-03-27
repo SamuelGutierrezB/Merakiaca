@@ -24,9 +24,7 @@ import type { Category } from "@/types/category.types";
 
 const categorySchema = z.object({
   name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-  description: z
-    .string()
-    .min(5, "La descripción debe tener al menos 5 caracteres"),
+  description: z.string().min(1, "La descripción es requerida"),
   order: z.number().min(0, "El orden debe ser un número positivo"),
 });
 

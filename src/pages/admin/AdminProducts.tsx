@@ -218,7 +218,9 @@ export default function AdminProducts() {
                               {product.name}
                             </div>
                             <div className="text-sm text-gray-500 truncate max-w-xs">
-                              {product.description}
+                              {product.description !== "sin descripcion"
+                                ? product.description
+                                : null}
                             </div>
                           </div>
                         </td>
@@ -327,7 +329,9 @@ export default function AdminProducts() {
                           {product.name}
                         </h3>
                         <p className="text-sm text-gray-500 line-clamp-2">
-                          {product.description}
+                          {product.description !== "sin descripcion"
+                            ? product.description
+                            : null}
                         </p>
                       </div>
                     </div>

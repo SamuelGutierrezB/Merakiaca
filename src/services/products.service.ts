@@ -97,6 +97,10 @@ export const createProduct = async (
 
     const newProduct = {
       ...productData,
+      description:
+        !productData.description || productData.description.trim() === ""
+          ? "sin descripcion"
+          : productData.description,
       mainImage: "",
       images: [],
       fabrics: [],
@@ -126,6 +130,10 @@ export const updateProduct = async (
 
     await updateDoc(productRef, {
       ...productData,
+      description:
+        !productData.description || productData.description.trim() === ""
+          ? "sin descripcion"
+          : productData.description,
       updatedAt: serverTimestamp(),
     });
   } catch (error) {

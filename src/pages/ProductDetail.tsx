@@ -223,9 +223,11 @@ export default function ProductDetail() {
             </div>
 
             <div className="prose max-w-none">
-              <p className="text-gray-600 text-sm sm:text-base">
-                {product.description}
-              </p>
+              {product.description !== "sin descripcion" && (
+                <p className="text-gray-600 text-sm sm:text-base whitespace-pre-wrap">
+                  {product.description}
+                </p>
+              )}
             </div>
 
             {/* Selector de tela con vista previa */}

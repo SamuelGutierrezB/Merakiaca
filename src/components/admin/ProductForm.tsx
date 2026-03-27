@@ -376,10 +376,11 @@ export default function ProductForm({
         <input
           {...register("basePrice", { valueAsNumber: true })}
           type="number"
-          step="0.01"
+          step="10"
+          min="0"
           id="basePrice"
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
-          placeholder="0.00"
+          placeholder="0"
         />
         {errors.basePrice && (
           <p className="text-red-500 text-sm mt-1">
