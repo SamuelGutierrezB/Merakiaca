@@ -18,8 +18,8 @@ export default function AdminProducts() {
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | undefined>();
+  // const [showForm, setShowForm] = useState(false);
+  // const [editingProduct, setEditingProduct] = useState<Product | undefined>();
   const [deleteDialog, setDeleteDialog] = useState<{
     isOpen: boolean;
     product: Product | null;
@@ -43,13 +43,11 @@ export default function AdminProducts() {
   };
 
   const handleCreate = () => {
-    setEditingProduct(undefined);
-    setShowForm(true);
+    navigate("/admin/productos/editar/nuevo");
   };
 
   const handleEdit = (product: Product) => {
-    setEditingProduct(product);
-    setShowForm(true);
+    navigate(`/admin/productos/editar/${product.id}`);
   };
 
   const handleDelete = (product: Product) => {
@@ -69,49 +67,49 @@ export default function AdminProducts() {
     }
   };
 
-  const handleFormSuccess = () => {
-    setShowForm(false);
-    setEditingProduct(undefined);
-    loadProducts();
-  };
-
-  const handleFormCancel = () => {
-    setShowForm(false);
-    setEditingProduct(undefined);
-  };
-
-  if (showForm) {
-    return (
-      <>
-        <AdminJoyride page="product-form" />
-        <div className="max-w-3xl mx-auto py-8 px-4">
-          <div className="flex items-center gap-4 mb-4">
-            <button
-              onClick={handleFormCancel}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
-              data-tour="form-back"
-            >
-              <ArrowLeftIcon className="h-5 w-5" />
-              <span className="hidden sm:inline">Volver a Productos</span>
-            </button>
-          </div>
-          <h1
-            className="text-3xl font-bold text-gray-800 mb-8"
-            data-tour="form-title"
-          >
-            {editingProduct ? "Editar Producto" : "Crear Nuevo Producto"}
-          </h1>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <ProductForm
-              product={editingProduct}
-              onSuccess={handleFormSuccess}
-              onCancel={handleFormCancel}
-            />
-          </div>
-        </div>
-      </>
-    );
-  }
+  // const handleFormSuccess = () => {
+  //   setShowForm(false);
+  //   setEditingProduct(undefined);
+  //   loadProducts();
+  // };
+  //
+  // const handleFormCancel = () => {
+  //   setShowForm(false);
+  //   setEditingProduct(undefined);
+  // };
+  //
+  // if (showForm) {
+  //   return (
+  //     <>
+  //       <AdminJoyride page="product-form" />
+  //       <div className="max-w-3xl mx-auto py-8 px-4">
+  //         <div className="flex items-center gap-4 mb-4">
+  //           <button
+  //             onClick={handleFormCancel}
+  //             className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+  //             data-tour="form-back"
+  //           >
+  //             <ArrowLeftIcon className="h-5 w-5" />
+  //             <span className="hidden sm:inline">Volver a Productos</span>
+  //           </button>
+  //         </div>
+  //         <h1
+  //           className="text-3xl font-bold text-gray-800 mb-8"
+  //           data-tour="form-title"
+  //         >
+  //           {editingProduct ? "Editar Producto" : "Crear Nuevo Producto"}
+  //         </h1>
+  //         <div className="bg-white rounded-lg shadow-md p-6">
+  //           <ProductForm
+  //             product={editingProduct}
+  //             onSuccess={handleFormSuccess}
+  //             onCancel={handleFormCancel}
+  //           />
+  //         </div>
+  //       </div>
+  //     </>
+  //   );
+  // }
 
   return (
     <>

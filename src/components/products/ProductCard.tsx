@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import type { Product } from "@/types";
 import { formatPrice } from "@/utils/formatters";
@@ -11,7 +11,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { user } = useAuthStore();
+  const { user, isAdmin } = useAuthStore();
+  const navigate = useNavigate();
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const isFavorite = isInWishlist(product.id);
   const hasStock = product.fabrics.some((f) => f.stock > 0);
@@ -27,7 +28,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       to={`/products/${product.id}`}
-      className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
+      className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow relative"
     >
       {/* Imagen */}
       <div className="relative bg-gray-100 aspect-square overflow-hidden">
@@ -109,6 +110,33 @@ export default function ProductCard({ product }: ProductCardProps) {
               </div>
             )}
           </div>
+        )}
+        {/* Botón de editar para admin */}
+        {isAdmin && isAdmin() && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              navigate(`/admin/productos/editar/${product.id}`);
+            }}
+            className="absolute top-3 left-3 w-10 h-10 rounded-full bg-[#2391C3] text-white shadow-md flex items-center justify-center hover:bg-[#1A6B8E] transition-colors z-20"
+            title="Editar producto"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13zm0 0V17h4"
+              />
+            </svg>
+          </button>
         )}
       </div>
 

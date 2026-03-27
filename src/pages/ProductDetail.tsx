@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { Heart } from "lucide-react";
 import toast from "react-hot-toast";
@@ -16,7 +16,7 @@ import { formatPrice } from "@/utils/formatters";
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, isAdmin } = useAuthStore();
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -180,9 +180,20 @@ export default function ProductDetail() {
           <div className="space-y-4 sm:space-y-6">
             <div>
               <div className="flex items-start justify-between gap-4 mb-2">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
-                  {product.name}
-                </h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+                    {product.name}
+                  </h1>
+                  {isAdmin && isAdmin() && (
+                    <Link
+                      to={`/admin/productos/editar/${product.id}`}
+                      className="ml-2 px-2 py-1 rounded bg-[#2391C3] text-white text-xs font-semibold hover:bg-[#1A6B8E] transition-colors"
+                      title="Editar producto"
+                    >
+                      Editar
+                    </Link>
+                  )}
+                </div>
                 {user && (
                   <button
                     onClick={handleToggleFavorite}

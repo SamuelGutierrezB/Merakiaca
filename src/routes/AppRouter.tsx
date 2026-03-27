@@ -19,6 +19,8 @@ import AdminOrders from "@/pages/admin/AdminOrders";
 import AdminCategories from "@/pages/admin/AdminCategories";
 import AdminFrequentCodes from "@/pages/admin/AdminFrequentCodes";
 import DebugAuth from "@/pages/DebugAuth";
+import AdminEditProduct from "@/pages/admin/AdminEditProduct";
+
 export const AppRouter = () => {
   return (
     <BrowserRouter>
@@ -103,6 +105,14 @@ export const AppRouter = () => {
           element={
             <AdminRoute>
               <AdminFrequentCodes />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/productos/editar/:id"
+          element={
+            <AdminRoute>
+              <AdminEditProduct />
             </AdminRoute>
           }
         />
