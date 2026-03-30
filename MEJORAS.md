@@ -71,12 +71,12 @@ Registro de ideas y funcionalidades pendientes, ordenadas por categoría y prior
 
 ### UX / UI
 
-- [ ] **Modo oscuro** (dark mode) con toggle en el header
-- [ ] **Animaciones de entrada** en secciones del Home (Framer Motion o CSS transitions)
-- [ ] **Skeleton loaders** en lugar de spinner de carga en listas de productos y órdenes
-- [ ] **Breadcrumbs** en páginas de categoría y detalle de producto
-- [ ] **Página 404 personalizada** con link al Home y productos destacados
-- [ ] **Pull to refresh** en móvil para "Mis Órdenes"
+- [ ] **Modo oscuro** (dark mode) con toggle en el header ✅
+- [ ] **Animaciones de entrada** en secciones del Home (Framer Motion o CSS transitions) ✅
+- [ ] **Skeleton loaders** en lugar de spinner de carga en listas de productos y órdenes ✅
+- [ ] **Breadcrumbs** en páginas de categoría y detalle de producto ✅
+- [ ] **Página 404 personalizada** con link al Home y productos destacados ✅
+- [ ] **Pull to refresh** en móvil para "Mis Órdenes" ✅
 
 ### Técnico / Performance
 
@@ -113,3 +113,10 @@ Registro de ideas y funcionalidades pendientes, ordenadas por categoría y prior
 - Idempotencia en la reducción de stock (no se descuenta dos veces)
 - Eliminar todas las órdenes con confirmación por select
 - Guía interactiva (Joyride) para el panel admin
+- Botones de acción rápida en órdenes (WhatsApp, copiar dirección, aprobar pago, ver en MP)
+- **Modo oscuro** con toggle en el header (persistido en localStorage)
+- **Animaciones fade-in-up** en el hero del Home + reveal al hacer scroll en secciones
+- **Skeleton loaders** en lista de productos y órdenes del cliente
+- **Breadcrumbs** en páginas de Productos y Detalle de Producto
+- **Página 404 personalizada** con productos destacados y acceso al Home
+- **Pull to refresh** en Mis Órdenes (móvil)

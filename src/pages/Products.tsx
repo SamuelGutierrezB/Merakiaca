@@ -4,6 +4,8 @@ import type { Product, Category } from "@/types";
 import { getActiveProducts } from "@/services/products.service";
 import { getAllCategories } from "@/services/categories.service";
 import ProductCard from "@/components/products/ProductCard";
+import { ProductCardSkeleton } from "@/components/common/Skeleton";
+import Breadcrumbs from "@/components/common/Breadcrumbs";
 import toast from "react-hot-toast";
 
 export default function Products() {
@@ -54,13 +56,14 @@ export default function Products() {
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-8 sm:py-16">
         <div className="mb-6 sm:mb-8">
+          <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Productos" }]} />
           <h1
             className="text-3xl sm:text-4xl font-bold text-center mb-3 sm:mb-4"
             style={{ color: "#2391C3" }}
           >
             Nuestros Productos
           </h1>
-          <p className="text-center text-gray-600 mb-8 sm:mb-12 text-sm sm:text-base">
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 text-sm sm:text-base">
             Descubre nuestra colección de productos herbales artesanales
           </p>
         </div>
@@ -72,7 +75,7 @@ export default function Products() {
             className={`px-4 sm:px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap text-sm sm:text-base ${
               selectedCategory === "all"
                 ? "bg-[#2391C3] text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
             }`}
           >
             Todos
@@ -84,7 +87,7 @@ export default function Products() {
               className={`px-4 sm:px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap text-sm sm:text-base ${
                 selectedCategory === cat.name
                   ? "bg-[#2391C3] text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
               }`}
             >
               {cat.name}
@@ -94,12 +97,14 @@ export default function Products() {
 
         {/* Grid de productos */}
         {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#2391C3] border-t-transparent"></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-500 text-lg">
+            <p className="text-gray-500 dark:text-gray-400 text-lg">
               No hay productos disponibles en esta categoría
             </p>
           </div>

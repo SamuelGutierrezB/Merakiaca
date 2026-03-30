@@ -21,6 +21,7 @@ import AdminFrequentCodes from "@/pages/admin/AdminFrequentCodes";
 import DebugAuth from "@/pages/DebugAuth";
 import AdminEditProduct from "@/pages/admin/AdminEditProduct";
 import OrderResult from "@/pages/OrderResult";
+import NotFound from "@/pages/NotFound";
 
 export const AppRouter = () => {
   return (
@@ -120,6 +121,8 @@ export const AppRouter = () => {
             </AdminRoute>
           }
         />
+        {/* Ruta 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

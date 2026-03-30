@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Loader2, Package } from "lucide-react";
+import { Package } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import OrderHistory from "@/components/common/OrderHistory";
+import { OrderCardSkeleton } from "@/components/common/Skeleton";
 import { useAuthStore } from "@/store/authStore";
 import { getUserOrders } from "@/services/orders.service";
 import { formatPrice } from "@/utils/formatters";
@@ -44,6 +45,13 @@ export default function MyOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Pull-to-refresh state
+  const [isPulling, setIsPulling] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const touchStartY = useRef(0);
+  const PULL_THRESHOLD = 70;
+
   const loadOrders = useCallback(async () => {
     if (!user) return;
 
@@ -64,6 +72,34 @@ export default function MyOrders() {
       loadOrders();
     }
   }, [user, loadOrders]);
+
+  // Pull-to-refresh handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (window.scrollY === 0) {
+      touchStartY.current = e.touches[0].clientY;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartY.current === 0) return;
+    const delta = e.touches[0].clientY - touchStartY.current;
+    if (delta > 0 && window.scrollY === 0) {
+      setIsPulling(true);
+      setPullDistance(Math.min(delta * 0.5, PULL_THRESHOLD + 20));
+    }
+  };
+
+  const handleTouchEnd = async () => {
+    if (pullDistance >= PULL_THRESHOLD) {
+      setIsRefreshing(true);
+      await loadOrders();
+      toast.success("Actualizadas");
+      setIsRefreshing(false);
+    }
+    setIsPulling(false);
+    setPullDistance(0);
+    touchStartY.current = 0;
+  };
 
   const formatDate = (timestamp: unknown) => {
     if (!timestamp) return "N/A";
@@ -100,18 +136,43 @@ export default function MyOrders() {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 py-8 sm:py-16">
+      <div
+        className="max-w-7xl mx-auto px-4 py-8 sm:py-16"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Indicador de pull-to-refresh */}
+        {(isPulling || isRefreshing) && (
+          <div
+            className="flex justify-center items-center overflow-hidden transition-all duration-200"
+            style={{ height: `${pullDistance}px` }}
+          >
+            <div
+              className={`h-8 w-8 rounded-full border-4 border-[#2391C3] border-t-transparent ${
+                isRefreshing ? "animate-spin" : ""
+              }`}
+              style={{
+                transform: isRefreshing
+                  ? "none"
+                  : `rotate(${(pullDistance / PULL_THRESHOLD) * 180}deg)`,
+              }}
+            />
+          </div>
+        )}
+
         <h1
-          className="text-3xl sm:text-4xl font-bold mb-8"
+          className="text-3xl sm:text-4xl font-bold mb-8 dark:text-gray-100"
           style={{ color: "#2391C3" }}
         >
           Mis Órdenes
         </h1>
 
         {loading ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <Loader2 className="h-16 w-16 mx-auto mb-4 text-[#2391C3] animate-spin" />
-            <p className="text-gray-600">Cargando tus órdenes...</p>
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <OrderCardSkeleton key={i} />
+            ))}
           </div>
         ) : orders.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">

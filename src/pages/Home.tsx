@@ -44,6 +44,22 @@ export default function Home() {
     }
   };
 
+  // Animación reveal al hacer scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.08 },
+    );
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [isLoading]);
+
   const nextSlide = () => {
     if (products.length === 0) return;
     setCurrentIndex((prev) => {
@@ -72,25 +88,25 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
           <div>
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 animate-fade-in-up"
               style={{ color: "#2391C3" }}
             >
               Meraki{" "}
               <span className="text-3xl sm:text-4xl lg:text-5xl">aca®</span>
             </h1>
             <p
-              className="text-xl sm:text-2xl mb-4 sm:mb-6"
+              className="text-xl sm:text-2xl mb-4 sm:mb-6 animate-fade-in-up-delay-1"
               style={{ color: "#8A4A86" }}
             >
               Cojines Herbales con Alma, Creatividad y Amor
             </p>
-            <p className="text-base sm:text-lg text-gray-700 mb-6 sm:mb-8 leading-relaxed">
+            <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed animate-fade-in-up-delay-2">
               Experimenta el bienestar natural con nuestros cojines herbales
               artesanales. Cada pieza está creada con dedicación y amor,
               utilizando semillas y hierbas 100% naturales para tu relajación y
               bienestar.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 animate-fade-in-up-delay-3">
               <a
                 href="#productos"
                 className=" border-[#2391C3] text-[#2391C3] hover:bg-[#2391C3] hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg transition-colors text-center"
@@ -105,7 +121,7 @@ export default function Home() {
           </div>
 
           {/* Imagen principal */}
-          <div className="bg-white rounded-3xl shadow-2xl border-4 border-[#F5E63C]">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border-4 border-[#F5E63C] animate-fade-in-up-delay-1">
             <img
               src={logo}
               alt="Cojines Herbales Meraki aca"
@@ -116,15 +132,15 @@ export default function Home() {
       </section>
 
       {/* Beneficios Section */}
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-white dark:bg-gray-800 py-12 sm:py-16 transition-colors">
         <div className="max-w-7xl mx-auto px-4">
           <h2
-            className="text-3xl sm:text-4xl font-bold text-center mb-4"
+            className="text-3xl sm:text-4xl font-bold text-center mb-4 reveal"
             style={{ color: "#2391C3" }}
           >
             ¿Por qué Meraki <span className="text-2xl sm:text-3xl">aca</span>?
           </h2>
-          <p className="text-center text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base reveal">
             Creamos cada cojín herbal con dedicación, usando SEMILLAS Y HERBAS
             naturales de la más alta calidad
           </p>
@@ -163,12 +179,12 @@ export default function Home() {
       {/* Productos Preview Section */}
       <section id="productos" className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
         <h2
-          className="text-3xl sm:text-4xl font-bold text-center mb-4"
+          className="text-3xl sm:text-4xl font-bold text-center mb-4 reveal"
           style={{ color: "#2391C3" }}
         >
           Nuestros Productos
         </h2>
-        <p className="text-center text-gray-600 mb-8 sm:mb-12 text-sm sm:text-base">
+        <p className="text-center text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 text-sm sm:text-base reveal">
           Descubre nuestra colección de cojines herbales
         </p>
 
@@ -269,28 +285,28 @@ export default function Home() {
       </section>
 
       {/* Instrucciones de Uso */}
-      <section className="bg-gradient-to-br from-[#E8DFCA] to-[#F5E63C]/20 py-12 sm:py-16">
+      <section className="bg-gradient-to-br from-[#E8DFCA] to-[#F5E63C]/20 dark:from-gray-900 dark:to-gray-800 py-12 sm:py-16 transition-colors">
         <div className="max-w-5xl mx-auto px-4">
           <h2
-            className="text-3xl sm:text-4xl font-bold text-center mb-4"
+            className="text-3xl sm:text-4xl font-bold text-center mb-4 reveal"
             style={{ color: "#2391C3" }}
           >
             Instrucciones de Uso
           </h2>
-          <p className="text-center text-gray-700 mb-8 sm:mb-12 max-w-2xl mx-auto text-base font-medium">
+          <p className="text-center text-gray-700 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto text-base font-medium reveal">
             Cojín Herbal (compresa para masaje)
           </p>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
+          <div className="grid md:grid-cols-2 gap-8 mb-8 reveal">
             {/* Uso en Caliente */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-[#E85D5D]/20">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border-2 border-[#E85D5D]/20">
               <div className="flex items-center gap-3 mb-4">
                 <div className="text-4xl">🔥</div>
                 <h3 className="text-2xl font-bold text-[#E85D5D]">
                   Uso en caliente:
                 </h3>
               </div>
-              <ul className="space-y-3 text-gray-700">
+              <ul className="space-y-3 text-gray-700 dark:text-gray-300">
                 <li className="flex items-start gap-2">
                   <span className="text-[#2391C3] font-bold">•</span>
                   <span>
@@ -314,14 +330,14 @@ export default function Home() {
             </div>
 
             {/* Uso en Frío */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-[#2391C3]/20">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border-2 border-[#2391C3]/20">
               <div className="flex items-center gap-3 mb-4">
                 <div className="text-4xl">❄️</div>
                 <h3 className="text-2xl font-bold text-[#2391C3]">
                   Uso en frío:
                 </h3>
               </div>
-              <ul className="space-y-3 text-gray-700">
+              <ul className="space-y-3 text-gray-700 dark:text-gray-300">
                 <li className="flex items-start gap-2">
                   <span className="text-[#8A4A86] font-bold">•</span>
                   <span>
@@ -341,11 +357,11 @@ export default function Home() {
           </div>
 
           {/* Precauciones */}
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-6 mb-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-2">
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 rounded-lg p-6 mb-6">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2">
               <span>⚠️</span> Precauciones
             </h3>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-gray-700 dark:text-gray-300">
               <li className="flex items-start gap-2">
                 <span>•</span>
                 <span>
@@ -370,13 +386,13 @@ export default function Home() {
           </div>
 
           {/* Información Comercial */}
-          <div className="text-center bg-white rounded-2xl p-6 shadow-lg">
-            <p className="text-gray-700 mb-4">
+          <div className="text-center bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg reveal">
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
               <strong className="text-[#2391C3]">
                 Hecho en México por Meraki aca®
               </strong>
             </p>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Materiales: Semillas, hierbas naturales y tela de algodón
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -404,15 +420,15 @@ export default function Home() {
       </section>
 
       {/* Sección de Sucursales */}
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-white dark:bg-gray-800 py-12 sm:py-16 transition-colors">
         <div className="max-w-7xl mx-auto px-4">
           <h2
-            className="text-3xl sm:text-4xl font-bold text-center mb-4"
+            className="text-3xl sm:text-4xl font-bold text-center mb-4 reveal"
             style={{ color: "#2391C3" }}
           >
             Casa Blanca Sucursales
           </h2>
-          <p className="text-center text-gray-600 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base reveal">
             Entregas locales en Casa Blanca. Recoge tu pedido en la sucursal más
             cercana
           </p>

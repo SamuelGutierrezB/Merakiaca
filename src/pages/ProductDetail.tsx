@@ -4,6 +4,8 @@ import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { Heart } from "lucide-react";
 import toast from "react-hot-toast";
 import Layout from "@/components/layout/Layout";
+import { Skeleton } from "@/components/common/Skeleton";
+import Breadcrumbs from "@/components/common/Breadcrumbs";
 import type { Product, FabricOption } from "@/types";
 import { getProductById } from "@/services/products.service";
 import FabricSelector from "@/components/products/FabricSelector";
@@ -109,8 +111,26 @@ export default function ProductDetail() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#2391C3] border-t-transparent"></div>
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <Skeleton className="h-4 w-48 mb-6" />
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-3">
+              <Skeleton className="h-96 w-full rounded-2xl" />
+              <div className="flex gap-2">
+                {[0, 1, 2].map((i) => (
+                  <Skeleton key={i} className="h-20 w-20 rounded-lg" />
+                ))}
+              </div>
+            </div>
+            <div className="space-y-4">
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5 w-5/6" />
+              <Skeleton className="h-10 w-32" />
+              <Skeleton className="h-32 w-full rounded-xl" />
+              <Skeleton className="h-12 w-full rounded-lg" />
+            </div>
+          </div>
         </div>
       </Layout>
     );
@@ -133,6 +153,13 @@ export default function ProductDetail() {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto py-4 sm:py-8 px-4">
+        <Breadcrumbs
+          items={[
+            { label: "Inicio", href: "/" },
+            { label: "Productos", href: "/productos" },
+            { label: product.name },
+          ]}
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {/* Galería de imágenes del producto */}
           <div className="space-y-4">
