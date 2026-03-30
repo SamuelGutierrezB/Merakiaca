@@ -14,6 +14,20 @@ import {
 import { db } from "./firebase";
 import type { Product, ProductFormData, FabricOption } from "@/types";
 import { FIREBASE_COLLECTIONS } from "@/utils/constants";
+import { normalizeFabricOptions } from "@/utils/fabricColors";
+
+const normalizeProductData = (
+  id: string,
+  data: Record<string, unknown>,
+): Product => {
+  return {
+    id,
+    ...data,
+    fabrics: normalizeFabricOptions(
+      (data.fabrics as FabricOption[] | undefined) || [],
+    ),
+  } as Product;
+};
 
 /**
  * Obtiene todos los productos
@@ -24,10 +38,7 @@ export const getAllProducts = async (): Promise<Product[]> => {
     const q = query(productsRef, orderBy("createdAt", "desc"));
     const snapshot = await getDocs(q);
 
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Product[];
+    return snapshot.docs.map((doc) => normalizeProductData(doc.id, doc.data()));
   } catch (error) {
     console.error("Error al obtener productos:", error);
     throw error;
@@ -45,10 +56,9 @@ export const getActiveProducts = async (): Promise<Product[]> => {
     const q = query(productsRef, where("isActive", "==", true));
     const snapshot = await getDocs(q);
 
-    const products = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Product[];
+    const products = snapshot.docs.map((doc) =>
+      normalizeProductData(doc.id, doc.data()),
+    );
 
     // Ordenar en el cliente
     return products.sort((a, b) => {
@@ -71,10 +81,7 @@ export const getProductById = async (id: string): Promise<Product | null> => {
     const snapshot = await getDoc(productRef);
 
     if (snapshot.exists()) {
-      return {
-        id: snapshot.id,
-        ...snapshot.data(),
-      } as Product;
+      return normalizeProductData(snapshot.id, snapshot.data());
     }
 
     return null;
@@ -130,6 +137,9 @@ export const updateProduct = async (
 
     await updateDoc(productRef, {
       ...productData,
+      fabrics: productData.fabrics
+        ? normalizeFabricOptions(productData.fabrics)
+        : productData.fabrics,
       description:
         !productData.description || productData.description.trim() === ""
           ? "sin descripcion"
@@ -210,10 +220,9 @@ export const getProductsByCategory = async (
     const snapshot = await getDocs(q);
 
     // Filtramos en el cliente para soportar tanto category como categories
-    const products = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Product[];
+    const products = snapshot.docs.map((doc) =>
+      normalizeProductData(doc.id, doc.data()),
+    );
 
     // Filtrar productos que tienen la categoría buscada
     return products
@@ -247,7 +256,7 @@ export const updateProductFabrics = async (
   try {
     const productRef = doc(db, FIREBASE_COLLECTIONS.PRODUCTS, id);
     await updateDoc(productRef, {
-      fabrics,
+      fabrics: normalizeFabricOptions(fabrics),
       updatedAt: serverTimestamp(),
     });
   } catch (error) {
