@@ -20,6 +20,7 @@ import AdminCategories from "@/pages/admin/AdminCategories";
 import AdminFrequentCodes from "@/pages/admin/AdminFrequentCodes";
 import DebugAuth from "@/pages/DebugAuth";
 import AdminEditProduct from "@/pages/admin/AdminEditProduct";
+import OrderResult from "@/pages/OrderResult";
 
 export const AppRouter = () => {
   return (
@@ -32,6 +33,9 @@ export const AppRouter = () => {
         <Route path={ROUTES.PRODUCTS} element={<Products />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/debug" element={<DebugAuth />} />
+        <Route path={ROUTES.ORDER_SUCCESS} element={<OrderResult />} />
+        <Route path={ROUTES.ORDER_FAILURE} element={<OrderResult />} />
+        <Route path={ROUTES.ORDER_PENDING} element={<OrderResult />} />
 
         {/* Rutas privadas */}
         <Route

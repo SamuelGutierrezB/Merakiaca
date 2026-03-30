@@ -9,7 +9,8 @@ import Layout from "@/components/layout/Layout";
 import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 import { formatPrice } from "@/utils/formatters";
-import { createOrder } from "@/services/orders.service";
+import { createOrder, updateOrderPreferenceId } from "@/services/orders.service";
+import { createMercadoPagoPreference } from "@/services/mercadopago.service";
 import type { OrderItem, Address } from "@/types/order.types";
 import BranchMap from "@/components/common/BranchMap";
 
@@ -141,7 +142,7 @@ export default function Checkout() {
         phone: data.whatsapp,
       };
 
-      await createOrder(user.uid, {
+      const orderId = await createOrder(user.uid, {
         items: orderItems,
         shippingAddress: pickupAddress,
         subtotal,
@@ -150,14 +151,26 @@ export default function Checkout() {
         total,
       });
 
-      clearCart();
+      // Crear preferencia en Mercado Pago
+      const mpItems = orderItems.map((item) => ({
+        id: item.productId,
+        title: `${item.productName} — ${item.fabricName}`,
+        quantity: item.quantity,
+        unit_price: item.unitPrice,
+        currency_id: "MXN",
+      }));
 
-      toast.success(
-        "¡Pedido realizado exitosamente! Nos pondremos en contacto contigo por WhatsApp para confirmar el pago.",
-        { duration: 5000 },
+      const preference = await createMercadoPagoPreference(
+        orderId,
+        mpItems,
+        user.email ?? undefined,
       );
 
-      navigate("/mis-ordenes");
+      await updateOrderPreferenceId(orderId, preference.id);
+
+      clearCart();
+      // Redirigir a Mercado Pago para completar el pago
+      window.location.href = preference.init_point;
     } catch (error) {
       console.error("Error al procesar el pedido:", error);
       toast.error("Error al procesar el pedido. Intenta nuevamente.");
@@ -188,7 +201,7 @@ export default function Checkout() {
       }));
 
       // Crear la orden
-      await createOrder(user.uid, {
+      const orderId = await createOrder(user.uid, {
         items: orderItems,
         shippingAddress: data as Address,
         subtotal,
@@ -197,15 +210,27 @@ export default function Checkout() {
         total,
       });
 
-      // Limpiar el carrito
-      clearCart();
+      // Crear preferencia en Mercado Pago
+      const mpItems = orderItems.map((item) => ({
+        id: item.productId,
+        title: `${item.productName} — ${item.fabricName}`,
+        quantity: item.quantity,
+        unit_price: item.unitPrice,
+        currency_id: "MXN",
+      }));
 
-      toast.success(
-        "¡Pedido realizado exitosamente! Nos pondremos en contacto contigo por WhatsApp para confirmar el pago y calcular el envío.",
-        { duration: 5000 },
+      const preference = await createMercadoPagoPreference(
+        orderId,
+        mpItems,
+        user.email ?? undefined,
       );
 
-      navigate("/mis-ordenes");
+      await updateOrderPreferenceId(orderId, preference.id);
+
+      // Limpiar el carrito
+      clearCart();
+      // Redirigir a Mercado Pago para completar el pago
+      window.location.href = preference.init_point;
     } catch (error) {
       console.error("Error al procesar el pedido:", error);
       toast.error("Error al procesar el pedido. Intenta nuevamente.");
@@ -352,12 +377,7 @@ export default function Checkout() {
                       disabled={isProcessing}
                       className="w-full bg-[#2391C3] hover:bg-[#1A6B8E] text-white font-bold py-3 sm:py-4 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-base sm:text-lg"
                     >
-                      {isProcessing ? "Procesando..." : "Confirmar Pedido"}
-                    </button>
-                  </form>
-                </>
-              ) : (
-                <>
+                      {isProcessing ? "Creando orden..." : "Pagar con Mercado Pago"}
                   <h2 className="text-xl sm:text-2xl font-bold mb-6 text-gray-800">
                     Dirección de Envío
                   </h2>
@@ -520,12 +540,7 @@ export default function Checkout() {
                       disabled={isProcessing}
                       className="w-full bg-[#2391C3] hover:bg-[#1A6B8E] text-white font-bold py-3 sm:py-4 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-base sm:text-lg mt-6"
                     >
-                      {isProcessing ? "Procesando..." : "Confirmar Pedido"}
-                    </button>
-                  </form>
-                </>
-              )}
-            </div>
+                      {isProcessing ? "Creando orden..." : "Pagar con Mercado Pago"}
           </div>
 
           {/* Resumen del pedido */}

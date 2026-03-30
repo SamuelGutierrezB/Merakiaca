@@ -206,3 +206,22 @@ export async function updateOrderStatus(
     throw new Error("Error al actualizar el estado de la orden");
   }
 }
+
+/**
+ * Guarda el ID de preferencia de Mercado Pago en la orden.
+ */
+export async function updateOrderPreferenceId(
+  orderId: string,
+  preferenceId: string,
+): Promise<void> {
+  try {
+    const orderRef = doc(db, FIREBASE_COLLECTIONS.ORDERS, orderId);
+    await updateDoc(orderRef, {
+      mercadoPagoPreferenceId: preferenceId,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error("Error saving preferenceId:", error);
+    throw new Error("Error al guardar la preferencia de pago");
+  }
+}
