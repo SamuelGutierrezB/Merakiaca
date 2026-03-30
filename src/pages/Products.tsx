@@ -56,7 +56,9 @@ export default function Products() {
     <Layout>
       <div className="max-w-7xl mx-auto px-4 py-8 sm:py-16">
         <div className="mb-6 sm:mb-8">
-          <Breadcrumbs items={[{ label: "Inicio", href: "/" }, { label: "Productos" }]} />
+          <Breadcrumbs
+            items={[{ label: "Inicio", href: "/" }, { label: "Productos" }]}
+          />
           <h1
             className="text-3xl sm:text-4xl font-bold text-center mb-3 sm:mb-4"
             style={{ color: "#2391C3" }}
