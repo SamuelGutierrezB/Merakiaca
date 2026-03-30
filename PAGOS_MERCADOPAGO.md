@@ -1,21 +1,27 @@
 # Integración de Pagos — Mercado Pago
 
-> Última actualización: 29 de marzo de 2026
+> Última actualización: 29 de marzo de 2026 | **Status: ✅ Cloud Function desplegada y segura**
 
 ---
 
 ## 1. Estado actual — qué está implementado
 
-### 1.1 Flujo general (front-end)
+### 1.1 Flujo general (seguro, backend-driven)
 
 ```
 Usuario llena Checkout
         ↓
 Se crea la orden en Firestore  (paymentStatus: "pending")
         ↓
-Se crea la Preferencia en MP API  (POST /checkout/preferences)
+Cliente llama Cloud Function callable: createMercadoPagoPreference(orderId)
         ↓
-Se guarda preferenceId en la orden
+Cloud Function valida que la orden le pertenezca al usuario autenticado
+        ↓
+Cloud Function recalcula precios desde Firestore (no confía en el cliente)
+        ↓
+Cloud Function accede al Access Token desde Secret Manager
+        ↓
+Cloud Function crea preferencia en MP API y guarda preferenceId
         ↓
 Browser redirige a init_point de Mercado Pago
         ↓
@@ -26,42 +32,61 @@ MP redirige a /orden/success | /orden/failure | /orden/pending
 OrderResult.tsx actualiza paymentStatus en Firestore
 ```
 
+**Mejoras de seguridad implementadas:**
+
+- ✅ Access Token **NO** está en el bundle JS del cliente (vive en Secret Manager)
+- ✅ Precios se recalculan desde Firestore (previene manipulación)
+- ✅ Validación de propiedad de la orden (solo el dueño puede pagar)
+- ✅ Autenticación requerida (Firebase Auth tokens en la petición)
+
 ### 1.2 Archivos clave
 
-| Archivo                               | Responsabilidad                                            |
-| ------------------------------------- | ---------------------------------------------------------- |
-| `src/services/mercadopago.service.ts` | Llama a la API de MP para crear la preferencia             |
-| `src/pages/Checkout.tsx`              | Formulario de datos + dispara la preferencia               |
-| `src/pages/OrderResult.tsx`           | Landing de vuelta de MP. Actualiza estado de la orden      |
-| `src/services/orders.service.ts`      | `updateOrderPaymentStatus`, `updateOrderPreferenceId`      |
-| `src/routes/AppRouter.tsx`            | Rutas `/orden/success`, `/orden/failure`, `/orden/pending` |
-| `.env.production`                     | Variables de entorno con credenciales de MP                |
+| Archivo                               | Responsabilidad                                                         |
+| ------------------------------------- | ----------------------------------------------------------------------- |
+| `functions/index.js`                  | **Cloud Function callable** que crea preferencias de MP de forma segura |
+| `functions/package.json`              | Dependencias de Firebase Functions                                      |
+| `src/services/mercadopago.service.ts` | Cliente que llama la Cloud Function (sin acceso a tokens)               |
+| `src/pages/Checkout.tsx`              | Formulario consumidor de la callable                                    |
+| `src/pages/OrderResult.tsx`           | Landing de vuelta de MP. Actualiza estado de la orden                   |
+| `src/services/firebase.ts`            | Inicializa `functions` para poder llamar callables                      |
+| `firebase.json`                       | Configuración que incluye functions                                     |
 
-### 1.3 Variables de entorno configuradas (`.env.production`)
+### 1.3 Variables de entorno (cliente)
 
-| Variable                        | Valor                                                       |
-| ------------------------------- | ----------------------------------------------------------- |
-| `VITE_MERCADOPAGO_PUBLIC_KEY`   | `APP_USR-143aba6d-7920-4259-b862-5082cb03509f`              |
-| `VITE_MERCADOPAGO_ACCESS_TOKEN` | `APP_USR-6819053407099765-032923-…` _(ver .env.production)_ |
-| `VITE_MERCADOPAGO_SUCCESS_URL`  | `https://merakiaca-3a05a.web.app/orden/success`             |
-| `VITE_MERCADOPAGO_FAILURE_URL`  | `https://merakiaca-3a05a.web.app/orden/failure`             |
-| `VITE_MERCADOPAGO_PENDING_URL`  | `https://merakiaca-3a05a.web.app/orden/pending`             |
+Ahora el cliente **NO necesita** `VITE_MERCADOPAGO_ACCESS_TOKEN`. Solo:
 
-> **⚠️ Importante:** el archivo `.env.production` NO debe subirse a git. Verificar que está en `.gitignore`.
+| Variable                       | Ubicación                       |
+| ------------------------------ | ------------------------------- |
+| `VITE_MERCADOPAGO_PUBLIC_KEY`  | `.env.production` (no sensible) |
+| `VITE_MERCADOPAGO_SUCCESS_URL` | `.env.production`               |
+| `VITE_MERCADOPAGO_FAILURE_URL` | `.env.production`               |
+| `VITE_MERCADOPAGO_PENDING_URL` | `.env.production`               |
 
-### 1.4 Parámetros que MP devuelve al redirigir
+### 1.4 Secretos de Firebase (backend)
 
-MP agrega estos query params a las URLs de retorno:
+| Secreto                    | Ubicación                  | Estado            |
+| -------------------------- | -------------------------- | ----------------- |
+| `MERCADOPAGO_ACCESS_TOKEN` | Secret Manager de Firebase | ✅ **Desplegado** |
 
-| Parámetro            | Descripción                                    |
-| -------------------- | ---------------------------------------------- |
-| `collection_id`      | ID del pago en MP                              |
-| `collection_status`  | `approved` / `rejected` / `pending`            |
-| `external_reference` | El `orderId` de Firestore que pasamos nosotros |
-| `payment_type`       | Método de pago usado                           |
-| `merchant_order_id`  | ID de la orden en MP                           |
+Acceso: solo Firebase Functions puede leerlo (configurado en IAM)
 
-### 1.5 Cómo se mapea el estado de pago
+### 1.5 Cloud Function
+
+- **Nombre:** `createMercadoPagoPreference`
+- **Región:** `us-central1`
+- **Tipo:** Callable (HTTPS)
+- **Autenticación:** Requiere usuario Firebase autenticado
+- **URL:** `https://us-central1-merakiaca-3a05a.cloudfunctions.net/createMercadoPagoPreference`
+
+**Validaciones internas:**
+
+1. Usuario debe estar autenticado
+2. `orderId` debe ser válido
+3. Orden debe existir en Firestore
+4. Orden debe pertenecer al usuario actual
+5. Preferencia se crea y se guarda el ID en Firestore
+
+### 1.6 Cómo mapea el estado de pago
 
 | Estado MP                  | PaymentStatus en Firestore                              |
 | -------------------------- | ------------------------------------------------------- |
@@ -92,37 +117,15 @@ MP agrega estos query params a las URLs de retorno:
    - Hacer `GET https://api.mercadopago.com/v1/payments/{id}` para obtener el estado real.
    - Llamar a `updateOrderPaymentStatus` con el resultado.
 
-### 2.2 🔴 CRÍTICO — Access Token en el cliente
+### 2.2 � IMPORTANTE — Ambiente de pruebas (Sandbox)
 
-El `VITE_MERCADOPAGO_ACCESS_TOKEN` queda embebido en el bundle JS que descarga el navegador. Cualquier persona puede inspeccionarlo con DevTools.
+Actualmente siempre usa `init_point` (producción). Para testing hay que:
 
-**Solución recomendada:** mover la creación de la preferencia a una Firebase Cloud Function:
+1. Crear otro secreto `MERCADOPAGO_ACCESS_TOKEN_TEST` en Firebase
+2. Agregar la lógica en la function para seleccionar según una env var
+3. Usar `sandbox_init_point` cuando sea test
 
-- El cliente llama a la función con los items y el orderId.
-- La función (servidor) crea la preferencia usando el token (que vive solo en el servidor).
-- La función devuelve el `init_point` al cliente.
-
-### 2.3 🟡 IMPORTANTE — Ambiente de pruebas (Sandbox)
-
-Actualmente el código siempre usa `init_point` (producción real). Para poder hacer pruebas sin procesar pagos reales hay que:
-
-1. Crear cuentas de prueba en [mercadopago.com/developers → Cuentas de prueba](https://www.mercadopago.com.mx/developers/es/docs/checkout-pro/additional-content/your-integrations/test/accounts).
-2. Obtener credenciales de test (`TEST-...`).
-3. Agregar variable `VITE_APP_ENV=test` y en el servicio usar `sandbox_init_point` cuando el entorno sea test.
-
-```ts
-// Cambio sugerido en mercadopago.service.ts
-const isTest = import.meta.env.VITE_APP_ENV === "test";
-window.location.href = isTest
-  ? preference.sandbox_init_point
-  : preference.init_point;
-```
-
-### 2.4 🟡 IMPORTANTE — Validación del monto en back-end
-
-El precio de los ítems viene del carrito del cliente (front-end). Un usuario malicioso podría manipular los valores. Lo correcto es que la Firebase Cloud Function (punto 2.2) recalcule el total desde los datos de Firestore antes de crear la preferencia, en lugar de confiar en los precios enviados por el cliente.
-
-### 2.5 🟡 IMPORTANTE — Expiración de preferencias
+### 2.3 🟠 MEJORA — Expiración de preferencias
 
 Actualmente las preferencias no expiran (`expires: false`). Conviene activar expiración para no acumular preferencias abiertas:
 
@@ -132,72 +135,96 @@ expiration_date_from: new Date().toISOString(),
 expiration_date_to: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 min
 ```
 
-### 2.6 🟠 MEJORA — Reintentar pago de una orden pendiente
+### 2.4 🟠 MEJORA — Reintentar pago de una orden pendiente
 
 Actualmente si el usuario falla el pago termina en `/carrito` sin ningún vínculo a su orden. Se debería:
 
 - Guardar el `orderId` en la sesión antes de redirigir.
 - En la pantalla de fallo, ofrecer botón "Reintentar pago" que crea una nueva preferencia para la misma orden (sin crear una orden duplicada).
 
-### 2.7 🟠 MEJORA — Notificación al admin cuando llega un pago
+### 2.5 🟠 MEJORA — Notificación al admin cuando llega un pago
 
 No hay ningún mecanismo para avisar al equipo de Merakiaca cuando se aprueba un pago. Opciones:
 
 - Firebase Cloud Function trigger en `onUpdate` de la colección `orders` que envíe un email o mensaje de WhatsApp/Telegram cuando `paymentStatus` cambia a `approved`.
 
-### 2.8 🟠 MEJORA — Panel admin: detalle de pago MP
+### 2.6 🟠 MEJORA — Panel admin: detalle de pago MP
 
 En `AdminOrders`, solo se muestra el `mercadoPagoPaymentId`. Sería útil agregar:
 
 - Enlace directo al pago en el panel de MP.
 - Visualización del método de pago (tarjeta, OXXO, transferencia, etc.).
 
-### 2.9 🟢 MENOR — Página de resultado sin `external_reference`
+### 2.7 🟢 MENOR — Página de resultado sin `external_reference`
 
 Si MP redirige sin los query params (ej. usuario hace refresh en `/orden/success`), la pantalla muestra el mensaje de éxito pero **no actualiza ninguna orden** y no da contexto al usuario. Se puede mejorar detectando el caso y mostrando un mensaje genérico distinto.
 
 ---
 
-## 3. Credenciales necesarias
+## 3. Credenciales y secretos
 
-### Producción (ya configuradas)
+### En `.env.production` (público, OK):
+```
+VITE_MERCADOPAGO_PUBLIC_KEY=APP_USR-143aba6d-7920-4259-b862-5082cb03509f
+VITE_MERCADOPAGO_SUCCESS_URL=https://merakiaca-3a05a.web.app/orden/success
+VITE_MERCADOPAGO_FAILURE_URL=https://merakiaca-3a05a.web.app/orden/failure
+VITE_MERCADOPAGO_PENDING_URL=https://merakiaca-3a05a.web.app/orden/pending
+```
 
-| Dato          | Valor                                          |
-| ------------- | ---------------------------------------------- |
-| Public Key    | `APP_USR-143aba6d-7920-4259-b862-5082cb03509f` |
-| Client ID     | `6819053407099765`                             |
-| Access Token  | ver `.env.production`                          |
-| Client Secret | guardar en lugar seguro, NO en código          |
+### En Firebase Secret Manager (privado, ✅ Seguro):
+```
+MERCADOPAGO_ACCESS_TOKEN = APP_USR-6819053407099765-032923-…
+```
 
-### Para pruebas (pendiente obtener)
+**Cambios vs antes:**
+- ✅ Access Token **removido** de `.env.production`
+- ✅ Access Token ahora en **Firebase Secret Manager**
+- ✅ Solo la Cloud Function puede acceder al secreto
 
-Crear en: https://www.mercadopago.com.mx/developers/panel/app/6819053407099765/test-credentials
-
-| Dato              | Valor                  |
-| ----------------- | ---------------------- |
-| Public Key TEST   | `TEST-...` (pendiente) |
-| Access Token TEST | `TEST-...` (pendiente) |
-
-### Tarjetas de prueba (cuando se tenga sandbox)
-
-Consultar la lista oficial: https://www.mercadopago.com.mx/developers/es/docs/checkout-pro/additional-content/your-integrations/test/cards
-
----
-
-## 4. Flujo de dinero real
-
-- Los pagos aprobados **se acreditan directamente en la cuenta de MP** asociada a las credenciales.
-- Para retirar el dinero: panel de MP → Dinero disponible → Transferir a cuenta bancaria.
-- MP cobra comisión por transacción (~3.49% + IVA para tarjeta). Sin cargo para OXXO (el comprador paga la comisión).
+### Cliente NO incluye:
+- ❌ Access Token
+- ❌ Client Secret
+- ❌ Credenciales de Admin
 
 ---
 
-## 5. Checklist para pasar a producción "segura"
+## 4. Comandos útiles
 
-- [ ] Mover `ACCESS_TOKEN` a Firebase Cloud Function (punto 2.2)
-- [ ] Configurar Webhook IPN en el panel de MP (punto 2.1)
-- [ ] Activar expiración de preferencias (punto 2.5)
-- [ ] Recalcular precios en servidor (punto 2.4)
-- [ ] Verificar que `.env.production` esté en `.gitignore`
-- [ ] Probar flujo completo con cuentas de prueba antes de lanzar
-- [ ] Configurar notificación al admin por pago aprobado (punto 2.7)
+```bash
+# Desplegar solo Cloud Functions
+npm run deploy:functions
+
+# Ver logs de la function
+firebase functions:log --project merakiaca-3a05a
+
+# Verificar secretos
+firebase functions:secrets:list --project merakiaca-3a05a
+
+# Actualizar un secreto
+firebase functions:secrets:set MERCADOPAGO_ACCESS_TOKEN --project merakiaca-3a05a
+
+# Local emulation
+firebase emulators:start
+```
+
+---
+
+## 5. Flujo de dinero real
+
+- Los pagos aprobados se acreditan en la cuenta de MP de la empresa
+- Comisión MP: ~3.49% + IVA para tarjeta (sin comisión cliente)
+- OXXO: cliente paga la comisión, 0% para empresa
+- Transferencia bancaria desde dashboard de MP
+
+---
+
+## 6. Checklist de seguridad (pendiente)
+
+- [x] Mover `ACCESS_TOKEN` a Firebase Cloud Function ✅ HECHO
+- [x] Validar propiedad de orden (solo el dueño puede pagar) ✅ HECHO
+- [x] Recalcular precios en backend ✅ HECHO
+- [ ] Configurar Webhook IPN en el panel de MP (punto 2.1) 🔴 PENDIENTE CRÍTICO
+- [ ] Ambiente de pruebas (Sandbox) (punto 2.2) 🟡 PENDIENTE
+- [ ] Activar expiración de preferencias (punto 2.3) 🟠 MEJORA
+- [ ] Reintentar pago (punto 2.4) 🟠 MEJORA
+- [ ] Notificación al admin (punto 2.5) 🟠 MEJORA
