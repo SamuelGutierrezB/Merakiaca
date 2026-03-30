@@ -17,7 +17,8 @@ const TITLE: Record<ResultType, string> = {
 };
 
 const DESCRIPTION: Record<ResultType, string> = {
-  success: "Tu pedido ha sido confirmado. Pronto recibirás noticias por WhatsApp.",
+  success:
+    "Tu pedido ha sido confirmado. Pronto recibirás noticias por WhatsApp.",
   failure:
     "El pago no pudo completarse. Puedes intentarlo nuevamente desde tu carrito.",
   pending:
@@ -50,9 +51,11 @@ export default function OrderResult() {
       : "success";
 
   // Parámetros que envía Mercado Pago
-  const collectionId = searchParams.get("collection_id") ?? searchParams.get("payment_id");
+  const collectionId =
+    searchParams.get("collection_id") ?? searchParams.get("payment_id");
   const externalReference = searchParams.get("external_reference"); // orderId
-  const collectionStatus = searchParams.get("collection_status") ?? searchParams.get("status");
+  const collectionStatus =
+    searchParams.get("collection_status") ?? searchParams.get("status");
 
   useEffect(() => {
     if (!externalReference || processed) return;
@@ -72,7 +75,7 @@ export default function OrderResult() {
     )
       .catch((err) => console.error("Error actualizando estado de pago:", err))
       .finally(() => setProcessed(true));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [externalReference]);
 
   const handleGoToOrders = () => navigate("/mis-ordenes");

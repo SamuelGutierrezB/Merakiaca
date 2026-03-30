@@ -9,7 +9,7 @@ import Layout from "@/components/layout/Layout";
 import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 import { formatPrice } from "@/utils/formatters";
-import { createOrder, updateOrderPreferenceId } from "@/services/orders.service";
+import { createOrder } from "@/services/orders.service";
 import { createMercadoPagoPreference } from "@/services/mercadopago.service";
 import type { OrderItem, Address } from "@/types/order.types";
 import BranchMap from "@/components/common/BranchMap";
@@ -151,26 +151,11 @@ export default function Checkout() {
         total,
       });
 
-      // Crear preferencia en Mercado Pago
-      const mpItems = orderItems.map((item) => ({
-        id: item.productId,
-        title: `${item.productName} — ${item.fabricName}`,
-        quantity: item.quantity,
-        unit_price: item.unitPrice,
-        currency_id: "MXN",
-      }));
-
-      const preference = await createMercadoPagoPreference(
-        orderId,
-        mpItems,
-        user.email ?? undefined,
-      );
-
-      await updateOrderPreferenceId(orderId, preference.id);
+      const preference = await createMercadoPagoPreference(orderId);
 
       clearCart();
       // Redirigir a Mercado Pago para completar el pago
-      window.location.href = preference.init_point;
+      window.location.href = preference.initPoint;
     } catch (error) {
       console.error("Error al procesar el pedido:", error);
       toast.error("Error al procesar el pedido. Intenta nuevamente.");
@@ -210,27 +195,12 @@ export default function Checkout() {
         total,
       });
 
-      // Crear preferencia en Mercado Pago
-      const mpItems = orderItems.map((item) => ({
-        id: item.productId,
-        title: `${item.productName} — ${item.fabricName}`,
-        quantity: item.quantity,
-        unit_price: item.unitPrice,
-        currency_id: "MXN",
-      }));
-
-      const preference = await createMercadoPagoPreference(
-        orderId,
-        mpItems,
-        user.email ?? undefined,
-      );
-
-      await updateOrderPreferenceId(orderId, preference.id);
+      const preference = await createMercadoPagoPreference(orderId);
 
       // Limpiar el carrito
       clearCart();
       // Redirigir a Mercado Pago para completar el pago
-      window.location.href = preference.init_point;
+      window.location.href = preference.initPoint;
     } catch (error) {
       console.error("Error al procesar el pedido:", error);
       toast.error("Error al procesar el pedido. Intenta nuevamente.");
@@ -377,7 +347,9 @@ export default function Checkout() {
                       disabled={isProcessing}
                       className="w-full bg-[#2391C3] hover:bg-[#1A6B8E] text-white font-bold py-3 sm:py-4 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-base sm:text-lg"
                     >
-                      {isProcessing ? "Creando orden..." : "Pagar con Mercado Pago"}
+                      {isProcessing
+                        ? "Creando orden..."
+                        : "Pagar con Mercado Pago"}
                     </button>
                   </form>
                 </>
@@ -545,7 +517,9 @@ export default function Checkout() {
                       disabled={isProcessing}
                       className="w-full bg-[#2391C3] hover:bg-[#1A6B8E] text-white font-bold py-3 sm:py-4 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-base sm:text-lg mt-6"
                     >
-                      {isProcessing ? "Creando orden..." : "Pagar con Mercado Pago"}
+                      {isProcessing
+                        ? "Creando orden..."
+                        : "Pagar con Mercado Pago"}
                     </button>
                   </form>
                 </>
