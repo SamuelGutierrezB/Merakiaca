@@ -11,7 +11,7 @@ export const BASE_FABRIC_COLORS: Omit<FabricOption, "id" | "stock">[] = [
   },
   {
     name: "Rosa Palo",
-    imageUrl: "#F9A8D4",
+    imageUrl: "#CD1969",
     priceModifier: 0,
   },
   {
