@@ -164,6 +164,7 @@ Si MP redirige sin los query params (ej. usuario hace refresh en `/orden/success
 ## 3. Credenciales y secretos
 
 ### En `.env.production` (público, OK):
+
 ```
 VITE_MERCADOPAGO_PUBLIC_KEY=APP_USR-143aba6d-7920-4259-b862-5082cb03509f
 VITE_MERCADOPAGO_SUCCESS_URL=https://merakiaca-3a05a.web.app/orden/success
@@ -172,16 +173,19 @@ VITE_MERCADOPAGO_PENDING_URL=https://merakiaca-3a05a.web.app/orden/pending
 ```
 
 ### En Firebase Secret Manager (privado, ✅ Seguro):
+
 ```
 MERCADOPAGO_ACCESS_TOKEN = APP_USR-6819053407099765-032923-…
 ```
 
 **Cambios vs antes:**
+
 - ✅ Access Token **removido** de `.env.production`
 - ✅ Access Token ahora en **Firebase Secret Manager**
 - ✅ Solo la Cloud Function puede acceder al secreto
 
 ### Cliente NO incluye:
+
 - ❌ Access Token
 - ❌ Client Secret
 - ❌ Credenciales de Admin

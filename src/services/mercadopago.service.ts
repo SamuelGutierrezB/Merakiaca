@@ -1,5 +1,4 @@
-import { httpsCallable } from "firebase/functions";
-import { functions } from "@/services/firebase";
+import { getAuth } from "firebase/auth";
 
 export interface MPPreferenceResult {
   preferenceId: string;
@@ -14,11 +13,34 @@ export interface MPPreferenceResult {
 export async function createMercadoPagoPreference(
   orderId: string,
 ): Promise<MPPreferenceResult> {
-  const createPreference = httpsCallable<
-    { orderId: string },
-    MPPreferenceResult
-  >(functions, "createMercadoPagoPreference");
+  const auth = getAuth();
+  const user = auth.currentUser;
 
-  const response = await createPreference({ orderId });
-  return response.data;
+  if (!user) {
+    throw new Error("Usuario no autenticado");
+  }
+
+  // Get Firebase Auth token
+  const idToken = await user.getIdToken();
+
+  const response = await fetch(
+    "https://us-central1-merakiaca-3a05a.cloudfunctions.net/mpCreatePreference",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: JSON.stringify({ orderId }),
+    },
+  );
+
+  if (!response.ok) {
+    const error = await response
+      .json()
+      .catch(() => ({ error: "Unknown error" }));
+    throw new Error(error.error || `HTTP ${response.status}`);
+  }
+
+  return response.json();
 }
