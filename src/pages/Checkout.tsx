@@ -378,6 +378,11 @@ export default function Checkout() {
                       className="w-full bg-[#2391C3] hover:bg-[#1A6B8E] text-white font-bold py-3 sm:py-4 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-base sm:text-lg"
                     >
                       {isProcessing ? "Creando orden..." : "Pagar con Mercado Pago"}
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <>
                   <h2 className="text-xl sm:text-2xl font-bold mb-6 text-gray-800">
                     Dirección de Envío
                   </h2>
@@ -541,6 +546,11 @@ export default function Checkout() {
                       className="w-full bg-[#2391C3] hover:bg-[#1A6B8E] text-white font-bold py-3 sm:py-4 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-base sm:text-lg mt-6"
                     >
                       {isProcessing ? "Creando orden..." : "Pagar con Mercado Pago"}
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Resumen del pedido */}
