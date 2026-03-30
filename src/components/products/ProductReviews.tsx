@@ -303,7 +303,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
 
       {/* Formulario para agregar reseña */}
       {user && (
-        <div className="bg-gray-50 p-6 rounded-lg">
+        <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
           {isLoadingPermission ? (
             <div className="text-center py-4">
               <div className="animate-spin rounded-full h-8 w-8 border-4 border-[#2391C3] border-t-transparent mx-auto"></div>
@@ -367,11 +367,11 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
             </div>
           ) : (
             <div className="text-center py-4 space-y-3">
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Debes comprar este producto para poder dejar una reseña
               </p>
-              <div className="border-t pt-3">
-                <p className="text-sm text-gray-600 mb-2">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                   ¿Eres cliente frecuente?
                 </p>
                 <button

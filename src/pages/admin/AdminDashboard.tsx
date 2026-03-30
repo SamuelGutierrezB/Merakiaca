@@ -42,6 +42,7 @@ import type {
   OrdersByStatus,
 } from "@/services/stats.service";
 import toast from "react-hot-toast";
+import { useThemeStore } from "@/store/themeStore";
 
 const STATUS_COLORS = ["#2391C3", "#8A4A86", "#D7322D", "#4CAF50", "#FF9800"];
 const STATUS_LABELS: Record<string, string> = {
@@ -53,6 +54,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default function AdminDashboard() {
+  const isDark = useThemeStore((state) => state.isDark);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [revenueData, setRevenueData] = useState<RevenueByMonth[]>([]);
   const [topProducts, setTopProducts] = useState<TopProduct[]>([]);
@@ -106,50 +108,62 @@ export default function AdminDashboard() {
           >
             Panel de Administración
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Bienvenida Madre, gestiona tu tienda desde aquí
           </p>
         </div>
 
         {/* Enlaces rápidos */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
             Accesos Rápidos
           </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Link
               to="/admin/productos"
-              className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
+              className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg dark:shadow-gray-900 hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
               data-tour="dashboard-products"
             >
               <Package className="h-20 w-20 mx-auto mb-4 text-[#2391C3]" />
-              <h2 className="text-2xl font-bold mb-2">Productos</h2>
-              <p className="text-gray-600">Gestionar catálogo de productos</p>
+              <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">
+                Productos
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                Gestionar catálogo de productos
+              </p>
             </Link>
 
             <Link
               to="/admin/ordenes"
-              className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
+              className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg dark:shadow-gray-900 hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
               data-tour="dashboard-orders"
             >
               <ShoppingBag className="h-20 w-20 mx-auto mb-4 text-[#E85D5D]" />
-              <h2 className="text-2xl font-bold mb-2">Órdenes</h2>
-              <p className="text-gray-600">Ver y gestionar órdenes</p>
+              <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">
+                Órdenes
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                Ver y gestionar órdenes
+              </p>
             </Link>
 
             <Link
               to="/admin/categorias"
-              className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
+              className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg dark:shadow-gray-900 hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
               data-tour="dashboard-categories"
             >
               <FolderTree className="h-20 w-20 mx-auto mb-4 text-[#8A4A86]" />
-              <h2 className="text-2xl font-bold mb-2">Categorías</h2>
-              <p className="text-gray-600">Gestionar categorías</p>
+              <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">
+                Categorías
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                Gestionar categorías
+              </p>
             </Link>
 
             <Link
               to="/admin/codigos-frecuentes"
-              className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
+              className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg dark:shadow-gray-900 hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
             >
               <svg
                 className="h-20 w-20 mx-auto mb-4 text-[#FFB800]"
@@ -164,8 +178,10 @@ export default function AdminDashboard() {
                   d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"
                 />
               </svg>
-              <h2 className="text-2xl font-bold mb-2">Códigos</h2>
-              <p className="text-gray-600">
+              <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">
+                Códigos
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
                 Gestionar códigos de clientes frecuentes
               </p>
             </Link>
@@ -175,11 +191,11 @@ export default function AdminDashboard() {
         {/* Tarjetas de métricas principales */}
         {stats && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-[#2391C3]">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-900 border-l-4 border-[#2391C3]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Ingresos Totales</p>
-                  <p className="text-2xl font-bold text-gray-800">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Ingresos Totales</p>
+                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                     {formatPrice(stats.totalRevenue)}
                   </p>
                 </div>
@@ -187,11 +203,11 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-green-500">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-900 border-l-4 border-green-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Órdenes Pagadas</p>
-                  <p className="text-2xl font-bold text-gray-800">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Órdenes Pagadas</p>
+                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                     {stats.totalOrders}
                   </p>
                 </div>
@@ -199,13 +215,13 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-orange-500">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-900 border-l-4 border-orange-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                     Órdenes Pendientes
                   </p>
-                  <p className="text-2xl font-bold text-gray-800">
+                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                     {stats.pendingOrders}
                   </p>
                 </div>
@@ -213,13 +229,13 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-[#8A4A86]">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-900 border-l-4 border-[#8A4A86]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                     Órdenes Entregadas
                   </p>
-                  <p className="text-2xl font-bold text-gray-800">
+                  <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                     {stats.completedOrders}
                   </p>
                 </div>
@@ -232,23 +248,40 @@ export default function AdminDashboard() {
         {/* Gráficas */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Gráfica de ingresos por mes */}
-          <div className="bg-white p-6 rounded-xl shadow-md">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-900">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-[#2391C3]" />
               Ingresos de los Últimos 6 Meses
             </h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={revenueData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke={isDark ? "#374151" : "#d1d5db"}
+                />
+                <XAxis
+                  dataKey="month"
+                  stroke={isDark ? "#d1d5db" : "#4b5563"}
+                  tick={{ fill: isDark ? "#d1d5db" : "#4b5563" }}
+                />
+                <YAxis
+                  stroke={isDark ? "#d1d5db" : "#4b5563"}
+                  tick={{ fill: isDark ? "#d1d5db" : "#4b5563" }}
+                />
                 <Tooltip
                   formatter={(value: number | undefined) =>
                     value ? formatPrice(value) : "$0"
                   }
-                  labelStyle={{ color: "#000" }}
+                  contentStyle={{
+                    backgroundColor: isDark ? "#111827" : "#ffffff",
+                    border: `1px solid ${isDark ? "#374151" : "#e5e7eb"}`,
+                    color: isDark ? "#f3f4f6" : "#111827",
+                  }}
+                  labelStyle={{ color: isDark ? "#f3f4f6" : "#000" }}
                 />
-                <Legend />
+                <Legend
+                  wrapperStyle={{ color: isDark ? "#d1d5db" : "#4b5563" }}
+                />
                 <Line
                   type="monotone"
                   dataKey="revenue"
@@ -261,8 +294,8 @@ export default function AdminDashboard() {
           </div>
 
           {/* Gráfica de órdenes por estado */}
-          <div className="bg-white p-6 rounded-xl shadow-md">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-900">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
               Órdenes por Estado
             </h3>
             <ResponsiveContainer width="100%" height={300}>
@@ -285,22 +318,39 @@ export default function AdminDashboard() {
                     />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: isDark ? "#111827" : "#ffffff",
+                    border: `1px solid ${isDark ? "#374151" : "#e5e7eb"}`,
+                    color: isDark ? "#f3f4f6" : "#111827",
+                  }}
+                  labelStyle={{ color: isDark ? "#f3f4f6" : "#000" }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Productos más vendidos */}
-        <div className="bg-white p-6 rounded-xl shadow-md mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-900 mb-8">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
             Top 5 Productos Más Vendidos
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={topProducts}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="productName" />
-              <YAxis />
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke={isDark ? "#374151" : "#d1d5db"}
+              />
+              <XAxis
+                dataKey="productName"
+                stroke={isDark ? "#d1d5db" : "#4b5563"}
+                tick={{ fill: isDark ? "#d1d5db" : "#4b5563" }}
+              />
+              <YAxis
+                stroke={isDark ? "#d1d5db" : "#4b5563"}
+                tick={{ fill: isDark ? "#d1d5db" : "#4b5563" }}
+              />
               <Tooltip
                 formatter={(
                   value: number | undefined,
@@ -308,8 +358,16 @@ export default function AdminDashboard() {
                 ) =>
                   value ? (name === "revenue" ? formatPrice(value) : value) : 0
                 }
+                contentStyle={{
+                  backgroundColor: isDark ? "#111827" : "#ffffff",
+                  border: `1px solid ${isDark ? "#374151" : "#e5e7eb"}`,
+                  color: isDark ? "#f3f4f6" : "#111827",
+                }}
+                labelStyle={{ color: isDark ? "#f3f4f6" : "#000" }}
               />
-              <Legend />
+              <Legend
+                wrapperStyle={{ color: isDark ? "#d1d5db" : "#4b5563" }}
+              />
               <Bar dataKey="sales" fill="#2391C3" name="Unidades Vendidas" />
               <Bar dataKey="revenue" fill="#8A4A86" name="Ingresos" />
             </BarChart>

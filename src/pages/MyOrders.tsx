@@ -175,12 +175,12 @@ export default function MyOrders() {
             ))}
           </div>
         ) : orders.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-12 text-center">
             <Package className="h-24 w-24 mx-auto mb-4 text-gray-400" />
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
               No tienes órdenes todavía
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               Cuando realices una compra, tus órdenes aparecerán aquí
             </p>
             <Link
@@ -195,14 +195,14 @@ export default function MyOrders() {
             {orders.map((order) => (
               <div
                 key={order.id}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-6 hover:shadow-lg transition-shadow"
               >
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-4 border-b">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-800">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
                       Orden #{order.id.slice(0, 8)}
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {formatDate(order.createdAt)}
                     </p>
                   </div>
@@ -227,8 +227,10 @@ export default function MyOrders() {
                       </span>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-600">Total</p>
-                      <p className="text-xl font-bold text-gray-900">
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        Total
+                      </p>
+                      <p className="text-xl font-bold text-gray-900 dark:text-gray-100">
                         {formatPrice(order.total)}
                       </p>
                     </div>
@@ -237,7 +239,7 @@ export default function MyOrders() {
 
                 {/* Lista de productos */}
                 <div className="space-y-2 mb-4">
-                  <p className="text-sm font-semibold text-gray-700">
+                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                     Productos:
                   </p>
                   {order.items.map((item, index) => (
@@ -246,14 +248,14 @@ export default function MyOrders() {
                       className="flex justify-between items-center text-sm"
                     >
                       <div>
-                        <span className="text-gray-800">
+                        <span className="text-gray-800 dark:text-gray-100">
                           {item.productName}
                         </span>
-                        <span className="text-gray-500 ml-2">
+                        <span className="text-gray-500 dark:text-gray-400 ml-2">
                           ({item.fabricName})
                         </span>
                       </div>
-                      <div className="text-gray-600">
+                      <div className="text-gray-600 dark:text-gray-300">
                         {item.quantity} × {formatPrice(item.unitPrice)} ={" "}
                         {formatPrice(item.totalPrice)}
                       </div>
@@ -264,7 +266,7 @@ export default function MyOrders() {
                 {/* Historial de cambios */}
                 {order.statusHistory?.length ||
                 order.paymentStatusHistory?.length ? (
-                  <div className="border-t border-gray-200 pt-4 mt-4">
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
                     <OrderHistory
                       statusHistory={order.statusHistory}
                       paymentStatusHistory={order.paymentStatusHistory}
@@ -273,25 +275,25 @@ export default function MyOrders() {
                 ) : null}
 
                 {/* Dirección de envío o recolección */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-sm font-semibold text-gray-700 mb-2">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                     {order.shippingAddress.street.startsWith(
                       "Recolección en sucursal",
                     )
                       ? "Recolección en sucursal:"
                       : "Dirección de Envío:"}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {order.shippingAddress.fullName}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {order.shippingAddress.street}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {order.shippingAddress.city}, {order.shippingAddress.state}{" "}
                     {order.shippingAddress.zipCode}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     Tel: {order.shippingAddress.phone}
                   </p>
                 </div>

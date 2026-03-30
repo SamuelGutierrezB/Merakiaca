@@ -1,7 +1,23 @@
 @import "tailwindcss";
 
 /* Dark mode via .dark class on <html> */
-@variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #e8dfca 0%, #ffffff 50%, #e8dfca 100%);
+  transition: background 250ms ease;
+}
+
+html.dark body {
+  background: linear-gradient(135deg, #030712 0%, #111827 50%, #030712 100%);
+}
 
 /* Fade-in-up animation for sections */
 @keyframes fadeInUp {

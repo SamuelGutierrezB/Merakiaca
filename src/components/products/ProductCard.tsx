@@ -28,10 +28,10 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       to={`/products/${product.id}`}
-      className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow relative"
+      className="group bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 overflow-hidden hover:shadow-xl transition-shadow relative"
     >
       {/* Imagen */}
-      <div className="relative bg-gray-100 aspect-square overflow-hidden">
+      <div className="relative bg-gray-100 dark:bg-gray-700 aspect-square overflow-hidden">
         {product.mainImage ? (
           <img
             src={product.mainImage}
@@ -48,7 +48,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {user && (
           <button
             onClick={handleToggleFavorite}
-            className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform z-10"
+            className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-md flex items-center justify-center hover:scale-110 transition-transform z-10"
             aria-label={
               isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"
             }
@@ -142,11 +142,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       {/* Información */}
       <div className="p-3 sm:p-4 space-y-2">
-        <h3 className="font-semibold text-sm sm:text-base text-gray-800 group-hover:text-[#2391C3] transition-colors line-clamp-2">
+        <h3 className="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-100 group-hover:text-[#2391C3] transition-colors line-clamp-2">
           {product.name}
         </h3>
 
-        <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
           {product.description !== "sin descripcion"
             ? product.description
             : null}
@@ -154,7 +154,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         <div className="flex items-center justify-between pt-2">
           <div>
-            <span className="text-xl sm:text-2xl font-bold text-gray-900">
+            <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {formatPrice(product.basePrice)}
             </span>
           </div>
@@ -166,7 +166,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             ).map((cat, idx) => (
               <span
                 key={idx}
-                className="px-2 py-1 bg-[#E8DFCA] text-gray-800 rounded-full text-xs font-semibold"
+                className="px-2 py-1 bg-[#E8DFCA] dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-xs font-semibold"
               >
                 {cat}
               </span>

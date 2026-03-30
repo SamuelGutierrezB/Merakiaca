@@ -242,12 +242,12 @@ export default function AdminOrders() {
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1
-                className="text-3xl font-bold text-gray-800"
+                className="text-3xl font-bold text-gray-800 dark:text-gray-100"
                 data-tour="orders-title"
               >
                 Gestión de Órdenes
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
                 Administra los pedidos de tus clientes
               </p>
             </div>

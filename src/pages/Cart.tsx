@@ -19,13 +19,13 @@ export default function Cart() {
           >
             Carrito de Compras
           </h1>
-          <p className="text-center text-gray-600 mb-8 sm:mb-12">
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-8 sm:mb-12">
             Tu carrito está vacío
           </p>
 
-          <div className="text-center bg-white p-8 sm:p-12 rounded-2xl shadow-lg">
+          <div className="text-center bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-2xl shadow-lg dark:shadow-gray-900">
             <ShoppingCart className="h-20 w-20 sm:h-24 sm:w-24 mx-auto mb-4 sm:mb-6 text-gray-400" />
-            <p className="text-lg sm:text-xl text-gray-600 mb-4 sm:mb-6">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-4 sm:mb-6">
               Aún no has agregado productos a tu carrito
             </p>
             <Link
@@ -65,11 +65,11 @@ export default function Cart() {
             {items.map((item) => (
               <div
                 key={`${item.productId}-${item.fabricId}`}
-                className="bg-white rounded-lg shadow-md p-4 sm:p-6"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-4 sm:p-6"
               >
                 <div className="flex gap-4">
                   {/* Imagen */}
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
                     {item.productImage ? (
                       <img
                         src={item.productImage}
@@ -85,20 +85,20 @@ export default function Cart() {
 
                   {/* Información */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-800 mb-1 text-sm sm:text-base truncate">
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-1 text-sm sm:text-base truncate">
                       {item.productName}
                     </h3>
-                    <p className="text-xs sm:text-sm text-gray-600 mb-2">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-2">
                       Tela:{" "}
                       <span className="font-medium">{item.fabricName}</span>
                     </p>
-                    <p className="text-base sm:text-lg font-bold text-gray-900 mb-3">
+                    <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">
                       {formatPrice(item.priceAtAdd)}
                     </p>
 
                     {/* Controles de cantidad */}
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center border border-gray-300 rounded-lg">
+                      <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg">
                         <button
                           onClick={() =>
                             updateQuantity(
@@ -107,11 +107,11 @@ export default function Cart() {
                               item.quantity - 1,
                             )
                           }
-                          className="p-2 hover:bg-gray-100 transition-colors"
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                         >
-                          <MinusIcon className="h-4 w-4 text-gray-600" />
+                          <MinusIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                         </button>
-                        <span className="px-4 py-2 font-semibold text-sm sm:text-base min-w-[3rem] text-center">
+                        <span className="px-4 py-2 font-semibold text-sm sm:text-base min-w-[3rem] text-center text-gray-800 dark:text-gray-100">
                           {item.quantity}
                         </span>
                         <button
@@ -122,9 +122,9 @@ export default function Cart() {
                               item.quantity + 1,
                             )
                           }
-                          className="p-2 hover:bg-gray-100 transition-colors"
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                         >
-                          <PlusIcon className="h-4 w-4 text-gray-600" />
+                          <PlusIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                         </button>
                       </div>
 
@@ -142,17 +142,17 @@ export default function Cart() {
 
                   {/* Subtotal (solo desktop) */}
                   <div className="hidden sm:flex flex-col items-end justify-between">
-                    <p className="text-sm text-gray-600">Subtotal</p>
-                    <p className="text-xl font-bold text-gray-800">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Subtotal</p>
+                    <p className="text-xl font-bold text-gray-800 dark:text-gray-100">
                       {formatPrice(item.priceAtAdd * item.quantity)}
                     </p>
                   </div>
                 </div>
 
                 {/* Subtotal móvil */}
-                <div className="sm:hidden flex justify-between items-center mt-3 pt-3 border-t border-gray-200">
-                  <span className="text-sm text-gray-600">Subtotal:</span>
-                  <span className="text-lg font-bold text-gray-800">
+                <div className="sm:hidden flex justify-between items-center mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Subtotal:</span>
+                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">
                     {formatPrice(item.priceAtAdd * item.quantity)}
                   </span>
                 </div>
@@ -162,25 +162,25 @@ export default function Cart() {
 
           {/* Resumen */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-6 sticky top-24">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
                 Resumen del Pedido
               </h2>
 
               <div className="space-y-3 mb-6">
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-600 dark:text-gray-300">
                   <span>Subtotal:</span>
                   <span className="font-semibold">
                     {formatPrice(getTotal())}
                   </span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-600 dark:text-gray-300">
                   <span>Envío:</span>
                   <span className="font-semibold">A calcular</span>
                 </div>
-                <div className="border-t border-gray-200 pt-3 flex justify-between text-lg font-bold">
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-3 flex justify-between text-lg font-bold">
                   <span>Total:</span>
-                  <span className="text-gray-900">
+                  <span className="text-gray-900 dark:text-gray-100">
                     {formatPrice(getTotal())}
                   </span>
                 </div>
@@ -200,8 +200,8 @@ export default function Cart() {
                 Seguir Comprando
               </Link>
 
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <p className="text-sm text-gray-600 text-center"></p>
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-sm text-gray-600 dark:text-gray-300 text-center"></p>
               </div>
             </div>
           </div>

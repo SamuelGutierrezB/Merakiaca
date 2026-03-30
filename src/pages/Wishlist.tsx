@@ -97,17 +97,19 @@ export default function Wishlist() {
         </div>
 
         {loading ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-12 text-center">
             <Loader2 className="h-16 w-16 mx-auto mb-4 text-[#2391C3] animate-spin" />
-            <p className="text-gray-600">Cargando favoritos...</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              Cargando favoritos...
+            </p>
           </div>
         ) : products.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-12 text-center">
             <Heart className="h-24 w-24 mx-auto mb-4 text-gray-400" />
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
               No tienes favoritos todavía
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               Explora nuestros productos y agrega tus favoritos haciendo clic en
               el corazón
             </p>
@@ -124,11 +126,11 @@ export default function Wishlist() {
             {products.map((product) => (
               <div
                 key={product.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow group"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 overflow-hidden hover:shadow-xl transition-shadow group"
               >
                 <Link to={`/producto/${product.id}`} className="block relative">
                   {/* Imagen */}
-                  <div className="relative bg-gray-100 aspect-square overflow-hidden">
+                  <div className="relative bg-gray-100 dark:bg-gray-700 aspect-square overflow-hidden">
                     {product.mainImage ? (
                       <img
                         src={product.mainImage}
@@ -147,7 +149,7 @@ export default function Wishlist() {
                         e.preventDefault();
                         handleRemove(product.id);
                       }}
-                      className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:scale-110 transition-transform z-10"
+                      className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-md flex items-center justify-center hover:scale-110 transition-transform z-10"
                       aria-label="Quitar de favoritos"
                     >
                       <Heart className="h-5 w-5 fill-red-500 text-red-500" />
@@ -161,19 +163,19 @@ export default function Wishlist() {
                     to={`/producto/${product.id}`}
                     className="block hover:text-[#2391C3] transition-colors"
                   >
-                    <h3 className="font-semibold text-base text-gray-800 line-clamp-2">
+                    <h3 className="font-semibold text-base text-gray-800 dark:text-gray-100 line-clamp-2">
                       {product.name}
                     </h3>
                   </Link>
 
-                  <p className="text-sm text-gray-600 line-clamp-2">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
                     {product.description !== "sin descripcion"
                       ? product.description
                       : null}
                   </p>
 
                   <div className="flex items-center justify-between pt-2">
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                       {formatPrice(product.basePrice)}
                     </span>
 
@@ -192,7 +194,7 @@ export default function Wishlist() {
                     ).map((cat, idx) => (
                       <span
                         key={idx}
-                        className="px-2 py-1 bg-[#E8DFCA] text-gray-800 rounded-full text-xs font-semibold"
+                        className="px-2 py-1 bg-[#E8DFCA] dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-xs font-semibold"
                       >
                         {cat}
                       </span>
