@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Layout from "@/components/layout/Layout";
 import { updateOrderPaymentStatus } from "@/services/orders.service";
+import { syncMercadoPagoPaymentStatus } from "@/services/mercadopago.service";
 
 type ResultType = "success" | "failure" | "pending";
 
@@ -60,23 +61,50 @@ export default function OrderResult() {
   useEffect(() => {
     if (!externalReference || processed) return;
 
-    const s = collectionStatus?.toLowerCase();
-    const paymentStatus =
-      s === "approved"
-        ? ("approved" as const)
-        : s === "rejected" || s === "cancelled"
-          ? ("rejected" as const)
-          : ("pending" as const);
+    const syncPayment = async () => {
+      try {
+        if (collectionId) {
+          let attempts = 0;
 
-    updateOrderPaymentStatus(
-      externalReference,
-      paymentStatus,
-      collectionId ?? undefined,
-    )
-      .catch((err) => console.error("Error actualizando estado de pago:", err))
-      .finally(() => setProcessed(true));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [externalReference]);
+          while (attempts < 3) {
+            attempts += 1;
+            const result = await syncMercadoPagoPaymentStatus(
+              externalReference,
+              collectionId,
+            );
+
+            if (result.paymentStatus !== "pending" || attempts === 3) {
+              return;
+            }
+
+            await new Promise((resolve) => window.setTimeout(resolve, 1500));
+          }
+
+          return;
+        }
+
+        const s = collectionStatus?.toLowerCase();
+        const paymentStatus =
+          s === "approved"
+            ? ("approved" as const)
+            : s === "rejected" || s === "cancelled"
+              ? ("rejected" as const)
+              : ("pending" as const);
+
+        await updateOrderPaymentStatus(
+          externalReference,
+          paymentStatus,
+          collectionId ?? undefined,
+        );
+      } catch (err) {
+        console.error("Error actualizando estado de pago:", err);
+      } finally {
+        setProcessed(true);
+      }
+    };
+
+    void syncPayment();
+  }, [externalReference, collectionId, collectionStatus, processed]);
 
   const handleGoToOrders = () => navigate("/mis-ordenes");
   const handleGoToCart = () => navigate("/carrito");

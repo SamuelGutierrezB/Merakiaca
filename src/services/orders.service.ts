@@ -1,6 +1,7 @@
 import {
   collection,
   addDoc,
+  getDoc,
   getDocs,
   deleteDoc,
   updateDoc,
@@ -119,55 +120,59 @@ export async function updateOrderPaymentStatus(
 ): Promise<void> {
   try {
     const orderRef = doc(db, FIREBASE_COLLECTIONS.ORDERS, orderId);
+    const orderSnapshot = await getDoc(orderRef);
 
-    // Crear entrada de historial usando Date en lugar de Timestamp para arrayUnion
+    if (!orderSnapshot.exists()) {
+      throw new Error("La orden no existe");
+    }
+
+    const currentOrder = orderSnapshot.data() as Order;
+    const isAlreadyApproved = currentOrder.paymentStatus === "approved";
+    const paymentStatusChanged = currentOrder.paymentStatus !== paymentStatus;
+
     const now = new Date();
-    const historyEntry: any = {
-      paymentStatus,
-      changedAt: now,
-      changedBy: changedBy || null,
-      note: note || null,
-    };
-
     const updateData: any = {
-      paymentStatus,
       updatedAt: serverTimestamp(),
-      paymentStatusHistory: arrayUnion(historyEntry),
     };
 
-    if (mercadoPagoPaymentId) {
+    if (paymentStatusChanged) {
+      updateData.paymentStatus = paymentStatus;
+      updateData.paymentStatusHistory = arrayUnion({
+        paymentStatus,
+        changedAt: now,
+        changedBy: changedBy || null,
+        note: note || null,
+      });
+    }
+
+    if (
+      mercadoPagoPaymentId &&
+      currentOrder.mercadoPagoPaymentId !== mercadoPagoPaymentId
+    ) {
       updateData.mercadoPagoPaymentId = mercadoPagoPaymentId;
     }
 
-    // Si el pago es aprobado, actualizar el estado de la orden
-    if (paymentStatus === "approved") {
+    if (paymentStatus === "approved" && !isAlreadyApproved) {
       updateData.status = "processing";
-
-      // Agregar entrada en historial de estado también
-      const statusHistoryEntry: any = {
+      updateData.statusHistory = arrayUnion({
         status: "processing",
         changedAt: now,
         changedBy: null,
         note: "Estado actualizado automáticamente al aprobar el pago",
-      };
-      updateData.statusHistory = arrayUnion(statusHistoryEntry);
+      });
     }
 
-    await updateDoc(orderRef, updateData);
+    if (Object.keys(updateData).length > 1) {
+      await updateDoc(orderRef, updateData);
+    }
 
-    // Si el pago es aprobado, reducir el stock
-    if (paymentStatus === "approved") {
-      const orders = await getAllOrders();
-      const order = orders.find((o) => o.id === orderId);
-
-      if (order) {
-        for (const item of order.items) {
-          await reduceProductFabricStock(
-            item.productId,
-            item.fabricId,
-            item.quantity,
-          );
-        }
+    if (paymentStatus === "approved" && !isAlreadyApproved) {
+      for (const item of currentOrder.items) {
+        await reduceProductFabricStock(
+          item.productId,
+          item.fabricId,
+          item.quantity,
+        );
       }
     }
   } catch (error) {
