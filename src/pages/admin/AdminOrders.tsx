@@ -3,18 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Loader2, Package, MapPin, Phone, ShoppingBag } from "lucide-react";
 import AdminJoyride from "@/components/admin/AdminJoyride";
+import { Dialog, Transition } from "@headlessui/react";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import OrderHistory from "@/components/common/OrderHistory";
 import {
   getAllOrders,
   updateOrderStatus,
   updateOrderPaymentStatus,
+  deleteAllOrders,
 } from "@/services/orders.service";
 import { deleteOrder } from "@/services/orders.service";
 import { formatPrice } from "@/utils/formatters";
 import type { Order, OrderStatus, PaymentStatus } from "@/types/order.types";
 import { useAuthStore } from "@/store/authStore";
 import toast from "react-hot-toast";
+import { Fragment } from "react";
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "Pendiente de pago",
@@ -51,11 +54,14 @@ export default function AdminOrders() {
   const { user } = useAuthStore();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deletingAll, setDeletingAll] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<{
     isOpen: boolean;
     order: Order | null;
   }>({ isOpen: false, order: null });
+  const [deleteAllDialogOpen, setDeleteAllDialogOpen] = useState(false);
+  const [deleteAllConfirmation, setDeleteAllConfirmation] = useState("");
 
   useEffect(() => {
     loadOrders();
@@ -104,6 +110,35 @@ export default function AdminOrders() {
     } catch (error) {
       console.error("Error deleting order:", error);
       toast.error("Error al eliminar la orden");
+    }
+  };
+
+  const closeDeleteAllDialog = () => {
+    setDeleteAllDialogOpen(false);
+    setDeleteAllConfirmation("");
+  };
+
+  const confirmDeleteAll = async () => {
+    if (deleteAllConfirmation !== "eliminar") {
+      return;
+    }
+
+    try {
+      setDeletingAll(true);
+      const deletedCount = await deleteAllOrders();
+      setOrders([]);
+      setSelectedOrder(null);
+      closeDeleteAllDialog();
+      toast.success(
+        deletedCount > 0
+          ? `Se eliminaron ${deletedCount} órdenes`
+          : "No había órdenes para eliminar",
+      );
+    } catch (error) {
+      console.error("Error deleting all orders:", error);
+      toast.error("Error al eliminar todas las órdenes");
+    } finally {
+      setDeletingAll(false);
     }
   };
 
@@ -169,16 +204,30 @@ export default function AdminOrders() {
             </button>
           </div>
 
-          <div className="mb-8">
-            <h1
-              className="text-3xl font-bold text-gray-800"
-              data-tour="orders-title"
-            >
-              Gestión de Órdenes
-            </h1>
-            <p className="text-gray-600 mt-1">
-              Administra los pedidos de tus clientes
-            </p>
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1
+                className="text-3xl font-bold text-gray-800"
+                data-tour="orders-title"
+              >
+                Gestión de Órdenes
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Administra los pedidos de tus clientes
+              </p>
+            </div>
+
+            {orders.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setDeleteAllDialogOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 font-semibold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={loading || deletingAll}
+              >
+                <TrashIcon className="h-5 w-5" />
+                Borrar Todas las Órdenes
+              </button>
+            )}
           </div>
 
           {loading ? (
@@ -620,6 +669,95 @@ export default function AdminOrders() {
         confirmText="Eliminar"
         cancelText="Cancelar"
       />
+
+      <Transition appear show={deleteAllDialogOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-50"
+          onClose={closeDeleteAllDialog}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title className="text-lg font-semibold leading-6 text-gray-900">
+                    Borrar Todas las Órdenes
+                  </Dialog.Title>
+
+                  <div className="mt-3 space-y-4">
+                    <p className="text-sm text-gray-600">
+                      Esta acción eliminará permanentemente todas las órdenes.
+                      Para continuar, selecciona la opción de eliminación y
+                      luego confirma.
+                    </p>
+
+                    <div>
+                      <label
+                        htmlFor="delete-all-orders-select"
+                        className="mb-2 block text-sm font-medium text-gray-700"
+                      >
+                        Confirmación
+                      </label>
+                      <select
+                        id="delete-all-orders-select"
+                        value={deleteAllConfirmation}
+                        onChange={(e) =>
+                          setDeleteAllConfirmation(e.target.value)
+                        }
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-red-500 focus:outline-none"
+                      >
+                        <option value="">Selecciona una opción</option>
+                        <option value="eliminar">Eliminar</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex justify-end gap-3">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+                      onClick={closeDeleteAllDialog}
+                      disabled={deletingAll}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                      onClick={confirmDeleteAll}
+                      disabled={
+                        deleteAllConfirmation !== "eliminar" || deletingAll
+                      }
+                    >
+                      {deletingAll ? "Eliminando..." : "Eliminar Todas"}
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </>
   );
 }

@@ -4,6 +4,7 @@ import {
   getDoc,
   getDocs,
   deleteDoc,
+  writeBatch,
   updateDoc,
   doc,
   query,
@@ -105,6 +106,28 @@ export async function deleteOrder(orderId: string): Promise<void> {
   } catch (error) {
     console.error("Error deleting order:", error);
     throw new Error("Error al eliminar la orden");
+  }
+}
+
+export async function deleteAllOrders(): Promise<number> {
+  try {
+    const ordersRef = collection(db, FIREBASE_COLLECTIONS.ORDERS);
+    const querySnapshot = await getDocs(ordersRef);
+
+    if (querySnapshot.empty) {
+      return 0;
+    }
+
+    const batch = writeBatch(db);
+    querySnapshot.docs.forEach((orderDoc) => {
+      batch.delete(orderDoc.ref);
+    });
+
+    await batch.commit();
+    return querySnapshot.size;
+  } catch (error) {
+    console.error("Error deleting all orders:", error);
+    throw new Error("Error al eliminar todas las órdenes");
   }
 }
 
