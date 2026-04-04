@@ -76,7 +76,9 @@ export default function ConfirmDialog({
                 </div>
 
                 <div className="mt-2">
-                  <p className="text-sm text-gray-600 dark:text-gray-300">{message}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    {message}
+                  </p>
                 </div>
 
                 <div className="mt-6 flex gap-3 justify-end">

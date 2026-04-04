@@ -50,16 +50,20 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200",
-  processing: "bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200",
+  pending:
+    "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200",
+  processing:
+    "bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200",
   shipped: "bg-purple-100 text-purple-800",
-  delivered: "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200",
+  delivered:
+    "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200",
   cancelled: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200",
 };
 
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
   pending: "bg-orange-100 text-orange-800",
-  approved: "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200",
+  approved:
+    "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200",
   rejected: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200",
   cancelled: "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100",
 };
@@ -277,7 +281,9 @@ export default function AdminOrders() {
           {loading ? (
             <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-12 text-center">
               <Loader2 className="h-16 w-16 mx-auto mb-4 text-[#2391C3] animate-spin" />
-              <p className="text-gray-600 dark:text-gray-300">Cargando órdenes...</p>
+              <p className="text-gray-600 dark:text-gray-300">
+                Cargando órdenes...
+              </p>
             </div>
           ) : orders.length === 0 ? (
             /* Estado vacío */
@@ -466,7 +472,9 @@ export default function AdminOrders() {
 
                     <div className="space-y-2 mb-3">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600 dark:text-gray-300">Cliente:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                          Cliente:
+                        </span>
                         <span className="text-sm font-medium text-gray-900 dark:text-gray-100 text-right">
                           {order.shippingAddress.fullName}
                         </span>
@@ -490,7 +498,9 @@ export default function AdminOrders() {
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600 dark:text-gray-300">Total:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                          Total:
+                        </span>
                         <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
                           {formatPrice(order.total)}
                         </span>
@@ -684,19 +694,25 @@ export default function AdminOrders() {
               {/* Totales */}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-700 dark:text-gray-200">Subtotal:</span>
+                  <span className="text-gray-700 dark:text-gray-200">
+                    Subtotal:
+                  </span>
                   <span className="font-semibold">
                     {formatPrice(selectedOrder.subtotal)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-700 dark:text-gray-200">Envío:</span>
+                  <span className="text-gray-700 dark:text-gray-200">
+                    Envío:
+                  </span>
                   <span className="font-semibold">
                     {selectedOrder.shipping}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-lg border-t border-gray-200 dark:border-gray-700 pt-2">
-                  <span className="font-bold text-gray-800 dark:text-gray-100">Total:</span>
+                  <span className="font-bold text-gray-800 dark:text-gray-100">
+                    Total:
+                  </span>
                   <span className="font-bold text-gray-900 dark:text-gray-100">
                     {formatPrice(selectedOrder.total)}
                   </span>

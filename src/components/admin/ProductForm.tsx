@@ -239,7 +239,9 @@ export default function ProductForm({
         {/* Preview de imagen actual */}
         {mainImageUrl && (
           <div className="mb-4">
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">Imagen actual:</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+              Imagen actual:
+            </p>
             <div className="w-full max-w-md bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
               <img
                 src={mainImageUrl}
@@ -444,7 +446,9 @@ export default function ProductForm({
                       }}
                       className="h-4 w-4 text-[#2391C3] focus:ring-[#2391C3] border-gray-300 dark:border-gray-600 rounded"
                     />
-                    <span className="text-sm text-gray-700 dark:text-gray-200">{cat.name}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-200">
+                      {cat.name}
+                    </span>
                   </label>
                 ))
               )}
@@ -499,14 +503,20 @@ export default function ProductForm({
           id="isActive"
           className="h-4 w-4 text-[#2391C3] focus:ring-[#2391C3] border-gray-300 dark:border-gray-600 rounded"
         />
-        <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700 dark:text-gray-200">
+        <label
+          htmlFor="isActive"
+          className="ml-2 block text-sm text-gray-700 dark:text-gray-200"
+        >
           Producto activo (visible para clientes)
         </label>
       </div>
 
       {/* Opciones de tela - Solo mostrar si el producto ya fue creado */}
       {productId && (
-        <div className="pt-6 border-t border-gray-200 dark:border-gray-700" data-tour="form-fabrics">
+        <div
+          className="pt-6 border-t border-gray-200 dark:border-gray-700"
+          data-tour="form-fabrics"
+        >
           <FabricOptionForm
             productId={productId}
             fabrics={fabrics}
@@ -541,7 +551,7 @@ export default function ProductForm({
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-6 py-3 rounded-lg font-semibold transition-colors"
+          className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-6 py-3 rounded-lg font-semibold transition-colors"
         >
           Cancelar
         </button>

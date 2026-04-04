@@ -559,17 +559,23 @@ export default function Checkout() {
               {/* Subtotales */}
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Subtotal:</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    Subtotal:
+                  </span>
                   <span className="font-semibold">{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Envío:</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    Envío:
+                  </span>
                   <span className="font-semibold">
                     {deliveryType === "pickup" ? "$0" : formatPrice(150)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Impuestos:</span>
+                  <span className="text-gray-600 dark:text-gray-300">
+                    Impuestos:
+                  </span>
                   <span className="font-semibold">{formatPrice(tax)}</span>
                 </div>
               </div>

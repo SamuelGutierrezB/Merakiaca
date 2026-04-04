@@ -3,6 +3,7 @@ import { Heart } from "lucide-react";
 import type { Product } from "@/types";
 import { formatPrice } from "@/utils/formatters";
 import { isBaseColor } from "@/utils/fabricColors";
+import { ROUTES } from "@/utils/constants";
 import { useAuthStore } from "@/store/authStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 
@@ -16,6 +17,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { isInWishlist, toggleWishlist } = useWishlistStore();
   const isFavorite = isInWishlist(product.id);
   const hasStock = product.fabrics.some((f) => f.stock > 0);
+  const productDetailPath = ROUTES.PRODUCT_DETAIL.replace(":id", product.id);
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link
-      to={`/products/${product.id}`}
+      to={productDetailPath}
       className="group bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 overflow-hidden hover:shadow-xl transition-shadow relative"
     >
       {/* Imagen */}

@@ -44,7 +44,9 @@ export default function AdminEditProduct() {
     return (
       <Layout>
         <div className="text-center py-20">
-          <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">Producto no encontrado</p>
+          <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">
+            Producto no encontrado
+          </p>
         </div>
       </Layout>
     );
@@ -53,7 +55,7 @@ export default function AdminEditProduct() {
   return (
     <Layout>
       <div className="max-w-2xl mx-auto py-8">
-        <h2 className="text-2xl font-bold mb-6">
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
           {id === "nuevo" ? "Crear Nuevo Producto" : "Editar producto"}
         </h2>
         <ProductForm

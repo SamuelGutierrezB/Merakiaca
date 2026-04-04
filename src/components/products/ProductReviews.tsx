@@ -252,7 +252,9 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
               {isFilled ? (
                 <StarIcon className={`${size} text-yellow-400`} />
               ) : (
-                <StarOutlineIcon className={`${size} text-gray-300 dark:text-gray-600`} />
+                <StarOutlineIcon
+                  className={`${size} text-gray-300 dark:text-gray-600`}
+                />
               )}
             </button>
           );

@@ -32,6 +32,7 @@ export const AppRouter = () => {
         <Route path={ROUTES.HOME} element={<Home />} />
         <Route path={ROUTES.LOGIN} element={<Login />} />
         <Route path={ROUTES.PRODUCTS} element={<Products />} />
+        <Route path={ROUTES.PRODUCT_DETAIL} element={<ProductDetail />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/debug" element={<DebugAuth />} />
         <Route path={ROUTES.ORDER_SUCCESS} element={<OrderResult />} />

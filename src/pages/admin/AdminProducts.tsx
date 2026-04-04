@@ -149,7 +149,9 @@ export default function AdminProducts() {
             </div>
           ) : products.length === 0 ? (
             <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-12 text-center">
-              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-lg mb-4">No hay productos aún</p>
+              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-lg mb-4">
+                No hay productos aún
+              </p>
               <button
                 onClick={handleCreate}
                 className="inline-flex items-center gap-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
@@ -193,7 +195,10 @@ export default function AdminProducts() {
                   </thead>
                   <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200">
                     {products.map((product) => (
-                      <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800">
+                      <tr
+                        key={product.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800"
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
                             {product.mainImage ? (
@@ -230,7 +235,7 @@ export default function AdminProducts() {
                             ).map((cat, idx) => (
                               <span
                                 key={idx}
-                                className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] text-gray-800 dark:text-gray-100"
+                                className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] dark:bg-[#5C4A2D] text-gray-800 dark:text-[#F7E7C6]"
                               >
                                 {cat}
                               </span>
@@ -335,13 +340,17 @@ export default function AdminProducts() {
 
                     <div className="space-y-2 mb-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600 dark:text-gray-300">Precio:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                          Precio:
+                        </span>
                         <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                           {formatPrice(product.basePrice)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600 dark:text-gray-300">Stock:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                          Stock:
+                        </span>
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             (product.fabrics?.reduce(
@@ -364,7 +373,9 @@ export default function AdminProducts() {
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600 dark:text-gray-300">Estado:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                          Estado:
+                        </span>
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             product.isActive
@@ -386,7 +397,7 @@ export default function AdminProducts() {
                           ).map((cat, idx) => (
                             <span
                               key={idx}
-                              className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] text-gray-800 dark:text-gray-100"
+                              className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] dark:bg-[#5C4A2D] text-gray-800 dark:text-[#F7E7C6]"
                             >
                               {cat}
                             </span>
@@ -405,7 +416,7 @@ export default function AdminProducts() {
                       </button>
                       <button
                         onClick={() => handleDelete(product)}
-                          className="flex-1 flex items-center justify-center gap-2 bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                        className="flex-1 flex items-center justify-center gap-2 bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
                       >
                         <TrashIcon className="h-4 w-4" />
                         Eliminar

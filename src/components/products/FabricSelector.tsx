@@ -36,7 +36,6 @@ export default function FabricSelector({
           </p>
         )}
       </div>
-      : "border-gray-300 dark:border-gray-600 hover:border-[#2391C3]"
       <div className="flex flex-wrap gap-2 sm:gap-3">
         {fabrics.map((fabric) => {
           const isSelected = fabric.id === selectedFabricId;
