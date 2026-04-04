@@ -314,6 +314,8 @@ export default function BranchMap({
           <p className="text-sm text-gray-700">
             ⏰ <strong>Importante:</strong> Tienes 7 días para recoger tu
             producto en la sucursal <strong>{selectedBranch.name}</strong>.
+            Recibirás tu nota con el folio por WhatsApp al número que
+            registraste al realizar tu compra.
           </p>
         </div>
       )}
