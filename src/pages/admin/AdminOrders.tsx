@@ -737,7 +737,7 @@ export default function AdminOrders() {
                     href={buildWhatsAppLink(selectedOrder)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-green-50 dark:bg-green-900/300 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
+                    className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-400 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
                   >
                     <WhatsAppIcon className="h-4 w-4" />
                     WhatsApp al cliente
