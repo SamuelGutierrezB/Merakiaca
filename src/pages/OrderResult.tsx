@@ -7,7 +7,10 @@ import {
 } from "@heroicons/react/24/outline";
 import Layout from "@/components/layout/Layout";
 import { updateOrderPaymentStatus } from "@/services/orders.service";
-import { syncMercadoPagoPaymentStatus } from "@/services/mercadopago.service";
+import {
+  createMercadoPagoPreference,
+  syncMercadoPagoPaymentStatus,
+} from "@/services/mercadopago.service";
 
 type ResultType = "success" | "failure" | "pending";
 
@@ -21,7 +24,7 @@ const DESCRIPTION: Record<ResultType, string> = {
   success:
     "Tu pedido ha sido confirmado. Pronto recibirás noticias por WhatsApp.",
   failure:
-    "El pago no pudo completarse. Puedes intentarlo nuevamente desde tu carrito.",
+    "El pago no pudo completarse. Esto puede pasar, por ejemplo, si la tarjeta está bloqueada o fue rechazada por el banco. Tu compra no se confirmó; puedes intentarlo de nuevo.",
   pending:
     "Tu pago está siendo procesado por Mercado Pago. Te avisaremos cuando se confirme.",
 };
@@ -43,6 +46,7 @@ export default function OrderResult() {
   const location = useLocation();
   const navigate = useNavigate();
   const [processed, setProcessed] = useState(false);
+  const [retryingPayment, setRetryingPayment] = useState(false);
 
   // Determinar tipo según la ruta
   const pathType: ResultType = location.pathname.includes("failure")
@@ -109,6 +113,21 @@ export default function OrderResult() {
   const handleGoToOrders = () => navigate("/mis-ordenes");
   const handleGoToCart = () => navigate("/carrito");
 
+  const handleRetryPayment = async () => {
+    if (!externalReference || retryingPayment) return;
+
+    try {
+      setRetryingPayment(true);
+      const preference = await createMercadoPagoPreference(externalReference);
+      window.location.href = preference.initPoint;
+    } catch (err) {
+      console.error("Error al reintentar pago:", err);
+      navigate("/checkout");
+    } finally {
+      setRetryingPayment(false);
+    }
+  };
+
   return (
     <Layout>
       <div className="max-w-lg mx-auto px-4 py-16 text-center">
@@ -140,16 +159,25 @@ export default function OrderResult() {
             ) : (
               <>
                 <button
-                  onClick={handleGoToCart}
+                  onClick={handleRetryPayment}
+                  disabled={!externalReference || retryingPayment}
                   className="flex-1 bg-[#2391C3] hover:bg-[#1A6B8E] text-white font-bold py-3 rounded-lg transition-colors"
                 >
-                  Volver al carrito
+                  {retryingPayment
+                    ? "Redirigiendo..."
+                    : "Intentar pago nuevamente"}
                 </button>
                 <button
                   onClick={handleGoToOrders}
                   className="flex-1 border border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   Ver mis pedidos
+                </button>
+                <button
+                  onClick={handleGoToCart}
+                  className="flex-1 border border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Volver al carrito
                 </button>
               </>
             )}
