@@ -73,7 +73,7 @@ export default function Header() {
                   <ShoppingCart className="h-5 w-5" />
                   Carrito
                   {itemCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-2 -right-2 bg-red-50 dark:bg-red-900/300 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                       {itemCount}
                     </span>
                   )}
@@ -132,7 +132,7 @@ export default function Header() {
             <button
               onClick={toggle}
               aria-label={isDark ? "Activar modo claro" : "Activar modo oscuro"}
-              className="p-2 rounded-lg text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-lg text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
             >
               {isDark ? (
                 <SunIcon className="h-5 w-5" />
@@ -146,7 +146,7 @@ export default function Header() {
           <Link to="/carrito" className="sm:hidden relative text-[#2391C3] p-2">
             <ShoppingCartIcon className="h-6 w-6" />
             {itemCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-red-50 dark:bg-red-900/300 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 {itemCount}
               </span>
             )}
@@ -161,14 +161,14 @@ export default function Header() {
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 dark:hover:bg-gray-800 font-semibold transition-colors"
+              className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-800 font-semibold transition-colors"
             >
               Inicio
             </Link>
             <Link
               to="/productos"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 dark:hover:bg-gray-800 font-semibold transition-colors"
+              className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-800 font-semibold transition-colors"
             >
               Productos
             </Link>
@@ -178,14 +178,14 @@ export default function Header() {
                 <Link
                   to="/carrito"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 dark:hover:bg-gray-800 font-semibold transition-colors flex items-center justify-between"
+                  className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-800 font-semibold transition-colors flex items-center justify-between"
                 >
                   <span className="flex items-center gap-2">
                     <ShoppingCart className="h-5 w-5" />
                     Carrito
                   </span>
                   {itemCount > 0 && (
-                    <span className="bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
+                    <span className="bg-red-50 dark:bg-red-900/300 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
                       {itemCount}
                     </span>
                   )}
@@ -194,7 +194,7 @@ export default function Header() {
                 <Link
                   to={ROUTES.WISHLIST}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 dark:hover:bg-gray-800 font-semibold transition-colors flex items-center gap-2"
+                  className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-800 font-semibold transition-colors flex items-center gap-2"
                 >
                   <Heart className="h-5 w-5" />
                   Favoritos
@@ -204,7 +204,7 @@ export default function Header() {
                   <Link
                     to="/admin"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-4 py-3 text-[#8A4A86] hover:bg-gray-50 dark:hover:bg-gray-800 font-semibold transition-colors flex items-center gap-2"
+                    className="px-4 py-3 text-[#8A4A86] hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-800 font-semibold transition-colors flex items-center gap-2"
                   >
                     <UserCog className="h-5 w-5" />
                     Admin
@@ -214,7 +214,7 @@ export default function Header() {
                 <Link
                   to={ROUTES.MY_ORDERS}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 dark:hover:bg-gray-800 font-semibold transition-colors flex items-center gap-2"
+                  className="px-4 py-3 text-[#2391C3] hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-800 font-semibold transition-colors flex items-center gap-2"
                 >
                   <Package className="h-5 w-5" />
                   Mis Órdenes
@@ -235,7 +235,7 @@ export default function Header() {
                     <button
                       onClick={toggle}
                       aria-label={isDark ? "Modo claro" : "Modo oscuro"}
-                      className="p-2 rounded-lg text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="p-2 rounded-lg text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                     >
                       {isDark ? (
                         <SunIcon className="h-5 w-5" />
@@ -248,7 +248,7 @@ export default function Header() {
                         logout();
                         setMobileMenuOpen(false);
                       }}
-                      className="text-red-600 hover:text-red-700 font-semibold transition-colors"
+                      className="text-red-600 hover:text-red-700 dark:text-red-300 font-semibold transition-colors"
                     >
                       Salir
                     </button>

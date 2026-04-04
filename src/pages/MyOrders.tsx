@@ -26,18 +26,18 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800",
-  processing: "bg-blue-100 text-blue-800",
+  pending: "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200",
+  processing: "bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200",
   shipped: "bg-purple-100 text-purple-800",
-  delivered: "bg-green-100 text-green-800",
-  cancelled: "bg-red-100 text-red-800",
+  delivered: "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200",
+  cancelled: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200",
 };
 
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
   pending: "bg-orange-100 text-orange-800",
-  approved: "bg-green-100 text-green-800",
-  rejected: "bg-red-100 text-red-800",
-  cancelled: "bg-gray-100 text-gray-800",
+  approved: "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200",
+  rejected: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200",
+  cancelled: "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100",
 };
 
 export default function MyOrders() {
@@ -119,8 +119,8 @@ export default function MyOrders() {
     return (
       <Layout>
         <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">Mis Órdenes</h1>
-          <p className="text-gray-600 mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">Mis Órdenes</h1>
+          <p className="text-gray-600 dark:text-gray-300 mb-8">
             Debes iniciar sesión para ver tus órdenes
           </p>
           <Link
@@ -176,7 +176,7 @@ export default function MyOrders() {
           </div>
         ) : orders.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-12 text-center">
-            <Package className="h-24 w-24 mx-auto mb-4 text-gray-400" />
+            <Package className="h-24 w-24 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
               No tienes órdenes todavía
             </h2>
@@ -202,7 +202,7 @@ export default function MyOrders() {
                     <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
                       Orden #{order.id.slice(0, 8)}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                       {formatDate(order.createdAt)}
                     </p>
                   </div>
@@ -211,7 +211,7 @@ export default function MyOrders() {
                       <span
                         className={`px-3 py-1 text-xs font-semibold rounded-full text-center ${
                           PAYMENT_STATUS_COLORS[order.paymentStatus] ||
-                          "bg-gray-100 text-gray-800"
+                          "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100"
                         }`}
                       >
                         {PAYMENT_STATUS_LABELS[order.paymentStatus] ||
@@ -220,7 +220,7 @@ export default function MyOrders() {
                       <span
                         className={`px-3 py-1 text-xs font-semibold rounded-full text-center ${
                           STATUS_COLORS[order.status] ||
-                          "bg-gray-100 text-gray-800"
+                          "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100"
                         }`}
                       >
                         {STATUS_LABELS[order.status] || order.status}
@@ -251,7 +251,7 @@ export default function MyOrders() {
                         <span className="text-gray-800 dark:text-gray-100">
                           {item.productName}
                         </span>
-                        <span className="text-gray-500 dark:text-gray-400 ml-2">
+                        <span className="text-gray-500 dark:text-gray-400 dark:text-gray-500 ml-2">
                           ({item.fabricName})
                         </span>
                       </div>

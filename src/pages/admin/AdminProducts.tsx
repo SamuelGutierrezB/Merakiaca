@@ -85,7 +85,7 @@ export default function AdminProducts() {
   //         <div className="flex items-center gap-4 mb-4">
   //           <button
   //             onClick={handleFormCancel}
-  //             className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+  //             className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:text-gray-100 transition-colors"
   //             data-tour="form-back"
   //           >
   //             <ArrowLeftIcon className="h-5 w-5" />
@@ -93,12 +93,12 @@ export default function AdminProducts() {
   //           </button>
   //         </div>
   //         <h1
-  //           className="text-3xl font-bold text-gray-800 mb-8"
+  //           className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8"
   //           data-tour="form-title"
   //         >
   //           {editingProduct ? "Editar Producto" : "Crear Nuevo Producto"}
   //         </h1>
-  //         <div className="bg-white rounded-lg shadow-md p-6">
+  //         <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
   //           <ProductForm
   //             product={editingProduct}
   //             onSuccess={handleFormSuccess}
@@ -119,7 +119,7 @@ export default function AdminProducts() {
           <div className="flex items-center gap-4 mb-6">
             <button
               onClick={() => navigate("/admin")}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:text-gray-100 transition-colors"
               data-tour="products-back"
             >
               <ArrowLeftIcon className="h-5 w-5" />
@@ -130,7 +130,7 @@ export default function AdminProducts() {
           </div>
 
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
               Gestión de Productos
             </h1>
             <button
@@ -148,8 +148,8 @@ export default function AdminProducts() {
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#2391C3] border-t-transparent"></div>
             </div>
           ) : products.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-md p-12 text-center">
-              <p className="text-gray-500 text-lg mb-4">No hay productos aún</p>
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-12 text-center">
+              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-lg mb-4">No hay productos aún</p>
               <button
                 onClick={handleCreate}
                 className="inline-flex items-center gap-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
@@ -162,40 +162,40 @@ export default function AdminProducts() {
             <>
               {/* Vista de tabla para desktop */}
               <div
-                className="hidden md:block bg-white rounded-lg shadow-md overflow-hidden"
+                className="hidden md:block bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden"
                 data-tour="products-table"
               >
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-50 dark:bg-gray-800">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                         Imagen
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                         Producto
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                         Categoría
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                         Precio
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                         Stock
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                         Estado
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                         Acciones
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200">
                     {products.map((product) => (
-                      <tr key={product.id} className="hover:bg-gray-50">
+                      <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                          <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
                             {product.mainImage ? (
                               <img
                                 src={product.mainImage}
@@ -203,7 +203,7 @@ export default function AdminProducts() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                              <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-xs">
                                 Sin imagen
                               </div>
                             )}
@@ -211,10 +211,10 @@ export default function AdminProducts() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                               {product.name}
                             </div>
-                            <div className="text-sm text-gray-500 truncate max-w-xs whitespace-pre-line">
+                            <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 truncate max-w-xs whitespace-pre-line">
                               {product.description !== "sin descripcion"
                                 ? product.description
                                 : null}
@@ -230,14 +230,14 @@ export default function AdminProducts() {
                             ).map((cat, idx) => (
                               <span
                                 key={idx}
-                                className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] text-gray-800"
+                                className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] text-gray-800 dark:text-gray-100"
                               >
                                 {cat}
                               </span>
                             ))}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                           {formatPrice(product.basePrice)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -247,13 +247,13 @@ export default function AdminProducts() {
                                 (sum, f) => sum + (f.stock || 0),
                                 0,
                               ) || 0) > 10
-                                ? "bg-green-100 text-green-800"
+                                ? "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200"
                                 : (product.fabrics?.reduce(
                                       (sum, f) => sum + (f.stock || 0),
                                       0,
                                     ) || 0) > 0
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : "bg-red-100 text-red-800"
+                                  ? "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200"
+                                  : "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200"
                             }`}
                           >
                             {product.fabrics?.reduce(
@@ -266,8 +266,8 @@ export default function AdminProducts() {
                           <span
                             className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                               product.isActive
-                                ? "bg-green-100 text-green-800"
-                                : "bg-gray-100 text-gray-800"
+                                ? "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200"
+                                : "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100"
                             }`}
                           >
                             {product.isActive ? "Activo" : "Inactivo"}
@@ -305,10 +305,10 @@ export default function AdminProducts() {
                 {products.map((product) => (
                   <div
                     key={product.id}
-                    className="bg-white rounded-lg shadow-md p-4"
+                    className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-4"
                   >
                     <div className="flex gap-4 mb-3">
-                      <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                      <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
                         {product.mainImage ? (
                           <img
                             src={product.mainImage}
@@ -316,16 +316,16 @@ export default function AdminProducts() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-xs">
                             Sin imagen
                           </div>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-bold text-gray-900 truncate">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate">
                           {product.name}
                         </h3>
-                        <p className="text-sm text-gray-500 line-clamp-2 whitespace-pre-line">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 line-clamp-2 whitespace-pre-line">
                           {product.description !== "sin descripcion"
                             ? product.description
                             : null}
@@ -335,26 +335,26 @@ export default function AdminProducts() {
 
                     <div className="space-y-2 mb-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Precio:</span>
-                        <span className="text-sm font-semibold text-gray-900">
+                        <span className="text-sm text-gray-600 dark:text-gray-300">Precio:</span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                           {formatPrice(product.basePrice)}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Stock:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">Stock:</span>
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             (product.fabrics?.reduce(
                               (sum, f) => sum + (f.stock || 0),
                               0,
                             ) || 0) > 10
-                              ? "bg-green-100 text-green-800"
+                              ? "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200"
                               : (product.fabrics?.reduce(
                                     (sum, f) => sum + (f.stock || 0),
                                     0,
                                   ) || 0) > 0
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-red-100 text-red-800"
+                                ? "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200"
+                                : "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200"
                           }`}
                         >
                           {product.fabrics?.reduce(
@@ -364,19 +364,19 @@ export default function AdminProducts() {
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Estado:</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">Estado:</span>
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             product.isActive
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
+                              ? "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200"
+                              : "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100"
                           }`}
                         >
                           {product.isActive ? "Activo" : "Inactivo"}
                         </span>
                       </div>
                       <div className="flex justify-between items-start">
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
                           Categorías:
                         </span>
                         <div className="flex flex-wrap gap-1 justify-end max-w-[60%]">
@@ -386,7 +386,7 @@ export default function AdminProducts() {
                           ).map((cat, idx) => (
                             <span
                               key={idx}
-                              className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] text-gray-800"
+                              className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-[#E8DFCA] text-gray-800 dark:text-gray-100"
                             >
                               {cat}
                             </span>
@@ -395,7 +395,7 @@ export default function AdminProducts() {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 pt-3 border-t border-gray-200">
+                    <div className="flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
                       <button
                         onClick={() => handleEdit(product)}
                         className="flex-1 flex items-center justify-center gap-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-4 py-2 rounded-lg font-semibold transition-colors"
@@ -405,7 +405,7 @@ export default function AdminProducts() {
                       </button>
                       <button
                         onClick={() => handleDelete(product)}
-                        className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                          className="flex-1 flex items-center justify-center gap-2 bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
                       >
                         <TrashIcon className="h-4 w-4" />
                         Eliminar

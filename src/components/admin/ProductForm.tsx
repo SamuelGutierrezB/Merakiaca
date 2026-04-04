@@ -232,15 +232,15 @@ export default function ProductForm({
     >
       {/* Imagen principal */}
       <div data-tour="form-image">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
           Imagen principal del producto
         </label>
 
         {/* Preview de imagen actual */}
         {mainImageUrl && (
           <div className="mb-4">
-            <p className="text-sm text-gray-600 mb-2">Imagen actual:</p>
-            <div className="w-full max-w-md bg-gray-100 rounded-lg overflow-hidden">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">Imagen actual:</p>
+            <div className="w-full max-w-md bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
               <img
                 src={mainImageUrl}
                 alt="Imagen del producto"
@@ -261,7 +261,7 @@ export default function ProductForm({
       {/* Galería de imágenes adicionales */}
       {productId && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Galería de imágenes adicionales
           </label>
 
@@ -271,7 +271,7 @@ export default function ProductForm({
               {additionalImages.map((imageUrl, index) => (
                 <div
                   key={index}
-                  className="relative group bg-gray-100 rounded-lg overflow-hidden aspect-square"
+                  className="relative group bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden aspect-square"
                 >
                   <img
                     src={imageUrl}
@@ -281,7 +281,7 @@ export default function ProductForm({
                   <button
                     type="button"
                     onClick={() => handleRemoveAdditionalImage(index)}
-                    className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-2 right-2 bg-red-50 dark:bg-red-900/300 hover:bg-red-600 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity"
                     title="Eliminar imagen"
                   >
                     <svg
@@ -310,7 +310,7 @@ export default function ProductForm({
             label="Agregar imagen a la galería"
             clearAfterUpload={true}
           />
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-2">
             💡 Puedes agregar múltiples imágenes para mostrar el producto desde
             diferentes ángulos
           </p>
@@ -318,8 +318,8 @@ export default function ProductForm({
       )}
 
       {!productId && (
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
             💡 <strong>Tip:</strong> Primero crea el producto con la imagen
             principal, luego podrás agregar más imágenes a la galería.
           </p>
@@ -329,7 +329,7 @@ export default function ProductForm({
       <div data-tour="form-name">
         <label
           htmlFor="name"
-          className="block text-sm font-medium text-gray-700 mb-2"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
         >
           Nombre del producto *
         </label>
@@ -337,7 +337,7 @@ export default function ProductForm({
           {...register("name")}
           type="text"
           id="name"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
           placeholder="Ej: Cojín Herbal Relajante"
         />
         {errors.name && (
@@ -348,7 +348,7 @@ export default function ProductForm({
       <div data-tour="form-description">
         <label
           htmlFor="description"
-          className="block text-sm font-medium text-gray-700 mb-2"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
         >
           Descripción *
         </label>
@@ -356,7 +356,7 @@ export default function ProductForm({
           {...register("description")}
           id="description"
           rows={4}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
           placeholder="Describe tu producto..."
         />
         {errors.description && (
@@ -369,7 +369,7 @@ export default function ProductForm({
       <div data-tour="form-price">
         <label
           htmlFor="basePrice"
-          className="block text-sm font-medium text-gray-700 mb-2"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
         >
           Precio base *
         </label>
@@ -379,7 +379,7 @@ export default function ProductForm({
           step="10"
           min="0"
           id="basePrice"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
           placeholder="0"
         />
         {errors.basePrice && (
@@ -390,16 +390,16 @@ export default function ProductForm({
       </div>
 
       <div data-tour="form-category">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
           Categorías *
         </label>
         <Controller
           name="categories"
           control={control}
           render={({ field }) => (
-            <div className="space-y-2 p-4 border border-gray-300 rounded-lg max-h-48 overflow-y-auto">
+            <div className="space-y-2 p-4 border border-gray-300 dark:border-gray-600 rounded-lg max-h-48 overflow-y-auto">
               {categories.length === 0 ? (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   No hay categorías.{" "}
                   <a
                     href="/admin/categorias"
@@ -412,7 +412,7 @@ export default function ProductForm({
                 categories.map((cat) => (
                   <label
                     key={cat.id}
-                    className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
+                    className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 p-2 rounded"
                   >
                     <input
                       type="checkbox"
@@ -442,9 +442,9 @@ export default function ProductForm({
                         field.onChange(newSelected);
                         setSelectedCategories(newSelected);
                       }}
-                      className="h-4 w-4 text-[#2391C3] focus:ring-[#2391C3] border-gray-300 rounded"
+                      className="h-4 w-4 text-[#2391C3] focus:ring-[#2391C3] border-gray-300 dark:border-gray-600 rounded"
                     />
-                    <span className="text-sm text-gray-700">{cat.name}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-200">{cat.name}</span>
                   </label>
                 ))
               )}
@@ -497,16 +497,16 @@ export default function ProductForm({
           {...register("isActive")}
           type="checkbox"
           id="isActive"
-          className="h-4 w-4 text-[#2391C3] focus:ring-[#2391C3] border-gray-300 rounded"
+          className="h-4 w-4 text-[#2391C3] focus:ring-[#2391C3] border-gray-300 dark:border-gray-600 rounded"
         />
-        <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700">
+        <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700 dark:text-gray-200">
           Producto activo (visible para clientes)
         </label>
       </div>
 
       {/* Opciones de tela - Solo mostrar si el producto ya fue creado */}
       {productId && (
-        <div className="pt-6 border-t border-gray-200" data-tour="form-fabrics">
+        <div className="pt-6 border-t border-gray-200 dark:border-gray-700" data-tour="form-fabrics">
           <FabricOptionForm
             productId={productId}
             fabrics={fabrics}
@@ -516,8 +516,8 @@ export default function ProductForm({
       )}
 
       {!productId && (
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
             💡 <strong>Tip:</strong> Primero crea el producto, luego podrás
             agregar las opciones de tela y patrones.
           </p>
@@ -541,7 +541,7 @@ export default function ProductForm({
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors"
+          className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-6 py-3 rounded-lg font-semibold transition-colors"
         >
           Cancelar
         </button>

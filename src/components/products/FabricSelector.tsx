@@ -21,14 +21,14 @@ export default function FabricSelector({
   return (
     <div className="space-y-3 sm:space-y-4">
       <div>
-        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
           Selecciona tu tela
         </h3>
         {selectedFabric && (
-          <p className="text-xs sm:text-sm text-gray-600">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
             <span className="font-medium">{selectedFabric.name}</span>
             {selectedFabric.priceModifier !== 0 && (
-              <span className="ml-2 text-gray-900">
+              <span className="ml-2 text-gray-900 dark:text-gray-100">
                 ({selectedFabric.priceModifier > 0 ? "+" : ""}
                 {formatPrice(selectedFabric.priceModifier)})
               </span>
@@ -36,7 +36,7 @@ export default function FabricSelector({
           </p>
         )}
       </div>
-
+      : "border-gray-300 dark:border-gray-600 hover:border-[#2391C3]"
       <div className="flex flex-wrap gap-2 sm:gap-3">
         {fabrics.map((fabric) => {
           const isSelected = fabric.id === selectedFabricId;
@@ -56,7 +56,7 @@ export default function FabricSelector({
                 ${
                   isSelected
                     ? "border-[#2391C3] ring-4 ring-[#2391C3] ring-opacity-30"
-                    : "border-gray-300 hover:border-[#2391C3]"
+                    : "border-gray-300 dark:border-gray-600 hover:border-[#2391C3]"
                 }
                 ${isOutOfStock ? "opacity-40 cursor-not-allowed" : "cursor-pointer"}
               `}
@@ -79,7 +79,7 @@ export default function FabricSelector({
                 }}
               >
                 {!isBase && !hasImage && (
-                  <span className="text-gray-600">
+                  <span className="text-gray-700 dark:text-gray-200">
                     {fabric.name.charAt(0).toUpperCase()}
                   </span>
                 )}
@@ -94,7 +94,7 @@ export default function FabricSelector({
 
               {/* X si está agotado */}
               {isOutOfStock && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 rounded-full">
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-800 dark:bg-gray-700 bg-opacity-50 rounded-full">
                   <span className="text-white text-xl sm:text-2xl font-bold">
                     ✕
                   </span>
@@ -104,22 +104,23 @@ export default function FabricSelector({
           );
         })}
       </div>
-
       {/* Precio final y stock */}
       {selectedFabric && (
-        <div className="pt-3 sm:pt-4 border-t border-gray-200">
+        <div className="pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
-            <span className="text-sm sm:text-base text-gray-600">
+            <span className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
               Precio final:
             </span>
-            <span className="text-xl sm:text-2xl font-bold text-gray-900">
+            <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {formatPrice(basePrice + selectedFabric.priceModifier)}
             </span>
           </div>
 
           {/* Stock disponible */}
           <div className="mt-2 flex items-center justify-between">
-            <span className="text-sm text-gray-600">Stock disponible:</span>
+            <span className="text-sm text-gray-600 dark:text-gray-300">
+              Stock disponible:
+            </span>
             <span
               className={`text-sm font-semibold ${
                 selectedFabric.stock === 0
@@ -135,9 +136,8 @@ export default function FabricSelector({
           </div>
         </div>
       )}
-
       {fabrics.length === 0 && (
-        <p className="text-gray-500 text-sm">
+        <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-sm">
           No hay opciones de tela disponibles para este producto
         </p>
       )}

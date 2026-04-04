@@ -36,9 +36,9 @@ const ICON: Record<ResultType, React.ReactNode> = {
 };
 
 const BG: Record<ResultType, string> = {
-  success: "bg-green-50 border-green-200",
-  failure: "bg-red-50 border-red-200",
-  pending: "bg-yellow-50 border-yellow-200",
+  success: "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800",
+  failure: "bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800",
+  pending: "bg-yellow-50 dark:bg-yellow-900/30 border-yellow-200 dark:border-yellow-800",
 };
 
 export default function OrderResult() {
@@ -136,14 +136,14 @@ export default function OrderResult() {
         >
           {ICON[pathType]}
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">
             {TITLE[pathType]}
           </h1>
 
-          <p className="text-gray-600">{DESCRIPTION[pathType]}</p>
+          <p className="text-gray-600 dark:text-gray-300">{DESCRIPTION[pathType]}</p>
 
           {collectionId && (
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
               Referencia MP: {collectionId}
             </p>
           )}
@@ -169,13 +169,13 @@ export default function OrderResult() {
                 </button>
                 <button
                   onClick={handleGoToOrders}
-                  className="flex-1 border border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 transition-colors"
                 >
                   Ver mis pedidos
                 </button>
                 <button
                   onClick={handleGoToCart}
-                  className="flex-1 border border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 transition-colors"
                 >
                   Volver al carrito
                 </button>

@@ -8,7 +8,7 @@ export default function Footer() {
         <p className="text-2xl font-bold mb-2 text-[#8A4A86] dark:text-purple-300">
           Meraki <span className="text-lg">aca®</span>
         </p>
-        <p className="text-gray-700 dark:text-gray-400 mb-6 font-medium">
+        <p className="text-gray-700 dark:text-gray-400 dark:text-gray-500 mb-6 font-medium">
           Cojines Herbales con Alma, Creatividad y Amor
         </p>
 
@@ -19,7 +19,7 @@ export default function Footer() {
           <span className="text-3xl">✨</span>
         </div>
 
-        <p className="text-sm text-gray-600 dark:text-gray-500">
+        <p className="text-sm text-gray-600 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
           © 2026 Meraki <span className="text-xs">aca®</span>. Hecho con amor en
           Jalisco, México 🇲🇽
         </p>

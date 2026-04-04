@@ -252,7 +252,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
               {isFilled ? (
                 <StarIcon className={`${size} text-yellow-400`} />
               ) : (
-                <StarOutlineIcon className={`${size} text-gray-300`} />
+                <StarOutlineIcon className={`${size} text-gray-300 dark:text-gray-600`} />
               )}
             </button>
           );
@@ -281,19 +281,19 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
   return (
     <div className="space-y-6">
       {/* Resumen de calificación */}
-      <div className="border-t pt-6">
-        <h3 className="text-2xl font-bold text-gray-800 mb-4">
+      <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+        <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
           Opiniones de clientes
         </h3>
         {productRating.count > 0 && (
           <div className="flex items-center gap-3 mb-6">
             <div className="flex items-center gap-2">
               {renderStars(productRating.average, false, "h-5 w-5")}
-              <span className="text-lg font-semibold text-gray-700">
+              <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">
                 {productRating.average.toFixed(1)}
               </span>
             </div>
-            <span className="text-gray-500">
+            <span className="text-gray-500 dark:text-gray-400 dark:text-gray-500">
               ({productRating.count}{" "}
               {productRating.count === 1 ? "reseña" : "reseñas"})
             </span>
@@ -310,16 +310,16 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
             </div>
           ) : canReview && userReviews.length < 3 ? (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <h4 className="text-lg font-semibold text-gray-800">
+              <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 Escribe una reseña
               </h4>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Has escrito {userReviews.length} de 3 reseñas permitidas para
                 este producto
               </p>
               {validatedCode && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                  <p className="text-sm text-green-800">
+                <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                  <p className="text-sm text-green-800 dark:text-green-200">
                     ✓ Código de cliente frecuente validado:{" "}
                     <strong>{validatedCode.code}</strong>
                   </p>
@@ -327,14 +327,14 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Calificación *
                 </label>
                 {renderStars(rating, true)}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Comentario *
                 </label>
                 <textarea
@@ -342,11 +342,11 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                   onChange={(e) => setComment(e.target.value)}
                   rows={4}
                   maxLength={500}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
                   placeholder="Comparte tu experiencia con este producto..."
                   required
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">
                   {comment.length}/500 caracteres
                 </p>
               </div>
@@ -361,7 +361,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
             </form>
           ) : userReviews.length >= 3 ? (
             <div className="text-center py-4">
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Ya has alcanzado el límite de 3 comentarios para este producto
               </p>
             </div>
@@ -387,8 +387,8 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
       )}
 
       {!user && (
-        <div className="bg-blue-50 p-6 rounded-lg text-center space-y-3">
-          <p className="text-gray-700">
+        <div className="bg-blue-50 dark:bg-blue-900/30 p-6 rounded-lg text-center space-y-3">
+          <p className="text-gray-700 dark:text-gray-200">
             <a
               href="/login"
               className="text-[#2391C3] hover:underline font-semibold"
@@ -397,8 +397,8 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
             </a>{" "}
             para dejar una reseña
           </p>
-          <div className="border-t border-blue-200 pt-3">
-            <p className="text-sm text-gray-600 mb-2">
+          <div className="border-t border-blue-200 dark:border-blue-800 pt-3">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
               ¿Eres cliente frecuente?
             </p>
             <button
@@ -416,14 +416,14 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
       {/* Lista de reseñas */}
       <div className="space-y-4">
         {reviews.length === 0 ? (
-          <p className="text-center text-gray-500 py-8">
+          <p className="text-center text-gray-500 dark:text-gray-400 dark:text-gray-500 py-8">
             Aún no hay reseñas para este producto. ¡Sé el primero en opinar!
           </p>
         ) : (
           reviews.map((review) => (
             <div
               key={review.id}
-              className="border border-gray-200 rounded-lg p-4 space-y-2"
+              className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 dark:bg-gray-900/40 rounded-lg p-4 space-y-2"
             >
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
@@ -431,7 +431,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                     {renderStars(review.rating, false, "h-4 w-4")}
                   </div>
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold text-gray-800">
+                    <p className="font-semibold text-gray-800 dark:text-gray-100">
                       {review.userName}
                     </p>
                     {review.frequentCustomerCode && (
@@ -440,7 +440,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                     {formatDate(review.createdAt)}
                   </p>
                 </div>
@@ -448,14 +448,16 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                   (user.uid === review.userId || user.role === "admin") && (
                     <button
                       onClick={() => handleDeleteReview(review.id)}
-                      className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
+                      className="text-red-500 hover:text-red-700 dark:text-red-300 text-sm font-medium transition-colors"
                       title="Eliminar reseña"
                     >
                       Eliminar
                     </button>
                   )}
               </div>
-              <p className="text-gray-700">{review.comment}</p>
+              <p className="text-gray-700 dark:text-gray-200">
+                {review.comment}
+              </p>
             </div>
           ))
         )}

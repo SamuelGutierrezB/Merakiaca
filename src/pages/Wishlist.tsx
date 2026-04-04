@@ -61,11 +61,11 @@ export default function Wishlist() {
     return (
       <Layout>
         <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-          <Heart className="h-24 w-24 mx-auto mb-4 text-gray-400" />
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">
+          <Heart className="h-24 w-24 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">
             Mis Favoritos
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="text-gray-600 dark:text-gray-300 mb-8">
             Debes iniciar sesión para ver tus productos favoritos
           </p>
           <Link
@@ -89,7 +89,7 @@ export default function Wishlist() {
           >
             Mis Favoritos
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             {products.length === 0
               ? "Aún no tienes productos favoritos"
               : `${products.length} producto${products.length !== 1 ? "s" : ""} guardado${products.length !== 1 ? "s" : ""}`}
@@ -105,7 +105,7 @@ export default function Wishlist() {
           </div>
         ) : products.length === 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900 p-12 text-center">
-            <Heart className="h-24 w-24 mx-auto mb-4 text-gray-400" />
+            <Heart className="h-24 w-24 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
               No tienes favoritos todavía
             </h2>
@@ -138,7 +138,7 @@ export default function Wishlist() {
                         className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="flex items-center justify-center h-full text-gray-400">
+                      <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
                         Sin imagen
                       </div>
                     )}

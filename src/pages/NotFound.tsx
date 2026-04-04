@@ -30,7 +30,7 @@ export default function NotFound() {
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-4">
           ¡Ups! Esta página se perdió en el tejido
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 text-lg mb-8 max-w-xl mx-auto">
+        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 text-lg mb-8 max-w-xl mx-auto">
           La página que buscas no existe o fue movida. Pero no te preocupes,
           tenemos muchos productos herbales que te van a encantar.
         </p>

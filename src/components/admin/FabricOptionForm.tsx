@@ -120,7 +120,7 @@ export default function FabricOptionForm({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           Opciones de Tela
         </h3>
         <button
@@ -142,11 +142,11 @@ export default function FabricOptionForm({
           return (
             <div
               key={fabric.id}
-              className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200"
+              className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
             >
               {/* Preview del color/patrón */}
               <div
-                className="w-12 h-12 rounded-full border-2 border-gray-300 flex-shrink-0"
+                className="w-12 h-12 rounded-full border-2 border-gray-300 dark:border-gray-600 flex-shrink-0"
                 style={{
                   backgroundColor: isBase ? fabric.imageUrl : "transparent",
                   backgroundImage: !isBase ? `url(${fabric.imageUrl})` : "none",
@@ -158,9 +158,9 @@ export default function FabricOptionForm({
               {/* Información */}
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="font-medium text-gray-800">{fabric.name}</p>
+                  <p className="font-medium text-gray-800 dark:text-gray-100">{fabric.name}</p>
                   {isBase && (
-                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                    <span className="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
                       Color base
                     </span>
                   )}
@@ -169,21 +169,21 @@ export default function FabricOptionForm({
 
               {/* Stock */}
               <div className="w-24">
-                <label className="text-xs text-gray-600">Stock</label>
+                <label className="text-xs text-gray-600 dark:text-gray-300">Stock</label>
                 <input
                   type="number"
                   value={fabric.stock}
                   onChange={(e) =>
                     handleStockChange(fabric.id, parseInt(e.target.value) || 0)
                   }
-                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                  className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
                   min="0"
                 />
               </div>
 
               {/* Modificador de precio */}
               <div className="w-28">
-                <label className="text-xs text-gray-600">Precio +/-</label>
+                <label className="text-xs text-gray-600 dark:text-gray-300">Precio +/-</label>
                 <input
                   type="number"
                   value={fabric.priceModifier}
@@ -193,7 +193,7 @@ export default function FabricOptionForm({
                       parseFloat(e.target.value) || 0,
                     )
                   }
-                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                  className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
                   step="0.01"
                 />
               </div>
@@ -203,7 +203,7 @@ export default function FabricOptionForm({
                 <button
                   type="button"
                   onClick={() => handleRemoveCustomFabric(fabric.id)}
-                  className="text-red-500 hover:text-red-700 transition-colors"
+                  className="text-red-500 hover:text-red-700 dark:text-red-300 transition-colors"
                   title="Eliminar tela"
                 >
                   <TrashIcon className="h-5 w-5" />
@@ -218,21 +218,21 @@ export default function FabricOptionForm({
       {isAddingCustom && (
         <div
           ref={customFormRef}
-          className="p-6 bg-white border-2 border-dashed border-[#8A4A86] rounded-lg space-y-4"
+          className="p-6 bg-white dark:bg-gray-900 border-2 border-dashed border-[#8A4A86] rounded-lg space-y-4"
         >
-          <h4 className="font-semibold text-gray-800">
+          <h4 className="font-semibold text-gray-800 dark:text-gray-100">
             Nueva Tela Personalizada
           </h4>
 
           {/* Tabs para elegir entre Color o Imagen */}
-          <div className="flex gap-2 border-b border-gray-200">
+          <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700">
             <button
               type="button"
               onClick={() => setOptionType("color")}
               className={`px-4 py-2 font-medium transition-colors ${
                 optionType === "color"
                   ? "text-[#8A4A86] border-b-2 border-[#8A4A86]"
-                  : "text-gray-500 hover:text-gray-700"
+                  : "text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:text-gray-200"
               }`}
             >
               🎨 Color Sólido
@@ -243,7 +243,7 @@ export default function FabricOptionForm({
               className={`px-4 py-2 font-medium transition-colors ${
                 optionType === "image"
                   ? "text-[#8A4A86] border-b-2 border-[#8A4A86]"
-                  : "text-gray-500 hover:text-gray-700"
+                  : "text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:text-gray-200"
               }`}
             >
               🖼️ Imagen/Patrón
@@ -253,7 +253,7 @@ export default function FabricOptionForm({
           {/* Selector de color o imagen según el tipo */}
           {optionType === "color" ? (
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                 Selecciona un color *
               </label>
               <div className="flex items-center gap-4">
@@ -261,7 +261,7 @@ export default function FabricOptionForm({
                   type="color"
                   value={selectedColor}
                   onChange={(e) => setSelectedColor(e.target.value)}
-                  className="w-20 h-20 rounded-lg cursor-pointer border-2 border-gray-300"
+                  className="w-20 h-20 rounded-lg cursor-pointer border-2 border-gray-300 dark:border-gray-600"
                 />
                 <div className="flex-1">
                   <input
@@ -269,9 +269,9 @@ export default function FabricOptionForm({
                     value={selectedColor}
                     onChange={(e) => setSelectedColor(e.target.value)}
                     placeholder="#FF6B6B"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent font-mono"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent font-mono"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">
                     Código hexadecimal del color
                   </p>
                 </div>
@@ -286,7 +286,7 @@ export default function FabricOptionForm({
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Nombre de la tela *
             </label>
             <input
@@ -294,13 +294,13 @@ export default function FabricOptionForm({
               value={customName}
               onChange={(e) => setCustomName(e.target.value)}
               placeholder="Ej: Flores Vintage, Rayas Doradas, Azul Cielo"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Modificador de precio
               </label>
               <input
@@ -311,15 +311,15 @@ export default function FabricOptionForm({
                 }
                 step="0.01"
                 placeholder="0.00"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">
                 Monto a sumar/restar al precio base
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Stock inicial
               </label>
               <input
@@ -328,7 +328,7 @@ export default function FabricOptionForm({
                 onChange={(e) => setCustomStock(parseInt(e.target.value) || 0)}
                 min="0"
                 placeholder="0"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
               />
             </div>
           </div>
@@ -352,7 +352,7 @@ export default function FabricOptionForm({
                 setSelectedColor("#FF6B6B");
                 setOptionType("color");
               }}
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold transition-colors"
+              className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg font-semibold transition-colors"
             >
               Cancelar
             </button>
@@ -361,7 +361,7 @@ export default function FabricOptionForm({
       )}
 
       {fabrics.length === 0 && (
-        <p className="text-center text-gray-500 py-8">
+        <p className="text-center text-gray-500 dark:text-gray-400 dark:text-gray-500 py-8">
           No hay opciones de tela configuradas
         </p>
       )}

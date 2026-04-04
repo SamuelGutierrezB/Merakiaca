@@ -39,7 +39,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-400">
+          <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
             Sin imagen
           </div>
         )}
@@ -57,7 +57,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               className={`h-5 w-5 transition-colors ${
                 isFavorite
                   ? "fill-red-500 text-red-500"
-                  : "text-gray-600 hover:text-red-500"
+                  : "text-gray-600 dark:text-gray-300 hover:text-red-500"
               }`}
             />
           </button>
@@ -65,7 +65,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {!hasStock && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <span className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold">
+            <span className="bg-red-50 dark:bg-red-900/300 text-white px-4 py-2 rounded-lg font-semibold">
               Agotado
             </span>
           </div>
@@ -105,7 +105,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               );
             })}
             {product.fabrics.length > 4 && (
-              <div className="w-6 h-6 rounded-full bg-gray-800 bg-opacity-70 border-2 border-white shadow-md flex items-center justify-center text-[10px] text-white font-bold">
+              <div className="w-6 h-6 rounded-full bg-gray-800 dark:bg-gray-700 bg-opacity-70 border-2 border-white dark:border-gray-600 shadow-md flex items-center justify-center text-[10px] text-white font-bold">
                 +{product.fabrics.length - 4}
               </div>
             )}

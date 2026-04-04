@@ -5,14 +5,14 @@ export default function DebugAuth() {
   const { user, loading, initialized, error } = useAuthStore();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-800 p-8">
+      <div className="max-w-2xl mx-auto bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold mb-4">Debug Autenticación</h1>
 
         <div className="space-y-4">
           <div>
             <h2 className="font-bold">Store State:</h2>
-            <pre className="bg-gray-100 p-4 rounded mt-2 text-sm overflow-auto">
+            <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded mt-2 text-sm overflow-auto">
               {JSON.stringify(
                 {
                   user: user
@@ -35,7 +35,7 @@ export default function DebugAuth() {
 
           <div>
             <h2 className="font-bold">Firebase Auth:</h2>
-            <pre className="bg-gray-100 p-4 rounded mt-2 text-sm overflow-auto">
+            <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded mt-2 text-sm overflow-auto">
               {JSON.stringify(
                 {
                   currentUser: auth.currentUser
@@ -59,7 +59,7 @@ export default function DebugAuth() {
 
           <div>
             <h2 className="font-bold">Variables de Entorno:</h2>
-            <pre className="bg-gray-100 p-4 rounded mt-2 text-sm overflow-auto">
+            <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded mt-2 text-sm overflow-auto">
               {JSON.stringify(
                 {
                   VITE_FIREBASE_API_KEY:

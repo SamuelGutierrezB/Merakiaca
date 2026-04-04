@@ -163,27 +163,27 @@ export default function AdminCategories() {
             <div className="flex items-center gap-4 mb-8">
               <button
                 onClick={handleCancel}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:text-gray-100 transition-colors"
               >
                 <ArrowLeftIcon className="h-5 w-5" />
                 <span className="hidden sm:inline">Volver</span>
               </button>
             </div>
 
-            <h1 className="text-3xl font-bold text-gray-800 mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">
               {editingCategory ? "Editar Categoría" : "Nueva Categoría"}
             </h1>
 
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     Nombre *
                   </label>
                   <input
                     {...register("name")}
                     type="text"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
                     placeholder="Ej: Almohadas"
                   />
                   {errors.name && (
@@ -194,13 +194,13 @@ export default function AdminCategories() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     Descripción *
                   </label>
                   <textarea
                     {...register("description")}
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
                     placeholder="Describe esta categoría..."
                   />
                   {errors.description && (
@@ -211,14 +211,14 @@ export default function AdminCategories() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     Orden de visualización *
                   </label>
                   <input
                     {...register("order", { valueAsNumber: true })}
                     type="number"
                     min="0"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
                   />
                   {errors.order && (
                     <p className="text-red-600 text-sm mt-1">
@@ -237,7 +237,7 @@ export default function AdminCategories() {
                   <button
                     type="button"
                     onClick={handleCancel}
-                    className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 transition-colors"
                   >
                     Cancelar
                   </button>
@@ -259,7 +259,7 @@ export default function AdminCategories() {
           <div className="flex items-center gap-4 mb-8">
             <button
               onClick={() => navigate("/admin")}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:text-gray-100 transition-colors"
               data-tour="categories-back"
             >
               <ArrowLeftIcon className="h-5 w-5" />
@@ -272,12 +272,12 @@ export default function AdminCategories() {
           <div className="flex justify-between items-center mb-8">
             <div>
               <h1
-                className="text-3xl font-bold text-gray-800"
+                className="text-3xl font-bold text-gray-800 dark:text-gray-100"
                 data-tour="categories-title"
               >
                 Gestión de Categorías
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
                 Organiza tus productos por categorías
               </p>
             </div>
@@ -292,17 +292,17 @@ export default function AdminCategories() {
           </div>
 
           {loading ? (
-            <div className="bg-white rounded-lg shadow-md p-12 text-center">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-12 text-center">
               <Loader2 className="h-16 w-16 mx-auto mb-4 text-[#2391C3] animate-spin" />
-              <p className="text-gray-600">Cargando categorías...</p>
+              <p className="text-gray-600 dark:text-gray-300">Cargando categorías...</p>
             </div>
           ) : categories.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-md p-12 text-center">
-              <FolderTree className="h-24 w-24 mx-auto mb-4 text-gray-400" />
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-12 text-center">
+              <FolderTree className="h-24 w-24 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
                 No hay categorías todavía
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Crea tu primera categoría para organizar tus productos
               </p>
               <button
@@ -323,21 +323,21 @@ export default function AdminCategories() {
                 {categories.map((category) => (
                   <div
                     key={category.id}
-                    className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow"
+                    className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow"
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">
+                        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
                           {category.name}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
                           {category.description}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                      <span className="text-sm text-gray-500">
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <span className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                         {productCounts[category.name] || 0} producto(s)
                       </span>
                       <div className="flex gap-2">
@@ -364,11 +364,11 @@ export default function AdminCategories() {
           )}
 
           {/* Info card */}
-          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="mt-8 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
             <h3 className="font-semibold text-blue-900 mb-2">
               💡 Sobre las Categorías
             </h3>
-            <p className="text-blue-800 text-sm">
+            <p className="text-blue-800 dark:text-blue-200 text-sm">
               Las categorías te ayudan a organizar tus productos. Los clientes
               pueden filtrar el catálogo por estas categorías para encontrar más
               fácilmente lo que buscan.

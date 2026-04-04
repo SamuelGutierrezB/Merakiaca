@@ -14,7 +14,7 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="flex items-center flex-wrap gap-1 text-sm text-gray-500 dark:text-gray-400 mb-4"
+      className="flex items-center flex-wrap gap-1 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 mb-4"
     >
       {items.map((item, index) => (
         <span key={index} className="flex items-center gap-1">

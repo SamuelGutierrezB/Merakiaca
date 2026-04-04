@@ -55,11 +55,11 @@ export default function FrequentCustomerDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-md w-full p-6 relative">
         {/* Botón cerrar */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:text-gray-300 transition-colors"
         >
           <XMarkIcon className="h-6 w-6" />
         </button>
@@ -67,10 +67,10 @@ export default function FrequentCustomerDialog({
         {/* Contenido */}
         <div className="space-y-4">
           <div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
               Código de Cliente Frecuente
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Ingresa tu código de cliente frecuente para poder comentar este
               producto sin necesidad de haberlo comprado.
             </p>
@@ -80,7 +80,7 @@ export default function FrequentCustomerDialog({
             <div>
               <label
                 htmlFor="frequentCustomerCode"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
               >
                 Código *
               </label>
@@ -90,7 +90,7 @@ export default function FrequentCustomerDialog({
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                 placeholder="Ej: CLIENTE2024"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent uppercase"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent uppercase"
                 maxLength={20}
                 disabled={isValidating}
               />
@@ -108,15 +108,15 @@ export default function FrequentCustomerDialog({
                 type="button"
                 onClick={handleClose}
                 disabled={isValidating}
-                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50"
+                className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-6 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50"
               >
                 Cancelar
               </button>
             </div>
           </form>
 
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <p className="text-xs text-blue-800">
+          <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg">
+            <p className="text-xs text-blue-800 dark:text-blue-200">
               💡 <strong>¿No tienes un código?</strong> Los códigos de cliente
               frecuente se otorgan a clientes que han realizado compras previas
               en nuestra tienda. Contáctanos para obtener el tuyo.

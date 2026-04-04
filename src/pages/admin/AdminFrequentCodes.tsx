@@ -171,9 +171,9 @@ export default function AdminFrequentCodes() {
   };
 
   const getUsageColor = (percentage: number) => {
-    if (percentage >= 90) return "bg-red-500";
-    if (percentage >= 70) return "bg-yellow-500";
-    return "bg-green-500";
+    if (percentage >= 90) return "bg-red-50 dark:bg-red-900/300";
+    if (percentage >= 70) return "bg-yellow-50 dark:bg-yellow-900/300";
+    return "bg-green-50 dark:bg-green-900/300";
   };
 
   return (
@@ -185,7 +185,7 @@ export default function AdminFrequentCodes() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate("/admin")}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:text-gray-100 transition-colors"
               data-tour="codes-back"
             >
               <ArrowLeftIcon className="h-5 w-5" />
@@ -202,12 +202,12 @@ export default function AdminFrequentCodes() {
           >
             <div>
               <h1
-                className="text-3xl font-bold text-gray-800"
+                className="text-3xl font-bold text-gray-800 dark:text-gray-100"
                 data-tour="codes-title"
               >
                 Códigos de Cliente Frecuente
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
                 Gestiona los códigos para que clientes frecuentes puedan
                 comentar productos
               </p>
@@ -225,16 +225,16 @@ export default function AdminFrequentCodes() {
           {/* Formulario de creación */}
           {showCreateForm && (
             <div
-              className="bg-white p-6 rounded-lg shadow-md border border-gray-200"
+              className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
               data-tour="codes-form"
             >
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
                 Crear Nuevo Código
               </h2>
               <form onSubmit={handleCreateCode} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       Código *
                     </label>
                     <input
@@ -242,18 +242,18 @@ export default function AdminFrequentCodes() {
                       value={newCode}
                       onChange={(e) => setNewCode(e.target.value.toUpperCase())}
                       placeholder="Ej: CLIENTE2024"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent uppercase"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent uppercase"
                       maxLength={20}
                       disabled={isCreating}
                       required
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">
                       Máximo 20 caracteres, solo letras y números
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       Usos Máximos *
                     </label>
                     <input
@@ -263,11 +263,11 @@ export default function AdminFrequentCodes() {
                         setMaxUses(parseInt(e.target.value) || 0)
                       }
                       min="1"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
                       disabled={isCreating}
                       required
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">
                       Número de usuarios que pueden usar este código
                     </p>
                   </div>
@@ -288,7 +288,7 @@ export default function AdminFrequentCodes() {
                       setNewCode("");
                       setMaxUses(100);
                     }}
-                    className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold transition-colors"
+                    className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-6 py-2 rounded-lg font-semibold transition-colors"
                   >
                     Cancelar
                   </button>
@@ -301,11 +301,11 @@ export default function AdminFrequentCodes() {
           {isLoading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#2391C3] border-t-transparent mx-auto"></div>
-              <p className="text-gray-600 mt-4">Cargando códigos...</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-4">Cargando códigos...</p>
             </div>
           ) : codes.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-md p-12 text-center">
-              <p className="text-gray-500 text-lg">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-12 text-center">
+              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-lg">
                 No hay códigos de cliente frecuente aún
               </p>
               <button
@@ -329,7 +329,7 @@ export default function AdminFrequentCodes() {
                 return (
                   <div
                     key={code.id}
-                    className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden"
+                    className="bg-white dark:bg-gray-900 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden"
                   >
                     {/* Header del código */}
                     <div className="bg-gradient-to-r from-[#2391C3] to-[#1A6B8E] p-4">
@@ -344,12 +344,12 @@ export default function AdminFrequentCodes() {
                         </div>
                         <div className="flex items-center gap-2">
                           {code.isActive ? (
-                            <span className="flex items-center gap-1 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            <span className="flex items-center gap-1 bg-green-50 dark:bg-green-900/300 text-white px-3 py-1 rounded-full text-xs font-semibold">
                               <CheckCircleIcon className="h-4 w-4" />
                               Activo
                             </span>
                           ) : (
-                            <span className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            <span className="flex items-center gap-1 bg-red-50 dark:bg-red-900/300 text-white px-3 py-1 rounded-full text-xs font-semibold">
                               <XCircleIcon className="h-4 w-4" />
                               Inactivo
                             </span>
@@ -363,18 +363,18 @@ export default function AdminFrequentCodes() {
                       {/* Estadísticas */}
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">Usos:</span>
-                          <span className="font-semibold text-gray-800">
+                          <span className="text-gray-600 dark:text-gray-300">Usos:</span>
+                          <span className="font-semibold text-gray-800 dark:text-gray-100">
                             {code.currentUses} / {code.maxUses}
                           </span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full transition-all ${getUsageColor(usagePercentage)}`}
                             style={{ width: `${usagePercentage}%` }}
                           ></div>
                         </div>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
                           {code.usedBy.length} usuario(s) han usado este código
                         </p>
                       </div>
@@ -386,21 +386,21 @@ export default function AdminFrequentCodes() {
                       >
                         <button
                           onClick={() => handleCopyCode(code.code)}
-                          className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors text-sm"
+                          className="flex items-center justify-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg transition-colors text-sm"
                         >
                           <ClipboardDocumentIcon className="h-4 w-4" />
                           Copiar
                         </button>
                         <button
                           onClick={() => handleShareCode(code.code)}
-                          className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors text-sm"
+                          className="flex items-center justify-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg transition-colors text-sm"
                         >
                           <ShareIcon className="h-4 w-4" />
                           Compartir
                         </button>
                         <button
                           onClick={() => handleShareWhatsApp(code.code)}
-                          className="flex items-center justify-center gap-2 bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-lg transition-colors text-sm"
+                          className="flex items-center justify-center gap-2 bg-green-100 dark:bg-green-900/40 hover:bg-green-200 dark:hover:bg-green-800/60 text-green-700 dark:text-green-300 px-4 py-2 rounded-lg transition-colors text-sm"
                         >
                           <ChatBubbleLeftRightIcon className="h-4 w-4" />
                           WhatsApp
@@ -411,15 +411,15 @@ export default function AdminFrequentCodes() {
                           }
                           className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm col-span-2 ${
                             code.isActive
-                              ? "bg-yellow-100 hover:bg-yellow-200 text-yellow-700"
-                              : "bg-green-100 hover:bg-green-200 text-green-700"
+                              ? "bg-yellow-100 dark:bg-yellow-900/40 hover:bg-yellow-200 dark:hover:bg-yellow-800/60 text-yellow-700 dark:text-yellow-300"
+                              : "bg-green-100 dark:bg-green-900/40 hover:bg-green-200 dark:hover:bg-green-800/60 text-green-700 dark:text-green-300"
                           }`}
                         >
                           {code.isActive ? "Desactivar" : "Activar"}
                         </button>
                         <button
                           onClick={() => handleDeleteClick(code.id, code.code)}
-                          className="flex items-center justify-center gap-2 bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg transition-colors text-sm"
+                          className="flex items-center justify-center gap-2 bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-800/60 text-red-700 dark:text-red-300 px-4 py-2 rounded-lg transition-colors text-sm"
                         >
                           <TrashIcon className="h-4 w-4" />
                           Eliminar

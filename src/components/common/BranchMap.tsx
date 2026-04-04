@@ -211,27 +211,27 @@ export default function BranchMap({
   return (
     <div className={className}>
       {showTitle && (
-        <h3 className="text-xl font-bold mb-4 text-gray-800">
+        <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">
           Sucursales Casa Blanca
         </h3>
       )}
 
       {/* Mapa con las ubicaciones */}
-      <div className="bg-gray-100 rounded-lg overflow-hidden mb-6 relative h-96 border-2 border-gray-200">
+      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mb-6 relative h-96 border-2 border-gray-200 dark:border-gray-700">
         <div ref={mapRef} className="w-full h-full"></div>
 
         {!mapLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#2391C3] border-t-transparent mx-auto mb-3"></div>
-              <p className="text-sm text-gray-600">Cargando mapa...</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Cargando mapa...</p>
             </div>
           </div>
         )}
 
         {mapLoaded && !selectedBranch && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg shadow-lg pointer-events-none">
-            <p className="text-xs text-gray-700 font-medium">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-900/95 backdrop-blur-sm px-4 py-2 rounded-lg shadow-lg pointer-events-none">
+            <p className="text-xs text-gray-700 dark:text-gray-200 font-medium">
               💡 Haz clic en los marcadores numerados o en las sucursales abajo
             </p>
           </div>
@@ -258,8 +258,8 @@ export default function BranchMap({
               selectedBranchId === branch.id
                 ? "border-[#2391C3] bg-[#2391C3]/5 shadow-lg"
                 : hoveredBranch === branch.id
-                  ? "border-[#2391C3]/50 bg-gray-50"
-                  : "border-gray-200 hover:border-gray-300"
+                  ? "border-[#2391C3]/50 bg-gray-50 dark:bg-gray-800"
+                  : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 dark:border-gray-600"
             }`}
           >
             <div className="flex items-start gap-2 mb-2">
@@ -267,16 +267,16 @@ export default function BranchMap({
                 className={`h-5 w-5 flex-shrink-0 mt-0.5 ${
                   selectedBranchId === branch.id
                     ? "text-[#2391C3]"
-                    : "text-gray-400"
+                    : "text-gray-400 dark:text-gray-500"
                 }`}
               />
               <div className="flex-1">
-                <h4 className="font-bold text-gray-800">{branch.name}</h4>
-                <p className="text-xs text-gray-600 mt-1">{branch.address}</p>
+                <h4 className="font-bold text-gray-800 dark:text-gray-100">{branch.name}</h4>
+                <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{branch.address}</p>
               </div>
             </div>
 
-            <div className="ml-7 space-y-1 text-xs text-gray-600">
+            <div className="ml-7 space-y-1 text-xs text-gray-600 dark:text-gray-300">
               <div className="flex items-center gap-1">
                 <ClockIcon className="h-4 w-4" />
                 <span>
@@ -310,8 +310,8 @@ export default function BranchMap({
       </div>
 
       {selectedBranch && (
-        <div className="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
-          <p className="text-sm text-gray-700">
+        <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 rounded">
+          <p className="text-sm text-gray-700 dark:text-gray-200">
             ⏰ <strong>Importante:</strong> Tienes 7 días para recoger tu
             producto en la sucursal <strong>{selectedBranch.name}</strong>.
             Recibirás tu nota con el folio por WhatsApp al número que

@@ -50,18 +50,18 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800",
-  processing: "bg-blue-100 text-blue-800",
+  pending: "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200",
+  processing: "bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200",
   shipped: "bg-purple-100 text-purple-800",
-  delivered: "bg-green-100 text-green-800",
-  cancelled: "bg-red-100 text-red-800",
+  delivered: "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200",
+  cancelled: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200",
 };
 
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
   pending: "bg-orange-100 text-orange-800",
-  approved: "bg-green-100 text-green-800",
-  rejected: "bg-red-100 text-red-800",
-  cancelled: "bg-gray-100 text-gray-800",
+  approved: "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200",
+  rejected: "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200",
+  cancelled: "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100",
 };
 
 export default function AdminOrders() {
@@ -220,6 +220,15 @@ export default function AdminOrders() {
     toast.success("Dirección copiada al portapapeles");
   };
 
+  const buildMercadoPagoActivityUrl = (paymentId: string) => {
+    return `https://www.mercadopago.com.mx/activities?search=${encodeURIComponent(paymentId)}`;
+  };
+
+  const copyPaymentId = async (paymentId: string) => {
+    await navigator.clipboard.writeText(paymentId);
+    toast.success("ID de pago copiado");
+  };
+
   return (
     <>
       <AdminJoyride page="orders" />
@@ -229,7 +238,7 @@ export default function AdminOrders() {
           <div className="flex items-center gap-4 mb-8">
             <button
               onClick={() => navigate("/admin")}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:text-gray-100 transition-colors"
               data-tour="orders-back"
             >
               <ArrowLeftIcon className="h-5 w-5" />
@@ -256,7 +265,7 @@ export default function AdminOrders() {
               <button
                 type="button"
                 onClick={() => setDeleteAllDialogOpen(true)}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 font-semibold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 dark:bg-red-700 px-4 py-3 font-semibold text-white transition-colors hover:bg-red-700 dark:hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={loading || deletingAll}
               >
                 <TrashIcon className="h-5 w-5" />
@@ -266,21 +275,21 @@ export default function AdminOrders() {
           </div>
 
           {loading ? (
-            <div className="bg-white rounded-lg shadow-md p-12 text-center">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-12 text-center">
               <Loader2 className="h-16 w-16 mx-auto mb-4 text-[#2391C3] animate-spin" />
-              <p className="text-gray-600">Cargando órdenes...</p>
+              <p className="text-gray-600 dark:text-gray-300">Cargando órdenes...</p>
             </div>
           ) : orders.length === 0 ? (
             /* Estado vacío */
             <div
-              className="bg-white rounded-lg shadow-md p-12 text-center"
+              className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-12 text-center"
               data-tour="orders-empty"
             >
-              <Package className="h-24 w-24 mx-auto mb-4 text-gray-400" />
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              <Package className="h-24 w-24 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
                 No hay órdenes todavía
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Las órdenes aparecerán aquí cuando los clientes realicen compras
               </p>
               <button
@@ -294,63 +303,63 @@ export default function AdminOrders() {
             <>
               {/* Tabla de órdenes para desktop */}
               <div
-                className="hidden lg:block bg-white rounded-lg shadow-md overflow-hidden"
+                className="hidden lg:block bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden"
                 data-tour="orders-table"
               >
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-50 dark:bg-gray-800">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                           Orden
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                           Cliente
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                           Productos
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                           Total
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                           Estado
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                           Fecha
                         </th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                           Acciones
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200">
                       {orders.map((order) => (
                         <tr
                           key={order.id}
                           onClick={() => setSelectedOrder(order)}
-                          className="hover:bg-gray-50 cursor-pointer"
+                          className="hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 cursor-pointer"
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                               #{order.id.slice(0, 8)}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">
+                            <div className="text-sm text-gray-900 dark:text-gray-100">
                               {order.shippingAddress.fullName}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
                               {order.shippingAddress.city},{" "}
                               {order.shippingAddress.state}
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className="text-sm text-gray-900">
+                            <div className="text-sm text-gray-900 dark:text-gray-100">
                               {order.items.length} producto
                               {order.items.length !== 1 ? "s" : ""}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
                               {order.items
                                 .map((item) => item.productName)
                                 .join(", ")
@@ -361,7 +370,7 @@ export default function AdminOrders() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-bold text-gray-900">
+                            <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
                               {formatPrice(order.total)}
                             </div>
                           </td>
@@ -370,7 +379,7 @@ export default function AdminOrders() {
                               <span
                                 className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-center ${
                                   PAYMENT_STATUS_COLORS[order.paymentStatus] ||
-                                  "bg-gray-100 text-gray-800"
+                                  "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100"
                                 }`}
                               >
                                 {PAYMENT_STATUS_LABELS[order.paymentStatus] ||
@@ -379,14 +388,14 @@ export default function AdminOrders() {
                               <span
                                 className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-center ${
                                   STATUS_COLORS[order.status] ||
-                                  "bg-gray-100 text-gray-800"
+                                  "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100"
                                 }`}
                               >
                                 {STATUS_LABELS[order.status] || order.status}
                               </span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                             {formatDate(order.createdAt)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -396,7 +405,7 @@ export default function AdminOrders() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
-                                className="text-green-600 hover:text-green-800 transition-colors"
+                                className="text-green-600 hover:text-green-800 dark:text-green-200 transition-colors"
                                 title="Contactar por WhatsApp"
                               >
                                 <WhatsAppIcon className="h-5 w-5" />
@@ -423,14 +432,14 @@ export default function AdminOrders() {
                   <div
                     key={order.id}
                     onClick={() => setSelectedOrder(order)}
-                    className="bg-white rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow"
+                    className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow"
                   >
                     <div className="flex justify-between items-start mb-3">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                           Orden #{order.id.slice(0, 8)}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
                           {formatDate(order.createdAt)}
                         </p>
                       </div>
@@ -440,7 +449,7 @@ export default function AdminOrders() {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="text-green-600 hover:text-green-800 transition-colors p-1"
+                          className="text-green-600 hover:text-green-800 dark:text-green-200 transition-colors p-1"
                           title="Contactar por WhatsApp"
                         >
                           <WhatsAppIcon className="h-5 w-5" />
@@ -457,43 +466,43 @@ export default function AdminOrders() {
 
                     <div className="space-y-2 mb-3">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Cliente:</span>
-                        <span className="text-sm font-medium text-gray-900 text-right">
+                        <span className="text-sm text-gray-600 dark:text-gray-300">Cliente:</span>
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100 text-right">
                           {order.shippingAddress.fullName}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
                           Ubicación:
                         </span>
-                        <span className="text-sm text-gray-900 text-right">
+                        <span className="text-sm text-gray-900 dark:text-gray-100 text-right">
                           {order.shippingAddress.city},{" "}
                           {order.shippingAddress.state}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
                           Productos:
                         </span>
-                        <span className="text-sm text-gray-900">
+                        <span className="text-sm text-gray-900 dark:text-gray-100">
                           {order.items.length} producto
                           {order.items.length !== 1 ? "s" : ""}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Total:</span>
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="text-sm text-gray-600 dark:text-gray-300">Total:</span>
+                        <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
                           {formatPrice(order.total)}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-2 pt-3 border-t border-gray-200">
+                    <div className="flex flex-col gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
                       <div className="flex gap-2">
                         <span
                           className={`flex-1 px-2 py-1 text-xs leading-5 font-semibold rounded-full text-center ${
                             PAYMENT_STATUS_COLORS[order.paymentStatus] ||
-                            "bg-gray-100 text-gray-800"
+                            "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100"
                           }`}
                         >
                           {PAYMENT_STATUS_LABELS[order.paymentStatus] ||
@@ -502,7 +511,7 @@ export default function AdminOrders() {
                         <span
                           className={`flex-1 px-2 py-1 text-xs leading-5 font-semibold rounded-full text-center ${
                             STATUS_COLORS[order.status] ||
-                            "bg-gray-100 text-gray-800"
+                            "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100"
                           }`}
                         >
                           {STATUS_LABELS[order.status] || order.status}
@@ -516,11 +525,11 @@ export default function AdminOrders() {
           )}
 
           {/* Info card */}
-          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="mt-8 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
             <h3 className="font-semibold text-blue-900 mb-2">
               💡 Sobre las Órdenes
             </h3>
-            <p className="text-blue-800 text-sm">
+            <p className="text-blue-800 dark:text-blue-200 text-sm">
               Aquí podrás ver todas las órdenes de compra, cambiar su estado
               (pendiente, en proceso, enviado, entregado), ver detalles del
               cliente y productos ordenados. La integración con Mercado Pago
@@ -537,22 +546,22 @@ export default function AdminOrders() {
           onClick={() => setSelectedOrder(null)}
         >
           <div
-            className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header del Modal */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+            <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex justify-between items-center">
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                   Orden #{selectedOrder.id.slice(0, 8)}
                 </h2>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   {formatDate(selectedOrder.createdAt)}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:text-gray-300 text-2xl font-bold"
               >
                 ×
               </button>
@@ -563,7 +572,7 @@ export default function AdminOrders() {
               {/* Estados */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500 mb-2">
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 mb-2">
                     Estado de Pago
                   </h3>
                   <select
@@ -574,19 +583,19 @@ export default function AdminOrders() {
                         e.target.value as PaymentStatus,
                       )
                     }
-                    className="px-3 py-1 text-xs font-semibold rounded-full border-2 border-gray-300 focus:border-[#2391C3] focus:outline-none"
+                    className="px-3 py-1 text-xs font-semibold rounded-full border-2 border-gray-300 dark:border-gray-600 focus:border-[#2391C3] focus:outline-none"
                   >
                     <option value="pending">Pago pendiente</option>
                     <option value="approved">Pago aprobado</option>
                     <option value="rejected">Pago rechazado</option>
                     <option value="cancelled">Pago cancelado</option>
                   </select>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">
                     Cambiar a "Pago aprobado" para órdenes por WhatsApp
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500 mb-2">
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 mb-2">
                     Estado del Pedido
                   </h3>
                   <select
@@ -597,7 +606,7 @@ export default function AdminOrders() {
                         e.target.value as OrderStatus,
                       )
                     }
-                    className="px-3 py-1 text-xs font-semibold rounded-full border-2 border-gray-300 focus:border-[#2391C3] focus:outline-none"
+                    className="px-3 py-1 text-xs font-semibold rounded-full border-2 border-gray-300 dark:border-gray-600 focus:border-[#2391C3] focus:outline-none"
                     disabled={selectedOrder.paymentStatus !== "approved"}
                   >
                     <option value="pending">Pendiente de pago</option>
@@ -607,7 +616,7 @@ export default function AdminOrders() {
                     <option value="cancelled">Cancelado</option>
                   </select>
                   {selectedOrder.paymentStatus !== "approved" && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">
                       Solo se puede cambiar cuando el pago esté aprobado
                     </p>
                   )}
@@ -616,23 +625,23 @@ export default function AdminOrders() {
 
               {/* Dirección de Envío */}
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 mb-2 flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
                   Dirección de Envío
                 </h3>
-                <div className="bg-gray-50 rounded-lg p-4 space-y-1">
-                  <p className="font-semibold text-gray-800">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-1">
+                  <p className="font-semibold text-gray-800 dark:text-gray-100">
                     {selectedOrder.shippingAddress.fullName}
                   </p>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 dark:text-gray-200">
                     {selectedOrder.shippingAddress.street}
                   </p>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 dark:text-gray-200">
                     {selectedOrder.shippingAddress.city},{" "}
                     {selectedOrder.shippingAddress.state}{" "}
                     {selectedOrder.shippingAddress.zipCode}
                   </p>
-                  <p className="text-gray-700 flex items-center gap-2">
+                  <p className="text-gray-700 dark:text-gray-200 flex items-center gap-2">
                     <Phone className="h-4 w-4" />
                     {selectedOrder.shippingAddress.phone}
                   </p>
@@ -641,29 +650,29 @@ export default function AdminOrders() {
 
               {/* Productos */}
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 mb-2 flex items-center gap-2">
                   <ShoppingBag className="h-4 w-4" />
                   Productos
                 </h3>
-                <div className="bg-gray-50 rounded-lg divide-y divide-gray-200">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg divide-y divide-gray-200">
                   {selectedOrder.items.map((item, index) => (
                     <div key={index} className="p-4 flex justify-between">
                       <div className="flex-1">
-                        <p className="font-semibold text-gray-800">
+                        <p className="font-semibold text-gray-800 dark:text-gray-100">
                           {item.productName}
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
                           Tela: {item.fabricName}
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
                           Cantidad: {item.quantity}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-gray-900">
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">
                           {formatPrice(item.totalPrice)}
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
                           c/u: {formatPrice(item.unitPrice)}
                         </p>
                       </div>
@@ -673,29 +682,29 @@ export default function AdminOrders() {
               </div>
 
               {/* Totales */}
-              <div className="border-t border-gray-200 pt-4">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-700">Subtotal:</span>
+                  <span className="text-gray-700 dark:text-gray-200">Subtotal:</span>
                   <span className="font-semibold">
                     {formatPrice(selectedOrder.subtotal)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-700">Envío:</span>
+                  <span className="text-gray-700 dark:text-gray-200">Envío:</span>
                   <span className="font-semibold">
                     {selectedOrder.shipping}
                   </span>
                 </div>
-                <div className="flex justify-between items-center text-lg border-t border-gray-200 pt-2">
-                  <span className="font-bold text-gray-800">Total:</span>
-                  <span className="font-bold text-gray-900">
+                <div className="flex justify-between items-center text-lg border-t border-gray-200 dark:border-gray-700 pt-2">
+                  <span className="font-bold text-gray-800 dark:text-gray-100">Total:</span>
+                  <span className="font-bold text-gray-900 dark:text-gray-100">
                     {formatPrice(selectedOrder.total)}
                   </span>
                 </div>
               </div>
 
               {/* Historial de Cambios */}
-              <div className="border-t border-gray-200 pt-6">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
                 <OrderHistory
                   statusHistory={selectedOrder.statusHistory}
                   paymentStatusHistory={selectedOrder.paymentStatusHistory}
@@ -703,8 +712,8 @@ export default function AdminOrders() {
               </div>
 
               {/* Acciones Rápidas */}
-              <div className="border-t border-gray-200 pt-4 space-y-3">
-                <h3 className="text-sm font-medium text-gray-500">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Acciones Rápidas
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
@@ -712,14 +721,14 @@ export default function AdminOrders() {
                     href={buildWhatsAppLink(selectedOrder)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
+                    className="flex items-center justify-center gap-2 bg-green-50 dark:bg-green-900/300 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
                   >
                     <WhatsAppIcon className="h-4 w-4" />
                     WhatsApp al cliente
                   </a>
                   <button
                     onClick={() => copyAddress(selectedOrder)}
-                    className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
+                    className="flex items-center justify-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
                   >
                     <Copy className="h-4 w-4" />
                     Copiar dirección
@@ -736,26 +745,39 @@ export default function AdminOrders() {
                     </button>
                   )}
                   {selectedOrder.mercadoPagoPaymentId && (
-                    <a
-                      href={`https://www.mercadopago.com.mx/activities/payments/${selectedOrder.mercadoPagoPaymentId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="col-span-2 flex items-center justify-center gap-2 bg-sky-50 hover:bg-sky-100 text-sky-700 px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      Ver pago en Mercado Pago
-                    </a>
+                    <>
+                      <a
+                        href={buildMercadoPagoActivityUrl(
+                          selectedOrder.mercadoPagoPaymentId,
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="col-span-2 flex items-center justify-center gap-2 bg-sky-50 hover:bg-sky-100 text-sky-700 px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        Buscar pago en Mercado Pago
+                      </a>
+                      <button
+                        onClick={() =>
+                          copyPaymentId(selectedOrder.mercadoPagoPaymentId!)
+                        }
+                        className="col-span-2 flex items-center justify-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
+                      >
+                        <Copy className="h-4 w-4" />
+                        Copiar ID de pago
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
 
               {/* Botón de Eliminar */}
-              <div className="border-t border-gray-200 pt-4">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <button
                   onClick={(e) => {
                     handleDelete(selectedOrder, e);
                   }}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-800 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                 >
                   <TrashIcon className="h-5 w-5" />
                   Eliminar Orden
@@ -805,13 +827,13 @@ export default function AdminOrders() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title className="text-lg font-semibold leading-6 text-gray-900">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-900 p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title className="text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100">
                     Borrar Todas las Órdenes
                   </Dialog.Title>
 
                   <div className="mt-3 space-y-4">
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       Esta acción eliminará permanentemente todas las órdenes.
                       Para continuar, selecciona la opción de eliminación y
                       luego confirma.
@@ -820,7 +842,7 @@ export default function AdminOrders() {
                     <div>
                       <label
                         htmlFor="delete-all-orders-select"
-                        className="mb-2 block text-sm font-medium text-gray-700"
+                        className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200"
                       >
                         Confirmación
                       </label>
@@ -830,7 +852,7 @@ export default function AdminOrders() {
                         onChange={(e) =>
                           setDeleteAllConfirmation(e.target.value)
                         }
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-red-500 focus:outline-none"
+                        className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-red-500 focus:outline-none"
                       >
                         <option value="">Selecciona una opción</option>
                         <option value="eliminar">Eliminar</option>
@@ -841,7 +863,7 @@ export default function AdminOrders() {
                   <div className="mt-6 flex justify-end gap-3">
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+                      className="inline-flex justify-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800"
                       onClick={closeDeleteAllDialog}
                       disabled={deletingAll}
                     >
@@ -849,7 +871,7 @@ export default function AdminOrders() {
                     </button>
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex justify-center rounded-lg bg-red-600 dark:bg-red-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 dark:hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-60"
                       onClick={confirmDeleteAll}
                       disabled={
                         deleteAllConfirmation !== "eliminar" || deletingAll

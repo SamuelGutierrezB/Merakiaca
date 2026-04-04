@@ -85,31 +85,31 @@ export default function ImageUpload({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">{label}</label>
 
       {preview ? (
         <div className="relative">
           <img
             src={preview}
             alt="Preview"
-            className="w-full h-48 object-cover rounded-lg border border-gray-300"
+            className="w-full h-48 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
           />
           <button
             type="button"
             onClick={clearPreview}
-            className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
+            className="absolute top-2 right-2 bg-red-50 dark:bg-red-900/300 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
           >
             <XMarkIcon className="h-5 w-5" />
           </button>
         </div>
       ) : (
-        <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-[#2391C3] transition-colors">
+        <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg hover:border-[#2391C3] transition-colors">
           <div className="space-y-2 text-center">
-            <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
-            <div className="flex text-sm text-gray-600">
+            <PhotoIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+            <div className="flex text-sm text-gray-600 dark:text-gray-300">
               <label
                 htmlFor={inputId}
-                className="relative cursor-pointer bg-white rounded-md font-medium text-[#2391C3] hover:text-[#1A6B8E] focus-within:outline-none"
+                className="relative cursor-pointer bg-white dark:bg-gray-900 rounded-md font-medium text-[#2391C3] hover:text-[#1A6B8E] focus-within:outline-none"
               >
                 <span>Seleccionar archivo</span>
                 <input
@@ -125,7 +125,7 @@ export default function ImageUpload({
               </label>
               <p className="pl-1">o arrastra aquí</p>
             </div>
-            <p className="text-xs text-gray-500">PNG, JPG, WebP hasta 5MB</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">PNG, JPG, WebP hasta 5MB</p>
           </div>
         </div>
       )}
@@ -133,7 +133,7 @@ export default function ImageUpload({
       {isUploading && (
         <div className="flex items-center justify-center py-4">
           <div className="animate-spin rounded-full h-8 w-8 border-4 border-[#2391C3] border-t-transparent"></div>
-          <span className="ml-3 text-sm text-gray-600">Subiendo imagen...</span>
+          <span className="ml-3 text-sm text-gray-600 dark:text-gray-300">Subiendo imagen...</span>
         </div>
       )}
     </div>

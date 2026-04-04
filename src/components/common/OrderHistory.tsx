@@ -37,7 +37,7 @@ export default function OrderHistory({
 
   if (allHistory.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500">
         <Clock className="h-12 w-12 mx-auto mb-2 opacity-50" />
         <p>No hay historial de cambios</p>
       </div>
@@ -57,13 +57,13 @@ export default function OrderHistory({
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
         Historial de Cambios
       </h3>
 
       <div className="relative">
         {/* Línea vertical del timeline */}
-        <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+        <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
 
         {/* Lista de eventos */}
         <div className="space-y-4">
@@ -79,8 +79,8 @@ export default function OrderHistory({
                 <div
                   className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full ${
                     isStatus
-                      ? "bg-blue-100 text-blue-600"
-                      : "bg-green-100 text-green-600"
+                      ? "bg-blue-100 dark:bg-blue-900/40 text-blue-600"
+                      : "bg-green-100 dark:bg-green-900/40 text-green-600"
                   }`}
                 >
                   {isStatus ? (
@@ -91,26 +91,26 @@ export default function OrderHistory({
                 </div>
 
                 {/* Contenido del evento */}
-                <div className="flex-1 bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <div className="flex-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm">
                   <div className="flex items-start justify-between gap-4 mb-1">
-                    <h4 className="font-semibold text-gray-800">{label}</h4>
-                    <span className="text-xs text-gray-500 whitespace-nowrap">
+                    <h4 className="font-semibold text-gray-800 dark:text-gray-100">{label}</h4>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 whitespace-nowrap">
                       {formatDate(item.changedAt)}
                     </span>
                   </div>
 
                   {item.note && (
-                    <p className="text-sm text-gray-600 mb-2">{item.note}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{item.note}</p>
                   )}
 
                   {item.changedBy && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
                       Cambiado por administrador
                     </p>
                   )}
 
                   {!item.changedBy && !item.note && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
                       Cambio automático del sistema
                     </p>
                   )}

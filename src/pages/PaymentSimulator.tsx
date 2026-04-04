@@ -81,18 +81,18 @@ export default function PaymentSimulator() {
       <div className="min-h-screen flex items-center justify-center px-4 py-16">
         <div className="max-w-md w-full">
           {paymentStatus === "pending" && (
-            <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-8 text-center">
               <div className="mb-6">
                 <ClockIcon className="h-20 w-20 text-[#2391C3] mx-auto animate-pulse" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
                 Procesando pago...
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Estamos simulando la conexión con Mercado Pago
               </p>
-              <div className="bg-gray-100 rounded-lg p-4 mb-4">
-                <p className="text-sm text-gray-600">
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Orden: #{orderId?.slice(0, 8)}
                 </p>
                 <p className="text-2xl font-bold text-[#2391C3] mt-2">
@@ -101,33 +101,33 @@ export default function PaymentSimulator() {
               </div>
               <div className="flex justify-center items-center gap-2">
                 <div className="animate-spin rounded-full h-6 w-6 border-4 border-[#2391C3] border-t-transparent"></div>
-                <span className="text-gray-500">Espera {countdown}s...</span>
+                <span className="text-gray-500 dark:text-gray-400 dark:text-gray-500">Espera {countdown}s...</span>
               </div>
-              <p className="text-xs text-gray-500 mt-6">
+              <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-6">
                 🔧 Modo simulación: Este es un entorno de prueba
               </p>
             </div>
           )}
 
           {paymentStatus === "approved" && (
-            <div className="bg-white rounded-lg shadow-lg p-8 text-center animate-fade-in">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-8 text-center animate-fade-in">
               <div className="mb-6">
                 <CheckCircleIcon className="h-20 w-20 text-green-500 mx-auto" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
                 ¡Pago Exitoso!
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Tu pedido ha sido confirmado y está siendo procesado
               </p>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-gray-600">
+              <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Orden: #{orderId?.slice(0, 8)}
                 </p>
                 <p className="text-2xl font-bold text-green-600 mt-2">
                   ${total}
                 </p>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-2">
                   Recibirás un correo con los detalles de tu pedido
                 </p>
               </div>
@@ -139,35 +139,35 @@ export default function PaymentSimulator() {
               </button>
               <button
                 onClick={() => navigate("/")}
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors"
+                className="w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-6 py-3 rounded-lg font-semibold transition-colors"
               >
                 Volver al inicio
               </button>
-              <p className="text-xs text-gray-500 mt-4">
+              <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-4">
                 Redirigiendo automáticamente en 5 segundos...
               </p>
             </div>
           )}
 
           {paymentStatus === "rejected" && (
-            <div className="bg-white rounded-lg shadow-lg p-8 text-center animate-fade-in">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-8 text-center animate-fade-in">
               <div className="mb-6">
                 <XCircleIcon className="h-20 w-20 text-red-500 mx-auto" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
                 Pago Rechazado
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
                 No se pudo procesar tu pago. Por favor, intenta nuevamente.
               </p>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-gray-600">
+              <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Orden: #{orderId?.slice(0, 8)}
                 </p>
                 <p className="text-sm text-red-600 mt-2">
                   El pago fue rechazado por el procesador
                 </p>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-2">
                   Verifica tus datos e intenta nuevamente
                 </p>
               </div>
@@ -179,11 +179,11 @@ export default function PaymentSimulator() {
               </button>
               <button
                 onClick={() => navigate("/")}
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold transition-colors"
+                className="w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-6 py-3 rounded-lg font-semibold transition-colors"
               >
                 Cancelar
               </button>
-              <p className="text-xs text-gray-500 mt-4">
+              <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-4">
                 Redirigiendo al carrito en 5 segundos...
               </p>
             </div>

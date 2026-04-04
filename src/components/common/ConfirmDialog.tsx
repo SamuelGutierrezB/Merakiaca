@@ -29,7 +29,7 @@ export default function ConfirmDialog({
   };
 
   const confirmColorClasses = {
-    red: "bg-red-600 hover:bg-red-700 focus:ring-red-500",
+    red: "bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 focus:ring-red-500",
     blue: "bg-[#2391C3] hover:bg-[#1A6B8E] focus:ring-[#2391C3]",
   };
 
@@ -59,7 +59,7 @@ export default function ConfirmDialog({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-900 p-6 text-left align-middle shadow-xl transition-all">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="flex-shrink-0">
                     <ExclamationTriangleIcon
@@ -69,20 +69,20 @@ export default function ConfirmDialog({
                   </div>
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-semibold leading-6 text-gray-900"
+                    className="text-lg font-semibold leading-6 text-gray-900 dark:text-gray-100"
                   >
                     {title}
                   </Dialog.Title>
                 </div>
 
                 <div className="mt-2">
-                  <p className="text-sm text-gray-600">{message}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{message}</p>
                 </div>
 
                 <div className="mt-6 flex gap-3 justify-end">
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors"
+                    className="inline-flex justify-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors"
                     onClick={onClose}
                   >
                     {cancelText}

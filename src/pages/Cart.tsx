@@ -24,7 +24,7 @@ export default function Cart() {
           </p>
 
           <div className="text-center bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-2xl shadow-lg dark:shadow-gray-900">
-            <ShoppingCart className="h-20 w-20 sm:h-24 sm:w-24 mx-auto mb-4 sm:mb-6 text-gray-400" />
+            <ShoppingCart className="h-20 w-20 sm:h-24 sm:w-24 mx-auto mb-4 sm:mb-6 text-gray-400 dark:text-gray-500" />
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-4 sm:mb-6">
               Aún no has agregado productos a tu carrito
             </p>
@@ -52,7 +52,7 @@ export default function Cart() {
           </h1>
           <button
             onClick={clearCart}
-            className="text-red-600 hover:text-red-700 font-semibold transition-colors flex items-center gap-2 text-sm sm:text-base"
+            className="text-red-600 hover:text-red-700 dark:text-red-300 font-semibold transition-colors flex items-center gap-2 text-sm sm:text-base"
           >
             <TrashIcon className="h-5 w-5" />
             Vaciar Carrito
@@ -77,7 +77,7 @@ export default function Cart() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-xs">
                         Sin imagen
                       </div>
                     )}
@@ -107,7 +107,7 @@ export default function Cart() {
                               item.quantity - 1,
                             )
                           }
-                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                         >
                           <MinusIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                         </button>
@@ -122,7 +122,7 @@ export default function Cart() {
                               item.quantity + 1,
                             )
                           }
-                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                         >
                           <PlusIcon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                         </button>
@@ -132,7 +132,7 @@ export default function Cart() {
                         onClick={() =>
                           removeItem(item.productId, item.fabricId)
                         }
-                        className="text-red-600 hover:text-red-700 p-2 transition-colors"
+                        className="text-red-600 hover:text-red-700 dark:text-red-300 p-2 transition-colors"
                         title="Eliminar del carrito"
                       >
                         <TrashIcon className="h-5 w-5" />

@@ -140,7 +140,7 @@ export default function Home() {
           >
             ¿Por qué Meraki <span className="text-2xl sm:text-3xl">aca</span>?
           </h2>
-          <p className="text-center text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base reveal">
+          <p className="text-center text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base reveal">
             Creamos cada cojín herbal con dedicación, usando SEMILLAS Y HERBAS
             naturales de la más alta calidad
           </p>
@@ -184,7 +184,7 @@ export default function Home() {
         >
           Nuestros Productos
         </h2>
-        <p className="text-center text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 text-sm sm:text-base reveal">
+        <p className="text-center text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-8 sm:mb-12 text-sm sm:text-base reveal">
           Descubre nuestra colección de cojines herbales
         </p>
 
@@ -200,7 +200,7 @@ export default function Home() {
               <button
                 onClick={prevSlide}
                 disabled={currentIndex === 0}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-6 z-10 bg-white hover:bg-[#2391C3] text-[#2391C3] hover:text-white p-2 sm:p-3 rounded-full shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-6 z-10 bg-white dark:bg-gray-900 hover:bg-[#2391C3] text-[#2391C3] hover:text-white p-2 sm:p-3 rounded-full shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Anterior"
               >
                 <ChevronLeftIcon className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -224,7 +224,7 @@ export default function Home() {
               <button
                 onClick={nextSlide}
                 disabled={currentIndex >= products.length - itemsPerView}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 sm:translate-x-6 z-10 bg-white hover:bg-[#2391C3] text-[#2391C3] hover:text-white p-2 sm:p-3 rounded-full shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 sm:translate-x-6 z-10 bg-white dark:bg-gray-900 hover:bg-[#2391C3] text-[#2391C3] hover:text-white p-2 sm:p-3 rounded-full shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Siguiente"
               >
                 <ChevronRightIcon className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -243,7 +243,7 @@ export default function Home() {
                     className={`h-2 rounded-full transition-all ${
                       index === currentIndex
                         ? "w-8 bg-[#2391C3]"
-                        : "w-2 bg-gray-300 hover:bg-gray-400"
+                        : "w-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
                     }`}
                     aria-label={`Ir a la página ${index + 1}`}
                   />
@@ -252,7 +252,7 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400 dark:text-gray-500">
             No hay productos disponibles
           </div>
         )}
@@ -267,7 +267,7 @@ export default function Home() {
           </p>
           <Link
             to="/productos"
-            className="inline-flex items-center justify-center gap-3 bg-white hover:bg-[#F5E63C] text-[#2391C3] font-bold px-6 sm:px-10 py-3 sm:py-4 rounded-xl text-base sm:text-xl transition-colors shadow-lg"
+            className="inline-flex items-center justify-center gap-3 bg-white dark:bg-gray-900 hover:bg-[#F5E63C] text-[#2391C3] font-bold px-6 sm:px-10 py-3 sm:py-4 rounded-xl text-base sm:text-xl transition-colors shadow-lg"
           >
             Ver Catálogo en Línea
           </Link>
@@ -293,7 +293,7 @@ export default function Home() {
           >
             Instrucciones de Uso
           </h2>
-          <p className="text-center text-gray-700 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto text-base font-medium reveal">
+          <p className="text-center text-gray-700 dark:text-gray-400 dark:text-gray-500 mb-8 sm:mb-12 max-w-2xl mx-auto text-base font-medium reveal">
             Cojín Herbal (compresa para masaje)
           </p>
 
@@ -392,7 +392,7 @@ export default function Home() {
                 Hecho en México por Meraki aca®
               </strong>
             </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-4">
               Materiales: Semillas, hierbas naturales y tela de algodón
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -428,7 +428,7 @@ export default function Home() {
           >
             Casa Blanca Sucursales
           </h2>
-          <p className="text-center text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base reveal">
+          <p className="text-center text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base reveal">
             Entregas locales en Casa Blanca. Recoge tu pedido en la sucursal más
             cercana
           </p>

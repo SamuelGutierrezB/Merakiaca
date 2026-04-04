@@ -52,16 +52,16 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
-      <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+      <div className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-xl max-w-md w-full">
         <h1 className="text-3xl font-bold text-center mb-2">Merakiaca</h1>
-        <p className="text-gray-600 text-center mb-8">
+        <p className="text-gray-600 dark:text-gray-300 text-center mb-8">
           Inicia sesión para continuar
         </p>
 
         <button
           onClick={handleGoogleSignIn}
           disabled={loading || isProcessing}
-          className="w-full bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading || isProcessing ? (
             <div className="flex items-center gap-2">

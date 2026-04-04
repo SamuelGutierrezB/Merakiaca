@@ -140,7 +140,9 @@ export default function ProductDetail() {
     return (
       <Layout>
         <div className="text-center py-20">
-          <p className="text-gray-500">Producto no encontrado</p>
+          <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">
+            Producto no encontrado
+          </p>
         </div>
       </Layout>
     );
@@ -164,7 +166,7 @@ export default function ProductDetail() {
           {/* Galería de imágenes del producto */}
           <div className="space-y-4">
             {/* Imagen principal */}
-            <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square">
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden aspect-square">
               {allImages.length > 0 ? (
                 <img
                   src={allImages[selectedImageIndex]}
@@ -172,7 +174,7 @@ export default function ProductDetail() {
                   className="w-full h-full object-contain"
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-400">
+                <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Sin imagen
                 </div>
               )}
@@ -186,10 +188,10 @@ export default function ProductDetail() {
                     key={index}
                     type="button"
                     onClick={() => setSelectedImageIndex(index)}
-                    className={`bg-gray-100 rounded-lg overflow-hidden aspect-square border-2 transition-all ${
+                    className={`bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden aspect-square border-2 transition-all ${
                       selectedImageIndex === index
                         ? "border-[#2391C3] ring-2 ring-[#2391C3]"
-                        : "border-transparent hover:border-gray-300"
+                        : "border-transparent hover:border-gray-300 dark:hover:border-gray-600 dark:border-gray-600 dark:hover:border-gray-600"
                     }`}
                   >
                     <img
@@ -208,7 +210,7 @@ export default function ProductDetail() {
             <div>
               <div className="flex items-start justify-between gap-4 mb-2">
                 <div className="flex items-center gap-2">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">
                     {product.name}
                   </h1>
                   {isAdmin && isAdmin() && (
@@ -224,7 +226,7 @@ export default function ProductDetail() {
                 {user && (
                   <button
                     onClick={handleToggleFavorite}
-                    className="flex-shrink-0 w-12 h-12 rounded-full bg-white border-2 border-gray-200 shadow-md flex items-center justify-center hover:scale-110 transition-transform"
+                    className="flex-shrink-0 w-12 h-12 rounded-full bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 shadow-md flex items-center justify-center hover:scale-110 transition-transform"
                     aria-label={
                       isInWishlist(product.id)
                         ? "Quitar de favoritos"
@@ -235,7 +237,7 @@ export default function ProductDetail() {
                       className={`h-6 w-6 transition-colors ${
                         isInWishlist(product.id)
                           ? "fill-red-500 text-red-500"
-                          : "text-gray-600 hover:text-red-500"
+                          : "text-gray-600 dark:text-gray-300 hover:text-red-500"
                       }`}
                     />
                   </button>
@@ -248,7 +250,7 @@ export default function ProductDetail() {
                 ).map((cat, idx) => (
                   <span
                     key={idx}
-                    className="px-3 py-1 bg-[#E8DFCA] text-gray-800 rounded-full text-sm font-semibold"
+                    className="px-3 py-1 bg-[#E8DFCA] dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-full text-sm font-semibold"
                   >
                     {cat}
                   </span>
@@ -256,13 +258,13 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <div className="text-2xl sm:text-3xl font-bold text-gray-900">
+            <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
               {formatPrice(product.basePrice)}
             </div>
 
             <div className="prose max-w-none">
               {product.description !== "sin descripcion" && (
-                <p className="text-gray-600 text-sm sm:text-base whitespace-pre-wrap">
+                <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base whitespace-pre-wrap">
                   {product.description}
                 </p>
               )}
@@ -274,10 +276,10 @@ export default function ProductDetail() {
                 <div className="flex flex-col sm:flex-row gap-4">
                   {/* Vista previa de tela - más pequeña */}
                   <div className="w-full sm:w-48 flex-shrink-0">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                       Vista previa
                     </h3>
-                    <div className="bg-white border-2 border-gray-200 rounded-lg overflow-hidden aspect-square relative">
+                    <div className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden aspect-square relative">
                       <div
                         className="w-full h-full transition-all duration-300"
                         style={{
@@ -296,7 +298,7 @@ export default function ProductDetail() {
                         }}
                       >
                         {!selectedFabric && (
-                          <div className="flex items-center justify-center h-full text-gray-400 text-xs text-center px-2">
+                          <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 text-xs text-center px-2">
                             Selecciona una tela
                           </div>
                         )}
@@ -304,7 +306,7 @@ export default function ProductDetail() {
                           !isBaseColor(selectedFabric.imageUrl) &&
                           !hasImage && (
                             <div className="flex items-center justify-center h-full">
-                              <span className="text-5xl text-gray-400 font-bold">
+                              <span className="text-5xl text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 font-bold">
                                 {selectedFabric.name.charAt(0)}
                               </span>
                             </div>
@@ -340,7 +342,7 @@ export default function ProductDetail() {
 
             {/* Cantidad */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Cantidad
               </label>
               <input
@@ -349,7 +351,7 @@ export default function ProductDetail() {
                 max={selectedFabric?.stock || 1}
                 value={quantity}
                 onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                className="w-24 px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
               />
             </div>
 
@@ -365,7 +367,7 @@ export default function ProductDetail() {
                 : "Agregar al Carrito"}
             </button>
 
-            <div className="pt-4 border-t border-gray-200 space-y-2 text-sm text-gray-600">
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2 text-sm text-gray-600 dark:text-gray-300">
               <p>✓ Garantía de satisfacción</p>
               <p>✓ Semillas y hierbas 100% naturales</p>
             </div>

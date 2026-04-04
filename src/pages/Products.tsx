@@ -65,7 +65,7 @@ export default function Products() {
           >
             Nuestros Productos
           </h1>
-          <p className="text-center text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 text-sm sm:text-base">
+          <p className="text-center text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-8 sm:mb-12 text-sm sm:text-base">
             Descubre nuestra colección de productos herbales artesanales
           </p>
         </div>
@@ -77,7 +77,7 @@ export default function Products() {
             className={`px-4 sm:px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap text-sm sm:text-base ${
               selectedCategory === "all"
                 ? "bg-[#2391C3] text-white"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
             }`}
           >
             Todos
@@ -89,7 +89,7 @@ export default function Products() {
               className={`px-4 sm:px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap text-sm sm:text-base ${
                 selectedCategory === cat.name
                   ? "bg-[#2391C3] text-white"
-                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
               }`}
             >
               {cat.name}
@@ -106,7 +106,7 @@ export default function Products() {
           </div>
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">
+            <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-lg">
               No hay productos disponibles en esta categoría
             </p>
           </div>

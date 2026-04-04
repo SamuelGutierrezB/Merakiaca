@@ -44,7 +44,7 @@ export default function AdminEditProduct() {
     return (
       <Layout>
         <div className="text-center py-20">
-          <p className="text-gray-500">Producto no encontrado</p>
+          <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500">Producto no encontrado</p>
         </div>
       </Layout>
     );
