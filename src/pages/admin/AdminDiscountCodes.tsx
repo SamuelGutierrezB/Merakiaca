@@ -42,6 +42,16 @@ export default function AdminDiscountCodes() {
   const [minPurchaseAmount, setMinPurchaseAmount] = useState<number | "">("");
   const [maxDiscountAmount, setMaxDiscountAmount] = useState<number | "">("");
 
+  const generateSecureCode = (length = 10) => {
+    const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const randomValues = new Uint32Array(length);
+    globalThis.crypto.getRandomValues(randomValues);
+
+    return Array.from(randomValues, (value) => alphabet[value % alphabet.length])
+      .join("")
+      .toUpperCase();
+  };
+
   useEffect(() => {
     loadCodes();
   }, []);
@@ -72,6 +82,12 @@ export default function AdminDiscountCodes() {
     setMinPurchaseAmount("");
     setMaxDiscountAmount("");
     setShowCreateForm(false);
+  };
+
+  const handleGenerateCode = () => {
+    const generatedCode = generateSecureCode();
+    setNewCode(generatedCode);
+    toast.success("Código seguro generado");
   };
 
   const handleCreateCode = async (e: React.FormEvent) => {
@@ -263,16 +279,29 @@ export default function AdminDiscountCodes() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                     Código *
                   </label>
-                  <input
-                    type="text"
-                    value={newCode}
-                    onChange={(e) => setNewCode(e.target.value.toUpperCase())}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg uppercase"
-                    placeholder="Ej: BIENVENIDA10"
-                    maxLength={25}
-                    disabled={isCreating}
-                    required
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newCode}
+                      onChange={(e) => setNewCode(e.target.value.toUpperCase())}
+                      className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg uppercase"
+                      placeholder="Ej: BIENVENIDA10"
+                      maxLength={25}
+                      disabled={isCreating}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={handleGenerateCode}
+                      className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium whitespace-nowrap"
+                      disabled={isCreating}
+                    >
+                      Generar
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Usa aleatoriedad criptográfica para evitar códigos predecibles.
+                  </p>
                 </div>
 
                 <div>

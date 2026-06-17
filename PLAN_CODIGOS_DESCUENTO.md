@@ -254,6 +254,7 @@ Criterio de salida:
 - [x] Rate limit por IP/usuario en validacion de codigos (5 intentos/minuto)
 - [x] Bloqueo temporal ante intentos fallidos repetidos (3 fallos = 15 min de bloqueo)
 - [x] Metricas de conversion por codigo
+- [x] Generador seguro de codigos random en admin
 - [ ] Dashboard de rendimiento de codigos
 
 ### Detalle: Bloqueo Temporal
@@ -327,6 +328,7 @@ Las tarjetas de código muestran en la sección "Métricas":
 - ✅ Backend: validación segura de códigos + canje atómico
 - ✅ Checkout: interfaz de código, aplicación y revalidación antes de pago
 - ✅ Admin: crear, compartir, copiar, activar/desactivar códigos
+- ✅ Admin: generador seguro de códigos aleatorios con crypto.getRandomValues
 - ✅ Firestore Rules: permisos de lectura/escritura seguros
 - ✅ Órdenes: snapshot de descuento persistido
 - ✅ Antifraude: bloqueo de doble canje en carrera (transacciones DB)
