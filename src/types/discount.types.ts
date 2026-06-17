@@ -18,6 +18,12 @@ export interface DiscountCode {
   createdBy?: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
+
+  // Métricas
+  validationAttempts?: number; // total de intentos de validación
+  validationSuccesses?: number; // validaciones exitosas
+  totalRedemptions?: number; // canjes exitosos
+  totalDiscountGiven?: number; // suma en MXN de descuentos otorgados
 }
 
 export interface AppliedDiscount {

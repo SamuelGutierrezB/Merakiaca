@@ -249,12 +249,74 @@ Criterio de salida:
 
 - ✅ Admin gestiona ciclo de vida completo del codigo
 
-## Fase 4 - Hardening (EN PROGRESS)
+## Fase 4 - Hardening (IN PROGRESS 🔒)
 
-- [ ] Rate limit por IP/usuario en validacion de codigos
-- [ ] Bloqueo temporal ante intentos fallidos repetidos
-- [ ] Metricas de conversion por codigo
+- [x] Rate limit por IP/usuario en validacion de codigos (5 intentos/minuto)
+- [x] Bloqueo temporal ante intentos fallidos repetidos (3 fallos = 15 min de bloqueo)
+- [x] Metricas de conversion por codigo
 - [ ] Dashboard de rendimiento de codigos
+
+### Detalle: Bloqueo Temporal
+
+**Mecanismo Anti-Fuerza Bruta:**
+
+- Usuario intenta validar código inválido/expirado
+- Sistema registra intento fallido
+- Después de **3 intentos fallidos en 10 minutos** → activar bloqueo de 15 minutos
+- Durante bloqueo: HTTP 429 "Bloqueado temporalmente... Intenta en X minuto(s)"
+- Bloqueo se revierte automáticamente después de 15 minutos
+
+**Intentos Fallidos que se Cuentan:**
+
+- ✅ Código no existe
+- ✅ Código inactivo/desactivado
+- ✅ Código aún no disponible (fecha inicio futura)
+- ✅ Código expirado (fecha fin pasada)
+- ✅ Código alcanzó límite global de usos
+- ✅ Usuario alcanzó límite personal de usos por código
+- ✅ Compra mínima no alcanzada
+
+**Intentos que NO se Cuentan (son errores de request):**
+
+- ❌ Code field vacío
+- ❌ Subtotal inválido
+
+**Almacenamiento:**
+
+- `rateLimits/{failed_attempts_userId}` → historial de intentos fallidos últimos 10 min
+- `rateLimits/{lock_userId}` → documento de bloqueo activo con fecha de expiración
+
+### Detalle: Métricas de Conversión
+
+**Campos Agregados a DiscountCode:**
+
+- `validationAttempts`: Total de intentos de validación (éxito o fallo)
+- `validationSuccesses`: Validaciones exitosas
+- `totalRedemptions`: Canjes completados exitosamente
+- `totalDiscountGiven`: Suma total de descuentos otorgados (MXN)
+
+**Cuándo se Actualiza:**
+
+| Evento                     | validationAttempts | validationSuccesses | totalRedemptions | totalDiscountGiven |
+| -------------------------- | ------------------ | ------------------- | ---------------- | ------------------ |
+| validateDiscountCode falla | ✅ +1              | ❌                  | ❌               | ❌                 |
+| validateDiscountCode éxito | ✅ +1              | ✅ +1               | ❌               | ❌                 |
+| applyDiscountCode éxito    | ❌                 | ❌                  | ✅ +1            | ✅ + amount        |
+
+**Visualización en Admin:**
+
+Las tarjetas de código muestran en la sección "Métricas":
+
+- **Intentos**: Total de validaciones intentadas
+- **Válidos**: Validaciones que pasaron todos los checks
+- **Canjes**: Cuántas veces se canjeó exitosamente en orden
+- **Ingresos**: Suma total de descuentos otorgados en MXN
+
+**Fórmulas Útiles:**
+
+- Tasa de validación exitosa = validationSuccesses / validationAttempts \* 100
+- Tasa de conversión = totalRedemptions / validationSuccesses \* 100
+- Descuento promedio = totalDiscountGiven / totalRedemptions
 
 ---
 
@@ -268,12 +330,14 @@ Criterio de salida:
 - ✅ Firestore Rules: permisos de lectura/escritura seguros
 - ✅ Órdenes: snapshot de descuento persistido
 - ✅ Antifraude: bloqueo de doble canje en carrera (transacciones DB)
+- ✅ Rate Limiting: máx 5 intentos de validación/minuto por usuario
+- ✅ Bloqueo Temporal: 3 intentos fallidos en 10 min → 15 min de bloqueo
 
 ### Próximos Pasos Recomendados
 
 1. **Métricas (Media)**: Agregar campos stats a discountCodes
-2. **Rate Limiting (Alta)**: Implementar en backend
-3. **Tests (Alta)**: Validar flujo completo
+2. **Generador Seguro (Media)**: Endpoint para generar códigos random en admin
+3. **Tests (Alta)**: Validar flujo completo con bloqueos temporales
 
 ---
 

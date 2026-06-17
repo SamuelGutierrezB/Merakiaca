@@ -33,6 +33,7 @@ const PRODUCTS_COLLECTION = "products";
 const ORDERS_COLLECTION = "orders";
 const DISCOUNT_CODES_COLLECTION = "discountCodes";
 const DISCOUNT_REDEMPTIONS_COLLECTION = "discountRedemptions";
+const RATE_LIMITS_COLLECTION = "rateLimits";
 
 // CORS middleware
 const corsMiddleware = cors({
@@ -274,6 +275,156 @@ const calculateDiscountAmount = ({ codeDoc, subtotal }) => {
   };
 };
 
+const checkRateLimit = async (
+  userId,
+  endpoint,
+  maxAttempts = 5,
+  windowMs = 60000,
+) => {
+  const now = Date.now();
+  const windowStart = now - windowMs;
+  const rateLimitKey = `${endpoint}_${userId}`;
+  const rateLimitDocRef = db
+    .collection(RATE_LIMITS_COLLECTION)
+    .doc(rateLimitKey);
+
+  const result = await db.runTransaction(async (transaction) => {
+    const docSnapshot = await transaction.get(rateLimitDocRef);
+    const currentData = docSnapshot.exists
+      ? docSnapshot.data()
+      : { attempts: [], userId, endpoint };
+
+    // Filter out old attempts outside the window
+    const recentAttempts = (currentData.attempts || []).filter(
+      (timestamp) => timestamp > windowStart,
+    );
+
+    if (recentAttempts.length >= maxAttempts) {
+      return { allowed: false, attemptsRemaining: 0 };
+    }
+
+    // Add new attempt and update
+    const newAttempts = [...recentAttempts, now];
+    transaction.set(rateLimitDocRef, {
+      userId,
+      endpoint,
+      attempts: newAttempts,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+
+    return {
+      allowed: true,
+      attemptsRemaining: maxAttempts - newAttempts.length,
+    };
+  });
+
+  return result;
+};
+
+const checkIfLocked = async (userId) => {
+  const now = Date.now();
+  const lockDocRef = db
+    .collection(RATE_LIMITS_COLLECTION)
+    .doc(`lock_${userId}`);
+
+  const lockSnapshot = await lockDocRef.get();
+  if (!lockSnapshot.exists) {
+    return { locked: false };
+  }
+
+  const lockData = lockSnapshot.data();
+  const lockedUntilMs = lockData.lockedUntilMs || 0;
+
+  if (now > lockedUntilMs) {
+    // Lock expired, delete it
+    await lockDocRef.delete();
+    return { locked: false };
+  }
+
+  const minutesRemaining = Math.ceil((lockedUntilMs - now) / 60000);
+  return { locked: true, minutesRemaining };
+};
+
+const recordFailedAttempt = async (userId) => {
+  const now = Date.now();
+  const tenMinutesAgo = now - 10 * 60 * 1000;
+  const failedAttemptsKey = `failed_attempts_${userId}`;
+  const failedAttemptsDocRef = db
+    .collection(RATE_LIMITS_COLLECTION)
+    .doc(failedAttemptsKey);
+
+  const result = await db.runTransaction(async (transaction) => {
+    const docSnapshot = await transaction.get(failedAttemptsDocRef);
+    const currentData = docSnapshot.exists
+      ? docSnapshot.data()
+      : { attempts: [], userId };
+
+    // Filter out attempts older than 10 minutes
+    const recentFailedAttempts = (currentData.attempts || []).filter(
+      (timestamp) => timestamp > tenMinutesAgo,
+    );
+
+    // Add new failed attempt
+    const newFailedAttempts = [...recentFailedAttempts, now];
+    transaction.set(failedAttemptsDocRef, {
+      userId,
+      attempts: newFailedAttempts,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+
+    // If 3+ failed attempts in 10 minutes, activate lockout for 15 minutes
+    if (newFailedAttempts.length >= 3) {
+      const lockDocRef = db
+        .collection(RATE_LIMITS_COLLECTION)
+        .doc(`lock_${userId}`);
+      const lockedUntilMs = now + 15 * 60 * 1000; // 15 minutes lockout
+
+      transaction.set(lockDocRef, {
+        userId,
+        lockedUntilMs,
+        reason: "too_many_failed_attempts",
+        activatedAt: FieldValue.serverTimestamp(),
+      });
+
+      return { locked: true, minutesRemaining: 15 };
+    }
+
+    return { locked: false, failedAttempts: newFailedAttempts.length };
+  });
+
+  return result;
+};
+
+const updateDiscountCodeMetrics = async (codeDocRef, metricsUpdate) => {
+  // metricsUpdate example: { validationAttempts: true, discountAmount: 500 }
+  const codeDoc = await codeDocRef.get();
+  if (!codeDoc.exists) {
+    throw new Error("Codigo no existe para actualizar metricas");
+  }
+
+  const data = codeDoc.data();
+  const updates = { updatedAt: FieldValue.serverTimestamp() };
+
+  if (metricsUpdate.validationAttempts) {
+    updates.validationAttempts = (data.validationAttempts || 0) + 1;
+  }
+
+  if (metricsUpdate.validationSuccess) {
+    updates.validationSuccesses = (data.validationSuccesses || 0) + 1;
+  }
+
+  if (metricsUpdate.redemption) {
+    updates.totalRedemptions = (data.totalRedemptions || 0) + 1;
+  }
+
+  if (metricsUpdate.discountAmount && metricsUpdate.discountAmount > 0) {
+    updates.totalDiscountGiven =
+      (data.totalDiscountGiven || 0) + metricsUpdate.discountAmount;
+  }
+
+  await codeDocRef.update(updates);
+};
+
 exports.validateDiscountCode = onRequest(
   { region: "us-central1" },
   (req, res) => {
@@ -299,6 +450,27 @@ exports.validateDiscountCode = onRequest(
           return res.status(401).json({ error: "Invalid token" });
         }
 
+        // Rate limiting: max 5 attempts per minute
+        const rateLimitResult = await checkRateLimit(
+          decodedToken.uid,
+          "validateDiscountCode",
+          5,
+          60000,
+        );
+        if (!rateLimitResult.allowed) {
+          return res.status(429).json({
+            error: "Demasiados intentos. Intenta en 1 minuto.",
+          });
+        }
+
+        // Check if user is locked out due to failed attempts
+        const lockCheck = await checkIfLocked(decodedToken.uid);
+        if (lockCheck.locked) {
+          return res.status(429).json({
+            error: `Bloqueado temporalmente por demasiados intentos fallidos. Intenta en ${lockCheck.minutesRemaining} minuto(s).`,
+          });
+        }
+
         const normalizedCode = String(req.body?.code || "")
           .trim()
           .toUpperCase();
@@ -319,6 +491,9 @@ exports.validateDiscountCode = onRequest(
           .get();
 
         if (codeSnapshot.empty) {
+          // Record failed attempt: invalid code
+          await recordFailedAttempt(decodedToken.uid);
+          // Note: can't update metrics without codeDocRef, skip
           return res.status(404).json({ error: "Codigo no valido" });
         }
 
@@ -327,6 +502,11 @@ exports.validateDiscountCode = onRequest(
         const now = Date.now();
 
         if (!codeDoc.isActive) {
+          // Record failed attempt: inactive code
+          await recordFailedAttempt(decodedToken.uid);
+          await updateDiscountCodeMetrics(codeDocRef, {
+            validationAttempts: true,
+          });
           return res
             .status(400)
             .json({ error: "Este codigo esta desactivado" });
@@ -336,18 +516,33 @@ exports.validateDiscountCode = onRequest(
         const endsAtMillis = codeDoc.endsAt?.toMillis?.();
 
         if (startsAtMillis && now < startsAtMillis) {
+          // Record failed attempt: code not available yet
+          await recordFailedAttempt(decodedToken.uid);
+          await updateDiscountCodeMetrics(codeDocRef, {
+            validationAttempts: true,
+          });
           return res
             .status(400)
             .json({ error: "Este codigo aun no esta disponible" });
         }
 
         if (endsAtMillis && now > endsAtMillis) {
+          // Record failed attempt: code expired
+          await recordFailedAttempt(decodedToken.uid);
+          await updateDiscountCodeMetrics(codeDocRef, {
+            validationAttempts: true,
+          });
           return res.status(400).json({ error: "Este codigo ya expiro" });
         }
 
         const maxUses = toSafeNumber(codeDoc.maxUses, 0);
         const currentUses = toSafeNumber(codeDoc.currentUses, 0);
         if (maxUses > 0 && currentUses >= maxUses) {
+          // Record failed attempt: code reached global limit
+          await recordFailedAttempt(decodedToken.uid);
+          await updateDiscountCodeMetrics(codeDocRef, {
+            validationAttempts: true,
+          });
           return res
             .status(400)
             .json({ error: "Este codigo alcanzo su limite de usos" });
@@ -363,6 +558,11 @@ exports.validateDiscountCode = onRequest(
             .get();
 
           if (userRedeemsSnapshot.size >= maxUsesPerUser) {
+            // Record failed attempt: user reached personal limit
+            await recordFailedAttempt(decodedToken.uid);
+            await updateDiscountCodeMetrics(codeDocRef, {
+              validationAttempts: true,
+            });
             return res
               .status(400)
               .json({ error: "Ya alcanzaste el limite de uso de este codigo" });
@@ -371,8 +571,19 @@ exports.validateDiscountCode = onRequest(
 
         const calculation = calculateDiscountAmount({ codeDoc, subtotal });
         if (!calculation.ok) {
+          // Record failed attempt: calculation failed (e.g., minimum purchase not met)
+          await recordFailedAttempt(decodedToken.uid);
+          await updateDiscountCodeMetrics(codeDocRef, {
+            validationAttempts: true,
+          });
           return res.status(400).json({ error: calculation.message });
         }
+
+        // Update metrics: successful validation
+        await updateDiscountCodeMetrics(codeDocRef, {
+          validationAttempts: true,
+          validationSuccess: true,
+        });
 
         return res.status(200).json({
           codeId: codeDocRef.id,
@@ -549,6 +760,12 @@ exports.applyDiscountCode = onRequest({ region: "us-central1" }, (req, res) => {
           codeId: codeDocRef.id,
           incrementedUses,
         };
+      });
+
+      // Update metrics: successful redemption
+      await updateDiscountCodeMetrics(codeDocRef, {
+        redemption: true,
+        discountAmount: discountAmountNum,
       });
 
       return res.status(200).json({

@@ -482,6 +482,47 @@ export default function AdminDiscountCodes() {
                       </div>
                     </div>
 
+                    {/* Métricas */}
+                    <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+                      <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        Métricas
+                      </p>
+                      <div className="grid grid-cols-2 gap-3 text-xs">
+                        <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-2">
+                          <p className="text-gray-500 dark:text-gray-400">
+                            Intentos
+                          </p>
+                          <p className="font-semibold text-gray-900 dark:text-gray-100">
+                            {code.validationAttempts || 0}
+                          </p>
+                        </div>
+                        <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-2">
+                          <p className="text-gray-500 dark:text-gray-400">
+                            Válidos
+                          </p>
+                          <p className="font-semibold text-gray-900 dark:text-gray-100">
+                            {code.validationSuccesses || 0}
+                          </p>
+                        </div>
+                        <div className="bg-purple-50 dark:bg-purple-900/30 rounded-lg p-2">
+                          <p className="text-gray-500 dark:text-gray-400">
+                            Canjes
+                          </p>
+                          <p className="font-semibold text-gray-900 dark:text-gray-100">
+                            {code.totalRedemptions || 0}
+                          </p>
+                        </div>
+                        <div className="bg-orange-50 dark:bg-orange-900/30 rounded-lg p-2">
+                          <p className="text-gray-500 dark:text-gray-400">
+                            Ingresos
+                          </p>
+                          <p className="font-semibold text-gray-900 dark:text-gray-100">
+                            {formatPrice(code.totalDiscountGiven || 0)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="text-xs text-gray-600 dark:text-gray-300 space-y-1">
                       {typeof code.minPurchaseAmount === "number" && (
                         <p>

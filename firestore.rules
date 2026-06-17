@@ -185,6 +185,15 @@ service cloud.firestore {
     }
     
     // ============================================
+    // COLECCIÓN: rateLimits
+    // ============================================
+    // Colección usada internamente por Cloud Functions para rate limiting
+    match /rateLimits/{docId} {
+      // No permitir acceso desde cliente (solo Cloud Functions con Admin SDK)
+      allow read, write: if false;
+    }
+    
+    // ============================================
     // REGLA POR DEFECTO: DENEGAR TODO
     // ============================================
     // Cualquier colección no especificada explícitamente será denegada
