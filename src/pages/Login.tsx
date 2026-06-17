@@ -39,8 +39,9 @@ export default function Login() {
       if (error.code === "auth/popup-closed-by-user") {
         toast.error("Inicio de sesión cancelado");
       } else if (error.code === "auth/unauthorized-domain") {
+        const currentDomain = window.location.hostname;
         toast.error(
-          "Dominio no autorizado. Configura localhost en Firebase Console",
+          `Dominio no autorizado (${currentDomain}). Agrega este dominio en Firebase Console > Authentication > Settings > Authorized domains.`,
         );
       } else {
         toast.error(error.message || "Error al iniciar sesión");
