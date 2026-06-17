@@ -47,7 +47,10 @@ export default function AdminDiscountCodes() {
     const randomValues = new Uint32Array(length);
     globalThis.crypto.getRandomValues(randomValues);
 
-    return Array.from(randomValues, (value) => alphabet[value % alphabet.length])
+    return Array.from(
+      randomValues,
+      (value) => alphabet[value % alphabet.length],
+    )
       .join("")
       .toUpperCase();
   };
@@ -233,6 +236,53 @@ export default function AdminDiscountCodes() {
     return formatPrice(code.value);
   };
 
+  const performanceStats = codes.reduce(
+    (accumulator, code) => {
+      const validationAttempts = code.validationAttempts || 0;
+      const validationSuccesses = code.validationSuccesses || 0;
+      const totalRedemptions = code.totalRedemptions || 0;
+      const totalDiscountGiven = code.totalDiscountGiven || 0;
+
+      accumulator.activeCodes += code.isActive ? 1 : 0;
+      accumulator.percentageCodes += code.type === "percentage" ? 1 : 0;
+      accumulator.fixedAmountCodes += code.type === "fixed_amount" ? 1 : 0;
+      accumulator.validationAttempts += validationAttempts;
+      accumulator.validationSuccesses += validationSuccesses;
+      accumulator.totalRedemptions += totalRedemptions;
+      accumulator.totalDiscountGiven += totalDiscountGiven;
+
+      return accumulator;
+    },
+    {
+      activeCodes: 0,
+      percentageCodes: 0,
+      fixedAmountCodes: 0,
+      validationAttempts: 0,
+      validationSuccesses: 0,
+      totalRedemptions: 0,
+      totalDiscountGiven: 0,
+    },
+  );
+
+  const validationSuccessRate =
+    performanceStats.validationAttempts > 0
+      ? (performanceStats.validationSuccesses /
+          performanceStats.validationAttempts) *
+        100
+      : 0;
+
+  const conversionRate =
+    performanceStats.validationSuccesses > 0
+      ? (performanceStats.totalRedemptions /
+          performanceStats.validationSuccesses) *
+        100
+      : 0;
+
+  const averageDiscount =
+    performanceStats.totalRedemptions > 0
+      ? performanceStats.totalDiscountGiven / performanceStats.totalRedemptions
+      : 0;
+
   return (
     <div className="py-8 px-4">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -300,7 +350,8 @@ export default function AdminDiscountCodes() {
                     </button>
                   </div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Usa aleatoriedad criptográfica para evitar códigos predecibles.
+                    Usa aleatoriedad criptográfica para evitar códigos
+                    predecibles.
                   </p>
                 </div>
 
@@ -447,8 +498,59 @@ export default function AdminDiscountCodes() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {codes.map((code) => {
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Códigos activos
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                  {performanceStats.activeCodes}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  de {codes.length} códigos totales
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Tasa de validación
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                  {validationSuccessRate.toFixed(1)}%
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {performanceStats.validationSuccesses} válidas de {performanceStats.validationAttempts} intentos
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Tasa de conversión
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                  {conversionRate.toFixed(1)}%
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {performanceStats.totalRedemptions} canjes de {performanceStats.validationSuccesses} validaciones exitosas
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Descuento promedio
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mt-1">
+                  {formatPrice(averageDiscount)}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {formatPrice(performanceStats.totalDiscountGiven)} otorgados en total
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {codes.map((code) => {
               const usagePercentage = getUsagePercentage(
                 code.currentUses,
                 code.maxUses,
@@ -543,7 +645,7 @@ export default function AdminDiscountCodes() {
                         </div>
                         <div className="bg-orange-50 dark:bg-orange-900/30 rounded-lg p-2">
                           <p className="text-gray-500 dark:text-gray-400">
-                            Ingresos
+                            Descuento otorgado
                           </p>
                           <p className="font-semibold text-gray-900 dark:text-gray-100">
                             {formatPrice(code.totalDiscountGiven || 0)}

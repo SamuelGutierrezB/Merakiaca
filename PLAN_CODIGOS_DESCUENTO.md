@@ -255,7 +255,7 @@ Criterio de salida:
 - [x] Bloqueo temporal ante intentos fallidos repetidos (3 fallos = 15 min de bloqueo)
 - [x] Metricas de conversion por codigo
 - [x] Generador seguro de codigos random en admin
-- [ ] Dashboard de rendimiento de codigos
+- [x] Dashboard de rendimiento de codigos
 
 ### Detalle: Bloqueo Temporal
 
@@ -311,7 +311,7 @@ Las tarjetas de código muestran en la sección "Métricas":
 - **Intentos**: Total de validaciones intentadas
 - **Válidos**: Validaciones que pasaron todos los checks
 - **Canjes**: Cuántas veces se canjeó exitosamente en orden
-- **Ingresos**: Suma total de descuentos otorgados en MXN
+- **Descuento otorgado**: Suma total de descuentos otorgados en MXN
 
 **Fórmulas Útiles:**
 
@@ -329,6 +329,7 @@ Las tarjetas de código muestran en la sección "Métricas":
 - ✅ Checkout: interfaz de código, aplicación y revalidación antes de pago
 - ✅ Admin: crear, compartir, copiar, activar/desactivar códigos
 - ✅ Admin: generador seguro de códigos aleatorios con crypto.getRandomValues
+- ✅ Admin: dashboard agregado de rendimiento
 - ✅ Firestore Rules: permisos de lectura/escritura seguros
 - ✅ Órdenes: snapshot de descuento persistido
 - ✅ Antifraude: bloqueo de doble canje en carrera (transacciones DB)
@@ -337,9 +338,8 @@ Las tarjetas de código muestran en la sección "Métricas":
 
 ### Próximos Pasos Recomendados
 
-1. **Métricas (Media)**: Agregar campos stats a discountCodes
-2. **Generador Seguro (Media)**: Endpoint para generar códigos random en admin
-3. **Tests (Alta)**: Validar flujo completo con bloqueos temporales
+1. **Tests (Alta)**: Validar flujo completo con bloqueos temporales y dashboard
+2. **Hardening extra (Media)**: Generador backend de códigos random
 
 ---
 
