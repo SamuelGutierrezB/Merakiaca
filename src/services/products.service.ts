@@ -30,6 +30,14 @@ const normalizeProductData = (
   } as Product;
 };
 
+const removeUndefinedFields = <T extends Record<string, unknown>>(
+  data: T,
+): Partial<T> => {
+  return Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== undefined),
+  ) as Partial<T>;
+};
+
 /**
  * Obtiene todos los productos
  */
@@ -136,7 +144,7 @@ export const updateProduct = async (
   try {
     const productRef = doc(db, FIREBASE_COLLECTIONS.PRODUCTS, id);
 
-    await updateDoc(productRef, {
+    const normalizedPayload = removeUndefinedFields({
       ...productData,
       fabrics: productData.fabrics
         ? normalizeFabricOptions(productData.fabrics)
@@ -147,6 +155,12 @@ export const updateProduct = async (
           : productData.description,
       updatedAt: serverTimestamp(),
     });
+
+    console.log("updateProduct: productId:", id);
+    console.log("updateProduct: raw productData:", productData);
+    console.log("updateProduct: normalized payload:", normalizedPayload);
+
+    await updateDoc(productRef, normalizedPayload);
   } catch (error) {
     console.error("Error al actualizar producto:", error);
     throw error;

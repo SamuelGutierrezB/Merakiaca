@@ -11,7 +11,6 @@ import {
   createProduct,
   updateProduct,
   updateProductMainImage,
-  updateProductFabrics,
   addProductImages,
 } from "@/services/products.service";
 import { getAllCategories } from "@/services/categories.service";
@@ -104,6 +103,9 @@ export default function ProductForm({
     console.log("ProductForm: current form values:", getValues());
     console.log("ProductForm: form errors:", errors);
     console.log("ProductForm: selectedCategories:", selectedCategories);
+    console.log("ProductForm: current local fabrics:", fabrics);
+    console.log("ProductForm: current mainImageUrl:", mainImageUrl);
+    console.log("ProductForm: current additionalImages:", additionalImages);
     console.log("ProductForm: isSubmitting:", isSubmitting);
     console.log("ProductForm: isValid:", isValid);
     setIsSubmitting(true);
@@ -113,6 +115,7 @@ export default function ProductForm({
         ...data,
         categories: selectedCategories,
         category: selectedCategories[0] || "", // Mantener la primera como principal por compatibilidad
+        fabrics,
       };
       console.log("ProductForm: prepared productData:", productData);
 
@@ -162,17 +165,13 @@ export default function ProductForm({
   };
 
   const handleFabricsUpdate = async (updatedFabrics: FabricOption[]) => {
+    console.log("ProductForm: handleFabricsUpdate called");
+    console.log("ProductForm: previous fabrics:", fabrics);
+    console.log("ProductForm: updated fabrics:", updatedFabrics);
     setFabrics(updatedFabrics);
-
-    // Si el producto ya existe, actualizar inmediatamente
-    if (productId) {
-      try {
-        await updateProductFabrics(productId, updatedFabrics);
-      } catch (error) {
-        console.error("Error al actualizar opciones de tela:", error);
-        toast.error("Error al actualizar las opciones de tela");
-      }
-    }
+    console.log(
+      "ProductForm: fabrics updated locally; changes will be saved on submit",
+    );
   };
 
   const handleAdditionalImageUploaded = async (imageUrl: string) => {

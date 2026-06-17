@@ -50,16 +50,26 @@ export default function FabricOptionForm({
   };
 
   const handleStockChange = (fabricId: string, newStock: number) => {
+    console.log("FabricOptionForm: handleStockChange", {
+      fabricId,
+      newStock,
+    });
     const updated = fabrics.map((fabric) =>
       fabric.id === fabricId ? { ...fabric, stock: newStock } : fabric,
     );
+    console.log("FabricOptionForm: fabrics after stock change", updated);
     onFabricsUpdate(updated);
   };
 
   const handlePriceChange = (fabricId: string, newPrice: number) => {
+    console.log("FabricOptionForm: handlePriceChange", {
+      fabricId,
+      newPrice,
+    });
     const updated = fabrics.map((fabric) =>
       fabric.id === fabricId ? { ...fabric, priceModifier: newPrice } : fabric,
     );
+    console.log("FabricOptionForm: fabrics after price change", updated);
     onFabricsUpdate(updated);
   };
 
@@ -81,6 +91,8 @@ export default function FabricOptionForm({
       priceModifier: customPrice,
       stock: customStock,
     };
+
+    console.log("FabricOptionForm: handleAddCustomFabric", newFabric);
 
     onFabricsUpdate([...fabrics, newFabric]);
 
@@ -104,6 +116,10 @@ export default function FabricOptionForm({
       return;
     }
 
+    console.log("FabricOptionForm: handleRemoveCustomFabric", {
+      fabricId,
+      remainingFabrics: fabrics.filter((f) => f.id !== fabricId),
+    });
     onFabricsUpdate(fabrics.filter((f) => f.id !== fabricId));
     toast.success("Tela eliminada");
   };
@@ -158,7 +174,9 @@ export default function FabricOptionForm({
               {/* Información */}
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="font-medium text-gray-800 dark:text-gray-100">{fabric.name}</p>
+                  <p className="font-medium text-gray-800 dark:text-gray-100">
+                    {fabric.name}
+                  </p>
                   {isBase && (
                     <span className="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded">
                       Color base
@@ -169,7 +187,9 @@ export default function FabricOptionForm({
 
               {/* Stock */}
               <div className="w-24">
-                <label className="text-xs text-gray-600 dark:text-gray-300">Stock</label>
+                <label className="text-xs text-gray-600 dark:text-gray-300">
+                  Stock
+                </label>
                 <input
                   type="number"
                   value={fabric.stock}
@@ -183,7 +203,9 @@ export default function FabricOptionForm({
 
               {/* Modificador de precio */}
               <div className="w-28">
-                <label className="text-xs text-gray-600 dark:text-gray-300">Precio +/-</label>
+                <label className="text-xs text-gray-600 dark:text-gray-300">
+                  Precio +/-
+                </label>
                 <input
                   type="number"
                   value={fabric.priceModifier}
