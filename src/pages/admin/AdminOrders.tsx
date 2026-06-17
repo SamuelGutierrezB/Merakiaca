@@ -22,6 +22,7 @@ import {
   deleteAllOrders,
 } from "@/services/orders.service";
 import { deleteOrder } from "@/services/orders.service";
+import { PRIMARY_ADMIN_EMAIL } from "@/utils/constants";
 import { formatPrice } from "@/utils/formatters";
 import type { Order, OrderStatus, PaymentStatus } from "@/types/order.types";
 import { useAuthStore } from "@/store/authStore";
@@ -71,6 +72,9 @@ const PAYMENT_STATUS_COLORS: Record<string, string> = {
 export default function AdminOrders() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const currentUserEmail = user?.email?.trim().toLowerCase() || "";
+  const isPrimaryAdmin =
+    Boolean(currentUserEmail) && currentUserEmail === PRIMARY_ADMIN_EMAIL;
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingAll, setDeletingAll] = useState(false);
@@ -138,6 +142,12 @@ export default function AdminOrders() {
   };
 
   const confirmDeleteAll = async () => {
+    if (!isPrimaryAdmin) {
+      toast.error("Solo admin 1 puede eliminar todas las órdenes");
+      closeDeleteAllDialog();
+      return;
+    }
+
     if (deleteAllConfirmation !== "eliminar") {
       return;
     }
@@ -265,7 +275,7 @@ export default function AdminOrders() {
               </p>
             </div>
 
-            {orders.length > 0 && (
+            {isPrimaryAdmin && orders.length > 0 && (
               <button
                 type="button"
                 onClick={() => setDeleteAllDialogOpen(true)}

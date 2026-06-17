@@ -34,6 +34,10 @@ export const FIREBASE_COLLECTIONS = {
 };
 
 export const ADMIN_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(",") || [];
+export const PRIMARY_ADMIN_EMAIL =
+  import.meta.env.VITE_PRIMARY_ADMIN_EMAIL?.trim().toLowerCase() ||
+  ADMIN_EMAILS[0]?.trim().toLowerCase() ||
+  "";
 
 export const TAX_RATE = 0.16; // 16% IVA
 export const SHIPPING_COST = 99; // Costo de envío fijo

@@ -13,11 +13,19 @@ initializeApp();
 
 const db = getFirestore();
 const mercadoPagoAccessToken = defineSecret("MERCADOPAGO_ACCESS_TOKEN");
-const DEFAULT_SITE_URL = "https://merakiaca-3a05a.web.app";
+const DEFAULT_SITE_URL = "https://merakiaca.com";
 const WEBHOOK_URL =
   "https://us-central1-merakiaca-3a05a.cloudfunctions.net/mpWebhook";
 const ALLOWED_ORIGINS = new Set([
   "http://localhost:5173",
+  "https://merakiaca.com",
+  "https://www.merakiaca.com",
+  "https://merakiaca-3a05a.web.app",
+  "https://merakiaca-3a05a.firebaseapp.com",
+]);
+const ALLOWED_MP_BACK_URL_ORIGINS = new Set([
+  "https://merakiaca.com",
+  "https://www.merakiaca.com",
   "https://merakiaca-3a05a.web.app",
   "https://merakiaca-3a05a.firebaseapp.com",
 ]);
@@ -34,7 +42,8 @@ const corsMiddleware = cors({
 
 const buildBackUrls = (originHeader) => {
   const siteUrl =
-    typeof originHeader === "string" && ALLOWED_ORIGINS.has(originHeader)
+    typeof originHeader === "string" &&
+    ALLOWED_MP_BACK_URL_ORIGINS.has(originHeader)
       ? originHeader
       : DEFAULT_SITE_URL;
 

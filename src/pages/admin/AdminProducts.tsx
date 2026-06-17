@@ -8,21 +8,33 @@ import {
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import type { Product } from "@/types";
-import { getAllProducts, deleteProduct } from "@/services/products.service";
+import {
+  getAllProducts,
+  deleteProduct,
+  setAllProductsStockToZero,
+} from "@/services/products.service";
 import { formatPrice } from "@/utils/formatters";
 import AdminJoyride from "@/components/admin/AdminJoyride";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
+import { useAuthStore } from "@/store/authStore";
+import { PRIMARY_ADMIN_EMAIL } from "@/utils/constants";
 
 export default function AdminProducts() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const currentUserEmail = user?.email?.trim().toLowerCase() || "";
+  const isPrimaryAdmin =
+    Boolean(currentUserEmail) && currentUserEmail === PRIMARY_ADMIN_EMAIL;
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [settingStockToZero, setSettingStockToZero] = useState(false);
   // const [showForm, setShowForm] = useState(false);
   // const [editingProduct, setEditingProduct] = useState<Product | undefined>();
   const [deleteDialog, setDeleteDialog] = useState<{
     isOpen: boolean;
     product: Product | null;
   }>({ isOpen: false, product: null });
+  const [resetStockDialogOpen, setResetStockDialogOpen] = useState(false);
 
   useEffect(() => {
     loadProducts();
@@ -63,6 +75,32 @@ export default function AdminProducts() {
     } catch (error) {
       console.error("Error al eliminar producto:", error);
       toast.error("Error al eliminar el producto");
+    }
+  };
+
+  const handleResetAllStock = async () => {
+    if (!isPrimaryAdmin) {
+      toast.error("Solo admin 1 puede poner el stock en cero");
+      setResetStockDialogOpen(false);
+      return;
+    }
+
+    try {
+      setSettingStockToZero(true);
+      const updatedCount = await setAllProductsStockToZero();
+      await loadProducts();
+
+      toast.success(
+        updatedCount > 0
+          ? `Stock en cero aplicado a ${updatedCount} productos`
+          : "Todos los productos ya estaban en cero",
+      );
+    } catch (error) {
+      console.error("Error al poner stock en cero:", error);
+      toast.error("Error al actualizar el stock");
+    } finally {
+      setSettingStockToZero(false);
+      setResetStockDialogOpen(false);
     }
   };
 
@@ -129,18 +167,33 @@ export default function AdminProducts() {
             </button>
           </div>
 
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
               Gestión de Productos
             </h1>
-            <button
-              onClick={handleCreate}
-              className="flex items-center gap-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-              data-tour="products-create"
-            >
-              <PlusIcon className="h-5 w-5" />
-              Crear Producto
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+              {isPrimaryAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setResetStockDialogOpen(true)}
+                  disabled={
+                    isLoading || settingStockToZero || products.length === 0
+                  }
+                  className="flex items-center justify-center gap-2 bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <TrashIcon className="h-5 w-5" />
+                  Poner Todo el Stock en Cero
+                </button>
+              )}
+              <button
+                onClick={handleCreate}
+                className="flex items-center gap-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                data-tour="products-create"
+              >
+                <PlusIcon className="h-5 w-5" />
+                Crear Producto
+              </button>
+            </div>
           </div>
 
           {isLoading ? (
@@ -437,6 +490,16 @@ export default function AdminProducts() {
         title="Eliminar Producto"
         message={`¿Estás seguro de eliminar "${deleteDialog.product?.name}"? Esta acción no se puede deshacer.`}
         confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
+
+      <ConfirmDialog
+        isOpen={resetStockDialogOpen}
+        onClose={() => setResetStockDialogOpen(false)}
+        onConfirm={handleResetAllStock}
+        title="Poner Todo el Stock en Cero"
+        message="Esta acción pondrá en 0 el stock de todas las telas en todos los productos. Esta operación afecta toda la tienda."
+        confirmText={settingStockToZero ? "Actualizando..." : "Confirmar"}
         cancelText="Cancelar"
       />
     </>

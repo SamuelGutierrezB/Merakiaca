@@ -10,6 +10,7 @@ import {
   where,
   orderBy,
   serverTimestamp,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import type { Product, ProductFormData, FabricOption } from "@/types";
@@ -293,6 +294,55 @@ export const reduceProductFabricStock = async (
     await updateProductFabrics(productId, updatedFabrics);
   } catch (error) {
     console.error("Error al reducir stock de tela:", error);
+    throw error;
+  }
+};
+
+/**
+ * Pone en cero el stock de todas las telas en todos los productos.
+ */
+export const setAllProductsStockToZero = async (): Promise<number> => {
+  try {
+    const productsRef = collection(db, FIREBASE_COLLECTIONS.PRODUCTS);
+    const snapshot = await getDocs(productsRef);
+
+    if (snapshot.empty) {
+      return 0;
+    }
+
+    const batch = writeBatch(db);
+    let updatedCount = 0;
+
+    snapshot.docs.forEach((productDoc) => {
+      const data = productDoc.data() as Product;
+      const fabrics = Array.isArray(data.fabrics) ? data.fabrics : [];
+      const hasStock = fabrics.some((fabric) => Number(fabric.stock || 0) > 0);
+
+      if (!hasStock) {
+        return;
+      }
+
+      const updatedFabrics = fabrics.map((fabric) => ({
+        ...fabric,
+        stock: 0,
+      }));
+
+      batch.update(productDoc.ref, {
+        fabrics: normalizeFabricOptions(updatedFabrics),
+        updatedAt: serverTimestamp(),
+      });
+
+      updatedCount += 1;
+    });
+
+    if (updatedCount === 0) {
+      return 0;
+    }
+
+    await batch.commit();
+    return updatedCount;
+  } catch (error) {
+    console.error("Error al poner stock en cero:", error);
     throw error;
   }
 };
