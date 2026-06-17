@@ -73,7 +73,7 @@ export default function Header() {
                   <ShoppingCart className="h-5 w-5" />
                   Carrito
                   {itemCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-50 dark:bg-red-900/300 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-2 -right-2 bg-red-600 dark:bg-red-500 text-white font-bold text-xs rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
                       {itemCount}
                     </span>
                   )}
@@ -146,7 +146,7 @@ export default function Header() {
           <Link to="/carrito" className="sm:hidden relative text-[#2391C3] p-2">
             <ShoppingCartIcon className="h-6 w-6" />
             {itemCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-50 dark:bg-red-900/300 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-red-600 dark:bg-red-500 text-white font-bold text-xs rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
                 {itemCount}
               </span>
             )}
@@ -185,7 +185,7 @@ export default function Header() {
                     Carrito
                   </span>
                   {itemCount > 0 && (
-                    <span className="bg-red-50 dark:bg-red-900/300 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
+                    <span className="bg-red-600 dark:bg-red-500 text-white font-bold text-xs rounded-full h-6 w-6 flex items-center justify-center shadow-sm">
                       {itemCount}
                     </span>
                   )}

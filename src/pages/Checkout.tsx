@@ -74,14 +74,19 @@ const addressSchema = z.object({
 type PickupFormData = z.infer<typeof pickupSchema>;
 type AddressFormData = z.infer<typeof addressSchema>;
 
+const SHIPPING_COSTS = {
+  local: 150,
+  foreign: 150,
+} as const;
+
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, getTotal, clearCart } = useCartStore();
   const { user } = useAuthStore();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [deliveryType, setDeliveryType] = useState<"pickup" | "shipping">(
-    "pickup",
-  );
+  const [deliveryType, setDeliveryType] = useState<
+    "pickup" | "shippingLocal" | "shippingForeign"
+  >("pickup");
   const [selectedBranch, setSelectedBranch] = useState<string>("");
 
   const pickupForm = useForm<PickupFormData>({
@@ -107,7 +112,12 @@ export default function Checkout() {
 
   const subtotal = getTotal();
   // Lógica de envío
-  const shipping = deliveryType === "pickup" ? 0 : 150;
+  const shipping =
+    deliveryType === "pickup"
+      ? 0
+      : deliveryType === "shippingLocal"
+        ? SHIPPING_COSTS.local
+        : SHIPPING_COSTS.foreign;
   const tax = 0; // Gratis por ahora
   const total = subtotal + shipping + tax;
 
@@ -243,24 +253,42 @@ export default function Checkout() {
                       Recolección en Sucursal
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                      Entregas locales (Guadalajara)
+                      Entregas locales (Guadalajara) - Sin costo
                     </p>
                   </button>
                   <button
                     type="button"
-                    onClick={() => setDeliveryType("shipping")}
+                    onClick={() => setDeliveryType("shippingLocal")}
                     className={`p-4 rounded-lg border-2 transition-all ${
-                      deliveryType === "shipping"
+                      deliveryType === "shippingLocal"
                         ? "border-[#2391C3] bg-[#2391C3]/5"
                         : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 dark:border-gray-600"
                     }`}
                   >
                     <div className="text-4xl mb-2">🚚</div>
                     <h3 className="font-bold text-gray-800 dark:text-gray-100">
-                      Envío a Domicilio
+                      Envío Local a Domicilio
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                      Envíos foráneos con paquetería
+                      Zona metropolitana - {formatPrice(SHIPPING_COSTS.local)}
+                    </p>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryType("shippingForeign")}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      deliveryType === "shippingForeign"
+                        ? "border-[#2391C3] bg-[#2391C3]/5"
+                        : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 dark:border-gray-600"
+                    }`}
+                  >
+                    <div className="text-4xl mb-2">📮</div>
+                    <h3 className="font-bold text-gray-800 dark:text-gray-100">
+                      Envío Foráneo a Domicilio
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                      Paquetería nacional -{" "}
+                      {formatPrice(SHIPPING_COSTS.foreign)}
                     </p>
                   </button>
                 </div>
@@ -569,7 +597,7 @@ export default function Checkout() {
                     Envío:
                   </span>
                   <span className="font-semibold">
-                    {deliveryType === "pickup" ? "$0" : formatPrice(150)}
+                    {deliveryType === "pickup" ? "$0" : formatPrice(shipping)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -597,7 +625,13 @@ export default function Checkout() {
                 <p className="text-xs text-gray-600 dark:text-gray-300">
                   {deliveryType === "pickup"
                     ? "Las entregas locales no tienen costo."
-                    : "El costo de envío es de $150 pesos para envíos a domicilio."}
+                    : deliveryType === "shippingLocal"
+                      ? `El costo de envío local es de ${formatPrice(
+                          SHIPPING_COSTS.local,
+                        )}.`
+                      : `El costo de envío foráneo es de ${formatPrice(
+                          SHIPPING_COSTS.foreign,
+                        )}.`}
                 </p>
               </div>
 
