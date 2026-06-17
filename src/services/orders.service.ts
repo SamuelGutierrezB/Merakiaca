@@ -34,6 +34,12 @@ export async function createOrder(
     const order: Omit<Order, "id"> = {
       userId,
       items: orderData.items,
+      discountCode: orderData.discountSnapshot?.code,
+      discountType: orderData.discountSnapshot?.type,
+      discountValue: orderData.discountSnapshot?.value,
+      discountAmount: orderData.discountSnapshot?.discountAmount,
+      totalBeforeDiscount:
+        orderData.subtotal + orderData.tax + orderData.shipping,
       subtotal: orderData.subtotal,
       tax: orderData.tax,
       shipping: orderData.shipping,

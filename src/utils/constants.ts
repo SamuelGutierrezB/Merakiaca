@@ -19,6 +19,7 @@ export const ROUTES = {
     ORDERS: "/admin/ordenes",
     CATEGORIES: "/admin/categorias",
     FREQUENT_CODES: "/admin/codigos-frecuentes",
+    DISCOUNT_CODES: "/admin/codigos-descuento",
   },
 };
 
@@ -31,6 +32,8 @@ export const FIREBASE_COLLECTIONS = {
   REVIEWS: "reviews",
   WISHLISTS: "wishlists",
   FREQUENT_CUSTOMER_CODES: "frequentCustomerCodes",
+  DISCOUNT_CODES: "discountCodes",
+  DISCOUNT_REDEMPTIONS: "discountRedemptions",
 };
 
 export const ADMIN_EMAILS = import.meta.env.VITE_ADMIN_EMAILS?.split(",") || [];

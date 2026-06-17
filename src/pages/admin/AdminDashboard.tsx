@@ -185,6 +185,31 @@ export default function AdminDashboard() {
                 Gestionar códigos de clientes frecuentes
               </p>
             </Link>
+
+            <Link
+              to="/admin/codigos-descuento"
+              className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg dark:shadow-gray-900 hover:shadow-xl transition-shadow border-2 border-transparent hover:border-[#2391C3]"
+            >
+              <svg
+                className="h-20 w-20 mx-auto mb-4 text-[#4CAF50]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8c-1.657 0-3-1.343-3-3m6 0c0 1.657-1.343 3-3 3m0 0v13m0-13a3 3 0 013 3v2a3 3 0 003 3h2a3 3 0 013 3m-14 0H5a3 3 0 01-3-3m0 0a3 3 0 013-3h2a3 3 0 003-3v-2a3 3 0 013-3"
+                />
+              </svg>
+              <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">
+                Descuentos
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                Gestionar códigos de descuento para checkout
+              </p>
+            </Link>
           </div>
         </div>
 
@@ -194,7 +219,9 @@ export default function AdminDashboard() {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-900 border-l-4 border-[#2391C3]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Ingresos Totales</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                    Ingresos Totales
+                  </p>
                   <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                     {formatPrice(stats.totalRevenue)}
                   </p>
@@ -206,7 +233,9 @@ export default function AdminDashboard() {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md dark:shadow-gray-900 border-l-4 border-green-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Órdenes Pagadas</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                    Órdenes Pagadas
+                  </p>
                   <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                     {stats.totalOrders}
                   </p>

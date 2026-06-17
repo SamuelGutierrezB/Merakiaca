@@ -31,6 +31,8 @@ const ALLOWED_MP_BACK_URL_ORIGINS = new Set([
 ]);
 const PRODUCTS_COLLECTION = "products";
 const ORDERS_COLLECTION = "orders";
+const DISCOUNT_CODES_COLLECTION = "discountCodes";
+const DISCOUNT_REDEMPTIONS_COLLECTION = "discountRedemptions";
 
 // CORS middleware
 const corsMiddleware = cors({
@@ -231,6 +233,344 @@ const verifyIdToken = async (authHeaderValue) => {
   const decodedToken = await getAuth().verifyIdToken(token);
   return decodedToken;
 };
+
+const toSafeNumber = (value, fallback = 0) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const calculateDiscountAmount = ({ codeDoc, subtotal }) => {
+  const type = codeDoc.type;
+  const value = toSafeNumber(codeDoc.value, 0);
+  const minPurchaseAmount = toSafeNumber(codeDoc.minPurchaseAmount, 0);
+  const maxDiscountAmount = toSafeNumber(codeDoc.maxDiscountAmount, 0);
+
+  if (minPurchaseAmount > 0 && subtotal < minPurchaseAmount) {
+    return {
+      ok: false,
+      message: `Compra minima de ${minPurchaseAmount} requerida para este codigo`,
+    };
+  }
+
+  let rawDiscount = 0;
+  if (type === "percentage") {
+    rawDiscount = (subtotal * value) / 100;
+    if (maxDiscountAmount > 0) {
+      rawDiscount = Math.min(rawDiscount, maxDiscountAmount);
+    }
+  } else if (type === "fixed_amount") {
+    rawDiscount = value;
+  } else {
+    return { ok: false, message: "Tipo de descuento no valido" };
+  }
+
+  const discountAmount = Math.max(0, Math.min(rawDiscount, subtotal));
+  const totalAfterDiscount = Math.max(0, subtotal - discountAmount);
+
+  return {
+    ok: true,
+    discountAmount,
+    totalAfterDiscount,
+  };
+};
+
+exports.validateDiscountCode = onRequest(
+  { region: "us-central1" },
+  (req, res) => {
+    corsMiddleware(req, res, async () => {
+      try {
+        if (req.method === "OPTIONS") {
+          return res.status(204).send("");
+        }
+
+        if (req.method !== "POST") {
+          return res.status(405).json({ error: "Method not allowed" });
+        }
+
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+          return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        let decodedToken;
+        try {
+          decodedToken = await verifyIdToken(authHeader);
+        } catch (err) {
+          return res.status(401).json({ error: "Invalid token" });
+        }
+
+        const normalizedCode = String(req.body?.code || "")
+          .trim()
+          .toUpperCase();
+        const subtotal = toSafeNumber(req.body?.subtotal, NaN);
+
+        if (!normalizedCode) {
+          return res.status(400).json({ error: "code is required" });
+        }
+
+        if (!Number.isFinite(subtotal) || subtotal < 0) {
+          return res.status(400).json({ error: "subtotal must be valid" });
+        }
+
+        const codeSnapshot = await db
+          .collection(DISCOUNT_CODES_COLLECTION)
+          .where("code", "==", normalizedCode)
+          .limit(1)
+          .get();
+
+        if (codeSnapshot.empty) {
+          return res.status(404).json({ error: "Codigo no valido" });
+        }
+
+        const codeDocRef = codeSnapshot.docs[0];
+        const codeDoc = codeDocRef.data();
+        const now = Date.now();
+
+        if (!codeDoc.isActive) {
+          return res
+            .status(400)
+            .json({ error: "Este codigo esta desactivado" });
+        }
+
+        const startsAtMillis = codeDoc.startsAt?.toMillis?.();
+        const endsAtMillis = codeDoc.endsAt?.toMillis?.();
+
+        if (startsAtMillis && now < startsAtMillis) {
+          return res
+            .status(400)
+            .json({ error: "Este codigo aun no esta disponible" });
+        }
+
+        if (endsAtMillis && now > endsAtMillis) {
+          return res.status(400).json({ error: "Este codigo ya expiro" });
+        }
+
+        const maxUses = toSafeNumber(codeDoc.maxUses, 0);
+        const currentUses = toSafeNumber(codeDoc.currentUses, 0);
+        if (maxUses > 0 && currentUses >= maxUses) {
+          return res
+            .status(400)
+            .json({ error: "Este codigo alcanzo su limite de usos" });
+        }
+
+        const maxUsesPerUser = toSafeNumber(codeDoc.maxUsesPerUser, 0);
+        if (maxUsesPerUser > 0) {
+          const userRedeemsSnapshot = await db
+            .collection(DISCOUNT_REDEMPTIONS_COLLECTION)
+            .where("codeId", "==", codeDocRef.id)
+            .where("userId", "==", decodedToken.uid)
+            .limit(maxUsesPerUser)
+            .get();
+
+          if (userRedeemsSnapshot.size >= maxUsesPerUser) {
+            return res
+              .status(400)
+              .json({ error: "Ya alcanzaste el limite de uso de este codigo" });
+          }
+        }
+
+        const calculation = calculateDiscountAmount({ codeDoc, subtotal });
+        if (!calculation.ok) {
+          return res.status(400).json({ error: calculation.message });
+        }
+
+        return res.status(200).json({
+          codeId: codeDocRef.id,
+          code: codeDoc.code,
+          type: codeDoc.type,
+          value: toSafeNumber(codeDoc.value, 0),
+          discountAmount: calculation.discountAmount,
+          subtotal,
+          totalAfterDiscount: calculation.totalAfterDiscount,
+        });
+      } catch (error) {
+        console.error("Error in validateDiscountCode:", error);
+        return res.status(500).json({ error: "Internal server error" });
+      }
+    });
+  },
+);
+
+exports.applyDiscountCode = onRequest({ region: "us-central1" }, (req, res) => {
+  corsMiddleware(req, res, async () => {
+    try {
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
+      if (req.method !== "POST") {
+        return res.status(405).json({ error: "Method not allowed" });
+      }
+
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      let decodedToken;
+      try {
+        decodedToken = await verifyIdToken(authHeader);
+      } catch (err) {
+        return res.status(401).json({ error: "Invalid token" });
+      }
+
+      const { orderId, code, discountAmount, totalAfterDiscount } =
+        req.body || {};
+
+      if (typeof orderId !== "string" || !orderId.trim()) {
+        return res.status(400).json({ error: "orderId is required" });
+      }
+
+      if (typeof code !== "string" || !code.trim()) {
+        return res.status(400).json({ error: "code is required" });
+      }
+
+      const normalizedCode = code.trim().toUpperCase();
+      const discountAmountNum = toSafeNumber(discountAmount, NaN);
+      const totalAfterDiscountNum = toSafeNumber(totalAfterDiscount, NaN);
+
+      if (!Number.isFinite(discountAmountNum) || discountAmountNum < 0) {
+        return res.status(400).json({ error: "Invalid discountAmount" });
+      }
+
+      if (
+        !Number.isFinite(totalAfterDiscountNum) ||
+        totalAfterDiscountNum < 0
+      ) {
+        return res.status(400).json({ error: "Invalid totalAfterDiscount" });
+      }
+
+      const orderRef = db.collection(ORDERS_COLLECTION).doc(orderId);
+      const orderSnapshot = await orderRef.get();
+
+      if (!orderSnapshot.exists) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      const order = orderSnapshot.data();
+      if (order.userId !== decodedToken.uid) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      if (order.discountCode) {
+        return res.status(400).json({
+          error: "El descuento ya fue aplicado a esta orden",
+        });
+      }
+
+      const codeSnapshot = await db
+        .collection(DISCOUNT_CODES_COLLECTION)
+        .where("code", "==", normalizedCode)
+        .limit(1)
+        .get();
+
+      if (codeSnapshot.empty) {
+        return res.status(404).json({ error: "Codigo no valido" });
+      }
+
+      const codeDocRef = codeSnapshot.docs[0];
+      const codeDocData = codeDocRef.data();
+      const now = Date.now();
+
+      if (!codeDocData.isActive) {
+        return res.status(400).json({ error: "Este codigo esta desactivado" });
+      }
+
+      const startsAtMillis = codeDocData.startsAt?.toMillis?.();
+      const endsAtMillis = codeDocData.endsAt?.toMillis?.();
+
+      if (startsAtMillis && now < startsAtMillis) {
+        return res.status(400).json({
+          error: "Este codigo aun no esta disponible",
+        });
+      }
+
+      if (endsAtMillis && now > endsAtMillis) {
+        return res.status(400).json({ error: "Este codigo ya expiro" });
+      }
+
+      const maxUses = toSafeNumber(codeDocData.maxUses, 0);
+      const currentUses = toSafeNumber(codeDocData.currentUses, 0);
+      if (maxUses > 0 && currentUses >= maxUses) {
+        return res.status(400).json({
+          error: "Este codigo alcanzo su limite de usos",
+        });
+      }
+
+      const maxUsesPerUser = toSafeNumber(codeDocData.maxUsesPerUser, 0);
+
+      let redeemResult = null;
+      await db.runTransaction(async (transaction) => {
+        const codeSnapshot2 = await transaction.get(codeDocRef);
+        const codeData = codeSnapshot2.data();
+
+        const currentUsesInTx = toSafeNumber(codeData.currentUses, 0);
+        if (maxUses > 0 && currentUsesInTx >= maxUses) {
+          throw new Error(
+            "Este codigo alcanzo su limite de usos (verificacion final)",
+          );
+        }
+
+        if (maxUsesPerUser > 0) {
+          const userRedeemsSnapshot = await db
+            .collection(DISCOUNT_REDEMPTIONS_COLLECTION)
+            .where("codeId", "==", codeDocRef.id)
+            .where("userId", "==", decodedToken.uid)
+            .get();
+
+          if (userRedeemsSnapshot.size >= maxUsesPerUser) {
+            throw new Error(
+              "Ya alcanzaste el limite de uso de este codigo (verificacion final)",
+            );
+          }
+        }
+
+        const incrementedUses = currentUsesInTx + 1;
+        transaction.update(codeDocRef, {
+          currentUses: incrementedUses,
+          updatedAt: Timestamp.now(),
+        });
+
+        const redemptionRef = db
+          .collection(DISCOUNT_REDEMPTIONS_COLLECTION)
+          .doc();
+        transaction.set(redemptionRef, {
+          codeId: codeDocRef.id,
+          code: normalizedCode,
+          userId: decodedToken.uid,
+          orderId,
+          discountAmount: discountAmountNum,
+          totalAfterDiscount: totalAfterDiscountNum,
+          createdAt: Timestamp.now(),
+        });
+
+        redeemResult = {
+          redemptionId: redemptionRef.id,
+          codeId: codeDocRef.id,
+          incrementedUses,
+        };
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Descuento aplicado exitosamente",
+        redemptionId: redeemResult.redemptionId,
+        incrementedUses: redeemResult.incrementedUses,
+      });
+    } catch (error) {
+      console.error("Error in applyDiscountCode:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Internal server error";
+      return res
+        .status(
+          errorMessage.includes("limite") || errorMessage.includes("expirado")
+            ? 400
+            : 500,
+        )
+        .json({ error: errorMessage });
+    }
+  });
+});
 
 exports.mpCreatePreference = onRequest(
   { region: "us-central1", secrets: [mercadoPagoAccessToken] },

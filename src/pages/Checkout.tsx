@@ -11,6 +11,11 @@ import { useAuthStore } from "@/store/authStore";
 import { formatPrice } from "@/utils/formatters";
 import { createOrder } from "@/services/orders.service";
 import { createMercadoPagoPreference } from "@/services/mercadopago.service";
+import {
+  validateDiscountCode,
+  applyDiscountCode,
+} from "@/services/discountCodes.service";
+import type { AppliedDiscount } from "@/types";
 import type { OrderItem, Address } from "@/types/order.types";
 import BranchMap from "@/components/common/BranchMap";
 
@@ -88,6 +93,10 @@ export default function Checkout() {
     "pickup" | "shippingLocal" | "shippingForeign"
   >("pickup");
   const [selectedBranch, setSelectedBranch] = useState<string>("");
+  const [discountCodeInput, setDiscountCodeInput] = useState("");
+  const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
+  const [appliedDiscount, setAppliedDiscount] =
+    useState<AppliedDiscount | null>(null);
 
   const pickupForm = useForm<PickupFormData>({
     resolver: zodResolver(pickupSchema),
@@ -119,7 +128,59 @@ export default function Checkout() {
         ? SHIPPING_COSTS.local
         : SHIPPING_COSTS.foreign;
   const tax = 0; // Gratis por ahora
-  const total = subtotal + shipping + tax;
+  const totalBeforeDiscount = subtotal + shipping + tax;
+  const discountAmount = appliedDiscount?.discountAmount || 0;
+  const total = Math.max(0, totalBeforeDiscount - discountAmount);
+
+  const handleApplyDiscount = async () => {
+    const normalizedCode = discountCodeInput.trim().toUpperCase();
+
+    if (!normalizedCode) {
+      toast.error("Ingresa un codigo de descuento");
+      return;
+    }
+
+    setIsApplyingDiscount(true);
+    try {
+      const validatedDiscount = await validateDiscountCode(
+        normalizedCode,
+        subtotal,
+      );
+      setAppliedDiscount(validatedDiscount);
+      setDiscountCodeInput(validatedDiscount.code);
+      toast.success("Codigo aplicado correctamente");
+    } catch (error) {
+      setAppliedDiscount(null);
+      toast.error(
+        error instanceof Error ? error.message : "No se pudo aplicar el codigo",
+      );
+    } finally {
+      setIsApplyingDiscount(false);
+    }
+  };
+
+  const handleRemoveDiscount = () => {
+    setAppliedDiscount(null);
+    setDiscountCodeInput("");
+    toast.success("Codigo removido");
+  };
+
+  const getFreshDiscountSnapshot =
+    async (): Promise<AppliedDiscount | null> => {
+      if (!appliedDiscount) {
+        return null;
+      }
+
+      try {
+        return await validateDiscountCode(appliedDiscount.code, subtotal);
+      } catch {
+        setAppliedDiscount(null);
+        toast.error(
+          "El codigo ya no es valido. Revisa el codigo o continua sin descuento.",
+        );
+        return null;
+      }
+    };
 
   const onSubmitPickup = async (data: PickupFormData) => {
     if (!user) {
@@ -131,6 +192,7 @@ export default function Checkout() {
     setIsProcessing(true);
 
     try {
+      const freshDiscount = await getFreshDiscountSnapshot();
       const orderItems: OrderItem[] = items.map((item) => ({
         productId: item.productId,
         productName: item.productName,
@@ -152,14 +214,39 @@ export default function Checkout() {
         phone: data.whatsapp,
       };
 
+      const finalTotal = Math.max(
+        0,
+        subtotal + tax - (freshDiscount?.discountAmount || 0),
+      );
+
       const orderId = await createOrder(user.uid, {
         items: orderItems,
         shippingAddress: pickupAddress,
+        discountSnapshot: freshDiscount || undefined,
         subtotal,
         tax,
         shipping: 0,
-        total,
+        total: finalTotal,
       });
+
+      if (freshDiscount) {
+        try {
+          await applyDiscountCode(
+            orderId,
+            freshDiscount.code,
+            freshDiscount.discountAmount,
+            finalTotal,
+          );
+        } catch (discountError) {
+          console.error(
+            "Error al aplicar descuento en transacción:",
+            discountError,
+          );
+          toast.error("El descuento no pudo ser aplicado. Intenta nuevamente.");
+          setIsProcessing(false);
+          return;
+        }
+      }
 
       const preference = await createMercadoPagoPreference(orderId);
 
@@ -184,6 +271,7 @@ export default function Checkout() {
     setIsProcessing(true);
 
     try {
+      const freshDiscount = await getFreshDiscountSnapshot();
       // Convertir items del carrito a OrderItem
       const orderItems: OrderItem[] = items.map((item) => ({
         productId: item.productId,
@@ -196,14 +284,39 @@ export default function Checkout() {
       }));
 
       // Crear la orden
+      const finalTotal = Math.max(
+        0,
+        subtotal + shipping + tax - (freshDiscount?.discountAmount || 0),
+      );
+
       const orderId = await createOrder(user.uid, {
         items: orderItems,
         shippingAddress: data as Address,
+        discountSnapshot: freshDiscount || undefined,
         subtotal,
         tax,
         shipping,
-        total,
+        total: finalTotal,
       });
+
+      if (freshDiscount) {
+        try {
+          await applyDiscountCode(
+            orderId,
+            freshDiscount.code,
+            freshDiscount.discountAmount,
+            finalTotal,
+          );
+        } catch (discountError) {
+          console.error(
+            "Error al aplicar descuento en transacción:",
+            discountError,
+          );
+          toast.error("El descuento no pudo ser aplicado. Intenta nuevamente.");
+          setIsProcessing(false);
+          return;
+        }
+      }
 
       const preference = await createMercadoPagoPreference(orderId);
 
@@ -585,6 +698,54 @@ export default function Checkout() {
               </div>
 
               {/* Subtotales */}
+              <div className="mb-4 border-b pb-4">
+                <label
+                  htmlFor="discountCode"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
+                >
+                  Codigo de descuento
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    id="discountCode"
+                    type="text"
+                    value={discountCodeInput}
+                    onChange={(e) =>
+                      setDiscountCodeInput(e.target.value.toUpperCase())
+                    }
+                    placeholder="Ej: BIENVENIDA10"
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                    disabled={isApplyingDiscount || isProcessing}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleApplyDiscount}
+                    disabled={isApplyingDiscount || isProcessing}
+                    className="px-3 py-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white rounded-lg text-sm font-semibold disabled:bg-gray-400"
+                  >
+                    {isApplyingDiscount ? "Aplicando..." : "Aplicar"}
+                  </button>
+                </div>
+
+                {appliedDiscount && (
+                  <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                    <p className="text-sm text-green-700 dark:text-green-300 font-medium">
+                      Codigo aplicado: {appliedDiscount.code}
+                    </p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                      Descuento: {formatPrice(appliedDiscount.discountAmount)}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleRemoveDiscount}
+                      className="mt-2 text-xs text-red-600 hover:underline"
+                    >
+                      Quitar codigo
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-300">
@@ -606,6 +767,16 @@ export default function Checkout() {
                   </span>
                   <span className="font-semibold">{formatPrice(tax)}</span>
                 </div>
+                {appliedDiscount && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-300">
+                      Descuento ({appliedDiscount.code}):
+                    </span>
+                    <span className="font-semibold text-green-700 dark:text-green-300">
+                      -{formatPrice(discountAmount)}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Total */}

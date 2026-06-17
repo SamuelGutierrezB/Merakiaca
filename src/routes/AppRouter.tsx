@@ -18,6 +18,7 @@ import AdminProducts from "@/pages/admin/AdminProducts";
 import AdminOrders from "@/pages/admin/AdminOrders";
 import AdminCategories from "@/pages/admin/AdminCategories";
 import AdminFrequentCodes from "@/pages/admin/AdminFrequentCodes";
+import AdminDiscountCodes from "@/pages/admin/AdminDiscountCodes";
 import DebugAuth from "@/pages/DebugAuth";
 import AdminEditProduct from "@/pages/admin/AdminEditProduct";
 import OrderResult from "@/pages/OrderResult";
@@ -111,6 +112,14 @@ export const AppRouter = () => {
           element={
             <AdminRoute>
               <AdminFrequentCodes />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path={ROUTES.ADMIN.DISCOUNT_CODES}
+          element={
+            <AdminRoute>
+              <AdminDiscountCodes />
             </AdminRoute>
           }
         />

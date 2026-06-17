@@ -160,6 +160,29 @@ service cloud.firestore {
       // Solo admins pueden crear o eliminar códigos
       allow create, delete: if isAdmin() || isAdminEmail();
     }
+
+    // ============================================
+    // COLECCIÓN: discountCodes
+    // ============================================
+    match /discountCodes/{codeId} {
+      // Usuarios autenticados pueden leer para validar código desde checkout
+      allow read: if isSignedIn();
+
+      // Solo admins pueden gestionar códigos
+      allow create, update, delete: if isAdmin() || isAdminEmail();
+    }
+
+    // ============================================
+    // COLECCIÓN: discountRedemptions
+    // ============================================
+    match /discountRedemptions/{redemptionId} {
+      // Lectura para admins o dueño del canje
+      allow read: if (isSignedIn() && resource.data.userId == request.auth.uid) || isAdmin() || isAdminEmail();
+
+      // Escritura solo para backend/admin confiable
+      allow create: if isAdmin() || isAdminEmail();
+      allow update, delete: if isAdmin() || isAdminEmail();
+    }
     
     // ============================================
     // REGLA POR DEFECTO: DENEGAR TODO

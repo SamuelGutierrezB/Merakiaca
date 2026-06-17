@@ -46,6 +46,11 @@ export interface Order {
   id: string;
   userId: string;
   items: OrderItem[];
+  discountCode?: string;
+  discountType?: "percentage" | "fixed_amount";
+  discountValue?: number;
+  discountAmount?: number;
+  totalBeforeDiscount?: number;
   subtotal: number;
   tax: number;
   shipping: number;
@@ -65,6 +70,15 @@ export interface Order {
 export interface CreateOrderData {
   items: OrderItem[];
   shippingAddress: Address;
+  discountSnapshot?: {
+    codeId: string;
+    code: string;
+    type: "percentage" | "fixed_amount";
+    value: number;
+    discountAmount: number;
+    subtotal: number;
+    totalAfterDiscount: number;
+  };
   subtotal: number;
   tax: number;
   shipping: number;
