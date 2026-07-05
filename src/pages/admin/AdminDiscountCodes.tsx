@@ -70,7 +70,7 @@ export default function AdminDiscountCodes() {
       });
       setCodes(sorted);
     } catch (error) {
-      toast.error("Error al cargar codigos de descuento");
+      toast.error("Error al cargar códigos de descuento");
     } finally {
       setIsLoading(false);
     }
@@ -97,12 +97,12 @@ export default function AdminDiscountCodes() {
     e.preventDefault();
 
     if (!newCode.trim()) {
-      toast.error("Ingresa un codigo");
+      toast.error("Ingresa un código");
       return;
     }
 
     if (maxUses < 1 || maxUsesPerUser < 1) {
-      toast.error("Los limites de uso deben ser al menos 1");
+      toast.error("Los límites de uso deben ser al menos 1");
       return;
     }
 
@@ -132,14 +132,14 @@ export default function AdminDiscountCodes() {
         maxDiscountAmount:
           typeof maxDiscountAmount === "number" ? maxDiscountAmount : undefined,
       });
-      toast.success("Codigo de descuento creado");
+      toast.success("Código de descuento creado");
       resetForm();
       loadCodes();
     } catch (error: unknown) {
       toast.error(
         error instanceof Error
           ? error.message
-          : "No se pudo crear el codigo de descuento",
+          : "No se pudo crear el código de descuento",
       );
     } finally {
       setIsCreating(false);
@@ -149,9 +149,9 @@ export default function AdminDiscountCodes() {
   const handleCopyCode = async (code: string) => {
     try {
       await navigator.clipboard.writeText(code);
-      toast.success("Codigo copiado");
+      toast.success("Código copiado");
     } catch (error) {
-      toast.error("No se pudo copiar el codigo");
+      toast.error("No se pudo copiar el código");
     }
   };
 
@@ -161,12 +161,12 @@ export default function AdminDiscountCodes() {
         ? `${code.value}%`
         : `${formatPrice(code.value)} MXN`;
 
-    const message = `Codigo de descuento Merakiaca\n\nCodigo: ${code.code}\nDescuento: ${discountLabel}\n\nAplicalo en checkout al finalizar tu compra.`;
+    const message = `Código de descuento Merakiaca\n\nCódigo: ${code.code}\nDescuento: ${discountLabel}\n\nAplícalo en checkout al finalizar tu compra.`;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Codigo de descuento - Merakiaca",
+          title: "Código de descuento - Merakiaca",
           text: message,
         });
       } catch (error) {
@@ -186,7 +186,7 @@ export default function AdminDiscountCodes() {
   const handleToggleStatus = async (codeId: string, currentStatus: boolean) => {
     try {
       await toggleDiscountCodeStatus(codeId, !currentStatus);
-      toast.success(currentStatus ? "Codigo desactivado" : "Codigo activado");
+      toast.success(currentStatus ? "Código desactivado" : "Código activado");
       loadCodes();
     } catch (error) {
       toast.error("No se pudo cambiar el estado");
@@ -204,10 +204,10 @@ export default function AdminDiscountCodes() {
 
     try {
       await deleteDiscountCode(deleteDialog.codeId);
-      toast.success("Codigo eliminado");
+      toast.success("Código eliminado");
       loadCodes();
     } catch (error) {
-      toast.error("No se pudo eliminar el codigo");
+      toast.error("No se pudo eliminar el código");
     }
   };
 
@@ -520,7 +520,8 @@ export default function AdminDiscountCodes() {
                   {validationSuccessRate.toFixed(1)}%
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {performanceStats.validationSuccesses} válidas de {performanceStats.validationAttempts} intentos
+                  {performanceStats.validationSuccesses} válidas de{" "}
+                  {performanceStats.validationAttempts} intentos
                 </p>
               </div>
 
@@ -532,7 +533,8 @@ export default function AdminDiscountCodes() {
                   {conversionRate.toFixed(1)}%
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {performanceStats.totalRedemptions} canjes de {performanceStats.validationSuccesses} validaciones exitosas
+                  {performanceStats.totalRedemptions} canjes de{" "}
+                  {performanceStats.validationSuccesses} validaciones exitosas
                 </p>
               </div>
 
@@ -544,174 +546,178 @@ export default function AdminDiscountCodes() {
                   {formatPrice(averageDiscount)}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {formatPrice(performanceStats.totalDiscountGiven)} otorgados en total
+                  {formatPrice(performanceStats.totalDiscountGiven)} otorgados
+                  en total
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {codes.map((code) => {
-              const usagePercentage = getUsagePercentage(
-                code.currentUses,
-                code.maxUses,
-              );
-              return (
-                <div
-                  key={code.id}
-                  className="bg-white dark:bg-gray-900 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden"
-                >
-                  <div className="bg-gradient-to-r from-[#2391C3] to-[#1A6B8E] p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-white mb-1">
-                          {code.code}
-                        </h3>
-                        <p className="text-white/80 text-sm">
-                          Descuento: {getDiscountLabel(code)}
-                        </p>
+                const usagePercentage = getUsagePercentage(
+                  code.currentUses,
+                  code.maxUses,
+                );
+                return (
+                  <div
+                    key={code.id}
+                    className="bg-white dark:bg-gray-900 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden"
+                  >
+                    <div className="bg-gradient-to-r from-[#2391C3] to-[#1A6B8E] p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="text-2xl font-bold text-white mb-1">
+                            {code.code}
+                          </h3>
+                          <p className="text-white/80 text-sm">
+                            Descuento: {getDiscountLabel(code)}
+                          </p>
+                        </div>
+                        {code.isActive ? (
+                          <span className="flex items-center gap-1 bg-green-500/80 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            <CheckCircleIcon className="h-4 w-4" />
+                            Activo
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 bg-red-500/80 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            <XCircleIcon className="h-4 w-4" />
+                            Inactivo
+                          </span>
+                        )}
                       </div>
-                      {code.isActive ? (
-                        <span className="flex items-center gap-1 bg-green-500/80 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                          <CheckCircleIcon className="h-4 w-4" />
-                          Activo
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1 bg-red-500/80 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                          <XCircleIcon className="h-4 w-4" />
-                          Inactivo
-                        </span>
-                      )}
+                    </div>
+
+                    <div className="p-4 space-y-3">
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
+                          <p className="text-gray-500 dark:text-gray-400">
+                            Usos
+                          </p>
+                          <p className="font-semibold text-gray-900 dark:text-gray-100">
+                            {code.currentUses} / {code.maxUses}
+                          </p>
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
+                          <p className="text-gray-500 dark:text-gray-400">
+                            Límite por usuario
+                          </p>
+                          <p className="font-semibold text-gray-900 dark:text-gray-100">
+                            {code.maxUsesPerUser || 1}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                          <div
+                            className="bg-[#2391C3] h-2 rounded-full"
+                            style={{
+                              width: `${Math.min(usagePercentage, 100)}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Métricas */}
+                      <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+                        <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                          Métricas
+                        </p>
+                        <div className="grid grid-cols-2 gap-3 text-xs">
+                          <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-2">
+                            <p className="text-gray-500 dark:text-gray-400">
+                              Intentos
+                            </p>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100">
+                              {code.validationAttempts || 0}
+                            </p>
+                          </div>
+                          <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-2">
+                            <p className="text-gray-500 dark:text-gray-400">
+                              Válidos
+                            </p>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100">
+                              {code.validationSuccesses || 0}
+                            </p>
+                          </div>
+                          <div className="bg-purple-50 dark:bg-purple-900/30 rounded-lg p-2">
+                            <p className="text-gray-500 dark:text-gray-400">
+                              Canjes
+                            </p>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100">
+                              {code.totalRedemptions || 0}
+                            </p>
+                          </div>
+                          <div className="bg-orange-50 dark:bg-orange-900/30 rounded-lg p-2">
+                            <p className="text-gray-500 dark:text-gray-400">
+                              Descuento otorgado
+                            </p>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100">
+                              {formatPrice(code.totalDiscountGiven || 0)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-xs text-gray-600 dark:text-gray-300 space-y-1">
+                        {typeof code.minPurchaseAmount === "number" && (
+                          <p>
+                            Compra mínima: {formatPrice(code.minPurchaseAmount)}
+                          </p>
+                        )}
+                        {typeof code.maxDiscountAmount === "number" && (
+                          <p>
+                            Tope de descuento:{" "}
+                            {formatPrice(code.maxDiscountAmount)}
+                          </p>
+                        )}
+                        <p>Creado: {formatDate(code.createdAt)}</p>
+                        <p>Actualizado: {formatDate(code.updatedAt)}</p>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => handleCopyCode(code.code)}
+                          className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm"
+                        >
+                          <ClipboardDocumentIcon className="h-4 w-4" />
+                          Copiar
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleShareCode(code)}
+                          className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm"
+                        >
+                          <ShareIcon className="h-4 w-4" />
+                          Compartir
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleToggleStatus(code.id, code.isActive)
+                          }
+                          className="px-3 py-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white rounded-lg text-sm"
+                        >
+                          {code.isActive ? "Desactivar" : "Activar"}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteClick(code.id, code.code)}
+                          className="flex items-center justify-center gap-1 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                          Eliminar
+                        </button>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="p-4 space-y-3">
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                        <p className="text-gray-500 dark:text-gray-400">Usos</p>
-                        <p className="font-semibold text-gray-900 dark:text-gray-100">
-                          {code.currentUses} / {code.maxUses}
-                        </p>
-                      </div>
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                        <p className="text-gray-500 dark:text-gray-400">
-                          Límite por usuario
-                        </p>
-                        <p className="font-semibold text-gray-900 dark:text-gray-100">
-                          {code.maxUsesPerUser || 1}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div
-                          className="bg-[#2391C3] h-2 rounded-full"
-                          style={{
-                            width: `${Math.min(usagePercentage, 100)}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Métricas */}
-                    <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
-                      <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        Métricas
-                      </p>
-                      <div className="grid grid-cols-2 gap-3 text-xs">
-                        <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-2">
-                          <p className="text-gray-500 dark:text-gray-400">
-                            Intentos
-                          </p>
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">
-                            {code.validationAttempts || 0}
-                          </p>
-                        </div>
-                        <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-2">
-                          <p className="text-gray-500 dark:text-gray-400">
-                            Válidos
-                          </p>
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">
-                            {code.validationSuccesses || 0}
-                          </p>
-                        </div>
-                        <div className="bg-purple-50 dark:bg-purple-900/30 rounded-lg p-2">
-                          <p className="text-gray-500 dark:text-gray-400">
-                            Canjes
-                          </p>
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">
-                            {code.totalRedemptions || 0}
-                          </p>
-                        </div>
-                        <div className="bg-orange-50 dark:bg-orange-900/30 rounded-lg p-2">
-                          <p className="text-gray-500 dark:text-gray-400">
-                            Descuento otorgado
-                          </p>
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">
-                            {formatPrice(code.totalDiscountGiven || 0)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="text-xs text-gray-600 dark:text-gray-300 space-y-1">
-                      {typeof code.minPurchaseAmount === "number" && (
-                        <p>
-                          Compra mínima: {formatPrice(code.minPurchaseAmount)}
-                        </p>
-                      )}
-                      {typeof code.maxDiscountAmount === "number" && (
-                        <p>
-                          Tope de descuento:{" "}
-                          {formatPrice(code.maxDiscountAmount)}
-                        </p>
-                      )}
-                      <p>Creado: {formatDate(code.createdAt)}</p>
-                      <p>Actualizado: {formatDate(code.updatedAt)}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
-                      <button
-                        type="button"
-                        onClick={() => handleCopyCode(code.code)}
-                        className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm"
-                      >
-                        <ClipboardDocumentIcon className="h-4 w-4" />
-                        Copiar
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleShareCode(code)}
-                        className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm"
-                      >
-                        <ShareIcon className="h-4 w-4" />
-                        Compartir
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleToggleStatus(code.id, code.isActive)
-                        }
-                        className="px-3 py-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white rounded-lg text-sm"
-                      >
-                        {code.isActive ? "Desactivar" : "Activar"}
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteClick(code.id, code.code)}
-                        className="flex items-center justify-center gap-1 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                        Eliminar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
 
