@@ -38,12 +38,6 @@ export default function ImageUpload({
         return;
       }
 
-      // Validar tamaño (máx 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("La imagen no debe superar los 5MB");
-        return;
-      }
-
       // Preview local
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -85,7 +79,9 @@ export default function ImageUpload({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">{label}</label>
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        {label}
+      </label>
 
       {preview ? (
         <div className="relative">
@@ -125,7 +121,10 @@ export default function ImageUpload({
               </label>
               <p className="pl-1">o arrastra aquí</p>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">PNG, JPG, WebP hasta 5MB</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              PNG, JPG, WebP. La imagen se comprime automaticamente antes de
+              subir.
+            </p>
           </div>
         </div>
       )}
@@ -133,7 +132,9 @@ export default function ImageUpload({
       {isUploading && (
         <div className="flex items-center justify-center py-4">
           <div className="animate-spin rounded-full h-8 w-8 border-4 border-[#2391C3] border-t-transparent"></div>
-          <span className="ml-3 text-sm text-gray-600 dark:text-gray-300">Subiendo imagen...</span>
+          <span className="ml-3 text-sm text-gray-600 dark:text-gray-300">
+            Subiendo imagen...
+          </span>
         </div>
       )}
     </div>
