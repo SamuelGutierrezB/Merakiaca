@@ -240,6 +240,11 @@ const toSafeNumber = (value, fallback = 0) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
+// Bloqueado temporalmente el 2026-07-15: vulnerabilidad de manipulacion de
+// precios en orders (ver PLAN_CODIGOS_DESCUENTO.md, seccion "Bloqueo temporal
+// 2026-07-15"). Reactivar solo despues de validar precios server-side.
+const DISCOUNT_CODES_ENABLED = false;
+
 const calculateDiscountAmount = ({ codeDoc, subtotal }) => {
   const type = codeDoc.type;
   const value = toSafeNumber(codeDoc.value, 0);
@@ -438,6 +443,12 @@ exports.validateDiscountCode = onRequest(
           return res.status(405).json({ error: "Method not allowed" });
         }
 
+        if (!DISCOUNT_CODES_ENABLED) {
+          return res.status(503).json({
+            error: "Los codigos de descuento estan temporalmente deshabilitados",
+          });
+        }
+
         const authHeader = req.headers.authorization;
         if (!authHeader) {
           return res.status(401).json({ error: "Unauthorized" });
@@ -612,6 +623,12 @@ exports.applyDiscountCode = onRequest({ region: "us-central1" }, (req, res) => {
 
       if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
+      }
+
+      if (!DISCOUNT_CODES_ENABLED) {
+        return res.status(503).json({
+          error: "Los codigos de descuento estan temporalmente deshabilitados",
+        });
       }
 
       const authHeader = req.headers.authorization;

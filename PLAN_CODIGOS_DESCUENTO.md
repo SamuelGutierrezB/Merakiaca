@@ -323,6 +323,113 @@ Las tarjetas de código muestran en la sección "Métricas":
 
 ## STATUS ACTUAL
 
+### 🔒 BLOQUEO TEMPORAL ACTIVO (desde 2026-07-15)
+
+**La feature de codigos de descuento esta deshabilitada en produccion.** No borrar
+este bloqueo sin antes resolver el punto critico de la seccion "Vulnerabilidad
+pendiente" mas abajo.
+
+Donde esta el bloqueo (buscar `DISCOUNT_CODES_ENABLED`):
+
+- `src/pages/Checkout.tsx`: constante `DISCOUNT_CODES_ENABLED = false` oculta el
+  campo de codigo y muestra el mensaje "temporalmente deshabilitados por
+  mantenimiento". El resto del checkout (sin descuento) sigue funcionando normal.
+- `functions/index.js`: constante `DISCOUNT_CODES_ENABLED = false` hace que
+  `validateDiscountCode` y `applyDiscountCode` respondan `503` de inmediato,
+  por si alguien llama la API directo sin pasar por la UI.
+
+**Para reactivar:** cambiar ambas constantes a `true`, desplegar
+(`firebase deploy --only functions:validateDiscountCode,functions:applyDiscountCode`)
+y hacer build/deploy del frontend. Solo hacerlo despues de corregir la
+vulnerabilidad descrita abajo.
+
+### Sesion 2026-07-15: bugs encontrados y corregidos
+
+Durante pruebas end-to-end del flujo completo (validar → aplicar → pagar en
+Mercado Pago) aparecieron 4 bugs reales, todos corregidos y desplegados:
+
+1. **Firestore rules nunca desplegadas**: las reglas de `discountCodes` /
+   `discountRedemptions` / `rateLimits` existian en el repo desde hace ~1 mes
+   pero nunca se habian desplegado al proyecto real (no hay CI/CD que las
+   despliegue automaticamente). Causaba "Missing or insufficient permissions"
+   al leer codigos desde el admin. **Fix:** `firebase deploy --only firestore:rules`.
+2. **Cloud Functions nunca desplegadas**: `validateDiscountCode` y
+   `applyDiscountCode` existian en `functions/index.js` pero nunca se habian
+   desplegado (`firebase functions:list` no las mostraba). Causaba 404/CORS en
+   checkout. **Fix:** deploy manual de ambas funciones.
+3. **Bug de referencia Firestore**: `codeSnapshot.docs[0]` (un
+   `QueryDocumentSnapshot`) se usaba como si fuera una `DocumentReference`,
+   rompiendo `.get()`/`.update()` con error "Value for argument field is not a
+   valid field path". Afectaba tanto a `validateDiscountCode` como a
+   `applyDiscountCode`. **Fix:** usar `.ref` del snapshot.
+4. **Canje siempre rechazado con "ya fue aplicado"**: `applyDiscountCode`
+   revisaba `order.discountCode`, pero ese campo ya lo escribe `createOrder`
+   al crear la orden (antes de que el canje real ocurra), asi que el canje
+   fallaba en el 100% de los intentos reales. **Fix:** nuevo campo
+   `discountRedeemed`, escrito solo dentro de la transaccion atomica de
+   `applyDiscountCode`, y verificado ahi mismo (no solo antes) para cubrir
+   condiciones de carrera.
+
+Ademas se corrigio un bug pre-existente y no especifico de descuentos:
+
+5. **`mpCreatePreference` ignoraba `order.total`**: armaba los items de
+   Mercado Pago solo con el precio original de cada producto, sin restar
+   descuento ni sumar envio/impuestos. Este bug ya existia en `main` antes de
+   esta feature (afecta cualquier checkout). **Fix aplicado en ambas ramas:**
+   escalar los items para que la suma coincida con `order.total`, agregando
+   envio/impuestos como items aparte. Commit en `main`: `c8a88b7`. Commit en
+   `feature/discount-code` (junto con los fixes 3 y 4): `a95e4c7`.
+
+### ⚠️ Vulnerabilidad pendiente (motivo del bloqueo temporal)
+
+**El monto que se cobra en Mercado Pago lo define el cliente, no el servidor.**
+
+`orders.service.ts` escribe la orden completa (`total`, `subtotal`,
+`items[].unitPrice`, `discountAmount`, `shipping`, `tax`) directo a Firestore
+desde el navegador (`addDoc`). La regla de Firestore para crear ordenes
+(`firestore.rules`, coleccion `orders`) solo valida
+`request.resource.data.userId == request.auth.uid` — **no valida ningun monto
+contra los precios reales de `products`**. `mpCreatePreference` toma esos
+valores tal cual para armar la preferencia de pago.
+
+Cualquiera que modifique esa escritura antes de que llegue a Firestore (por
+ejemplo desde las devtools del navegador) puede crear una orden con
+`total: 0.01` por productos reales y pagar casi nada. Esto **no es especifico
+de codigos de descuento** — existe para cualquier orden, con o sin codigo — pero
+se bloqueo la feature de descuentos junto con esto porque comparten el mismo
+flujo de creacion de orden y es el trabajo activo de esta sesion.
+
+`mpWebhook`/`mpSyncPaymentStatus` SI estan bien: vuelven a consultar el pago
+directo en la API de Mercado Pago (no confian en el payload del webhook), asi
+que no se puede falsificar un "pago aprobado". El problema es unicamente que
+el monto cobrado nunca se valida contra los precios reales antes de crear la
+preferencia.
+
+**Fix recomendado (pendiente, para retomar mañana):** mover el calculo del
+total a una Cloud Function confiable que:
+
+1. Reciba solo `productId` + `fabricId` + `quantity` del cliente (no precios).
+2. Lea el precio real de cada producto desde Firestore (Admin SDK).
+3. Recalcule `subtotal` server-side.
+4. Revalide el codigo de descuento server-side (ya existe la logica en
+   `validateDiscountCode`, reutilizable).
+5. Escriba la orden con esos valores server-calculados (o cree la orden desde
+   la propia Cloud Function en vez de que el cliente haga `addDoc` directo).
+6. Ajustar `firestore.rules` para que `orders.create` deje de aceptar
+   escritura libre de precios desde el cliente (o eliminar el permiso de
+   create directo y forzar todo por la Cloud Function con Admin SDK).
+
+Esto aplica tanto si se usa descuento como si no — es un fix de seguridad del
+checkout en general, no solo de esta feature.
+
+### Otro hallazgo menor, no bloqueante
+
+`isAdmin()` en `firestore.rules` verifica un campo `isAdmin == true` en el
+documento de usuario que el codigo de auth (`auth.service.ts`) nunca escribe
+(solo escribe `role`). El acceso de admin real depende solo de los 2 emails
+hardcodeados en `isAdminEmail()`. No bloquea nada hoy, pero es fragil para
+agregar nuevos admins.
+
 ### Implementado y Funcionando
 
 - ✅ Backend: validación segura de códigos + canje atómico

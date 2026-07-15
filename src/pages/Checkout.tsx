@@ -19,6 +19,11 @@ import type { AppliedDiscount } from "@/types";
 import type { OrderItem, Address } from "@/types/order.types";
 import BranchMap from "@/components/common/BranchMap";
 
+// Bloqueado temporalmente el 2026-07-15: vulnerabilidad de manipulacion de
+// precios en orders (ver PLAN_CODIGOS_DESCUENTO.md, seccion "Bloqueo temporal
+// 2026-07-15"). Reactivar solo despues de validar precios server-side.
+const DISCOUNT_CODES_ENABLED = false;
+
 const pickupSchema = z.object({
   fullName: z
     .string()
@@ -705,29 +710,36 @@ export default function Checkout() {
                 >
                   Codigo de descuento
                 </label>
-                <div className="flex gap-2">
-                  <input
-                    id="discountCode"
-                    type="text"
-                    value={discountCodeInput}
-                    onChange={(e) =>
-                      setDiscountCodeInput(e.target.value.toUpperCase())
-                    }
-                    placeholder="Ej: BIENVENIDA10"
-                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
-                    disabled={isApplyingDiscount || isProcessing}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleApplyDiscount}
-                    disabled={isApplyingDiscount || isProcessing}
-                    className="px-3 py-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white rounded-lg text-sm font-semibold disabled:bg-gray-400"
-                  >
-                    {isApplyingDiscount ? "Aplicando..." : "Aplicar"}
-                  </button>
-                </div>
+                {DISCOUNT_CODES_ENABLED ? (
+                  <div className="flex gap-2">
+                    <input
+                      id="discountCode"
+                      type="text"
+                      value={discountCodeInput}
+                      onChange={(e) =>
+                        setDiscountCodeInput(e.target.value.toUpperCase())
+                      }
+                      placeholder="Ej: BIENVENIDA10"
+                      className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2391C3] focus:border-transparent"
+                      disabled={isApplyingDiscount || isProcessing}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyDiscount}
+                      disabled={isApplyingDiscount || isProcessing}
+                      className="px-3 py-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white rounded-lg text-sm font-semibold disabled:bg-gray-400"
+                    >
+                      {isApplyingDiscount ? "Aplicando..." : "Aplicar"}
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                    Los codigos de descuento estan temporalmente
+                    deshabilitados por mantenimiento.
+                  </p>
+                )}
 
-                {appliedDiscount && (
+                {DISCOUNT_CODES_ENABLED && appliedDiscount && (
                   <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
                     <p className="text-sm text-green-700 dark:text-green-300 font-medium">
                       Codigo aplicado: {appliedDiscount.code}
