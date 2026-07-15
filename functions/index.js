@@ -497,8 +497,9 @@ exports.validateDiscountCode = onRequest(
           return res.status(404).json({ error: "Codigo no valido" });
         }
 
-        const codeDocRef = codeSnapshot.docs[0];
-        const codeDoc = codeDocRef.data();
+        const codeSnapshotDoc = codeSnapshot.docs[0];
+        const codeDocRef = codeSnapshotDoc.ref;
+        const codeDoc = codeSnapshotDoc.data();
         const now = Date.now();
 
         if (!codeDoc.isActive) {
@@ -663,7 +664,7 @@ exports.applyDiscountCode = onRequest({ region: "us-central1" }, (req, res) => {
         return res.status(403).json({ error: "Access denied" });
       }
 
-      if (order.discountCode) {
+      if (order.discountRedeemed) {
         return res.status(400).json({
           error: "El descuento ya fue aplicado a esta orden",
         });
@@ -679,8 +680,9 @@ exports.applyDiscountCode = onRequest({ region: "us-central1" }, (req, res) => {
         return res.status(404).json({ error: "Codigo no valido" });
       }
 
-      const codeDocRef = codeSnapshot.docs[0];
-      const codeDocData = codeDocRef.data();
+      const codeSnapshotDoc = codeSnapshot.docs[0];
+      const codeDocRef = codeSnapshotDoc.ref;
+      const codeDocData = codeSnapshotDoc.data();
       const now = Date.now();
 
       if (!codeDocData.isActive) {
@@ -712,6 +714,11 @@ exports.applyDiscountCode = onRequest({ region: "us-central1" }, (req, res) => {
 
       let redeemResult = null;
       await db.runTransaction(async (transaction) => {
+        const orderSnapshotTx = await transaction.get(orderRef);
+        if (orderSnapshotTx.data()?.discountRedeemed) {
+          throw new Error("El descuento ya fue aplicado a esta orden");
+        }
+
         const codeSnapshot2 = await transaction.get(codeDocRef);
         const codeData = codeSnapshot2.data();
 
@@ -739,6 +746,11 @@ exports.applyDiscountCode = onRequest({ region: "us-central1" }, (req, res) => {
         const incrementedUses = currentUsesInTx + 1;
         transaction.update(codeDocRef, {
           currentUses: incrementedUses,
+          updatedAt: Timestamp.now(),
+        });
+
+        transaction.update(orderRef, {
+          discountRedeemed: true,
           updatedAt: Timestamp.now(),
         });
 
@@ -780,7 +792,9 @@ exports.applyDiscountCode = onRequest({ region: "us-central1" }, (req, res) => {
         error instanceof Error ? error.message : "Internal server error";
       return res
         .status(
-          errorMessage.includes("limite") || errorMessage.includes("expirado")
+          errorMessage.includes("limite") ||
+            errorMessage.includes("expirado") ||
+            errorMessage.includes("ya fue aplicado")
             ? 400
             : 500,
         )
@@ -832,18 +846,81 @@ exports.mpCreatePreference = onRequest(
           return res.status(403).json({ error: "Access denied" });
         }
 
-        const items = Array.isArray(order.items)
-          ? order.items.map((item) => ({
-              id: item.productId,
-              title: `${item.productName} - ${item.fabricName}`,
-              quantity: item.quantity,
-              unit_price: item.unitPrice,
-              currency_id: "MXN",
-            }))
-          : [];
-
-        if (items.length === 0) {
+        const rawItems = Array.isArray(order.items) ? order.items : [];
+        if (rawItems.length === 0) {
           return res.status(400).json({ error: "Order has no valid items" });
+        }
+
+        const orderTotal = toSafeNumber(order.total, null);
+        if (orderTotal === null || orderTotal <= 0) {
+          return res
+            .status(400)
+            .json({ error: "El monto de la orden no es valido para pagar" });
+        }
+
+        const shipping = toSafeNumber(order.shipping, 0);
+        const tax = toSafeNumber(order.tax, 0);
+
+        // Lo que deben sumar los items de producto: total menos envio e impuestos
+        // (que se agregan como items aparte). Aqui es donde se refleja cualquier
+        // descuento aplicado a la orden, ya que order.total ya lo tiene restado.
+        const productsTarget = Math.max(0, orderTotal - shipping - tax);
+        const productsRawSum = rawItems.reduce(
+          (sum, item) =>
+            sum + toSafeNumber(item.unitPrice, 0) * toSafeNumber(item.quantity, 0),
+          0,
+        );
+        const scale = productsRawSum > 0 ? productsTarget / productsRawSum : 1;
+
+        const items = rawItems.map((item) => {
+          const quantity = toSafeNumber(item.quantity, 0);
+          const unitPrice =
+            quantity > 0
+              ? Math.round(toSafeNumber(item.unitPrice, 0) * scale * 100) / 100
+              : 0;
+          return {
+            id: item.productId,
+            title: `${item.productName} - ${item.fabricName}`,
+            quantity,
+            unit_price: unitPrice,
+            currency_id: "MXN",
+          };
+        });
+
+        // Corregir el redondeo acumulado en el ultimo item para que la suma sea exacta
+        const itemsSum = items.reduce(
+          (sum, item) => sum + item.unit_price * item.quantity,
+          0,
+        );
+        const roundingDelta = Math.round((productsTarget - itemsSum) * 100) / 100;
+        const lastItem = items[items.length - 1];
+        if (roundingDelta !== 0 && lastItem.quantity > 0) {
+          lastItem.unit_price = Math.max(
+            0,
+            Math.round(
+              (lastItem.unit_price + roundingDelta / lastItem.quantity) * 100,
+            ) / 100,
+          );
+        }
+
+        if (shipping > 0) {
+          items.push({
+            id: "shipping",
+            title: "Envio",
+            quantity: 1,
+            unit_price: Math.round(shipping * 100) / 100,
+            currency_id: "MXN",
+          });
+        }
+
+        if (tax > 0) {
+          items.push({
+            id: "tax",
+            title: "Impuestos",
+            quantity: 1,
+            unit_price: Math.round(tax * 100) / 100,
+            currency_id: "MXN",
+          });
         }
 
         const accessToken = mercadoPagoAccessToken.value();
