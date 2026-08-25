@@ -11,6 +11,11 @@ const cors = require("cors");
 
 initializeApp();
 
+const { onOrderCreated, onProductStockChanged } = require("./triggers");
+
+exports.onOrderCreated = onOrderCreated;
+exports.onProductStockChanged = onProductStockChanged;
+
 const db = getFirestore();
 const mercadoPagoAccessToken = defineSecret("MERCADOPAGO_ACCESS_TOKEN");
 const DEFAULT_SITE_URL = "https://merakiaca.com";
