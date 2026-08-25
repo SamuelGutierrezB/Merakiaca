@@ -1,0 +1,12 @@
+{
+  "name": "Merakiaca - Panel Admin",
+  "short_name": "Merakiaca",
+  "start_url": "/admin",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2391C3",
+  "icons": [
+    { "src": "/logo.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/logo.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
