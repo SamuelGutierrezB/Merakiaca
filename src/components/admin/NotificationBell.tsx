@@ -57,14 +57,20 @@ export default function NotificationBell() {
 
   useEffect(() => {
     let unsubscribeForeground: (() => void) | undefined;
+    let cancelled = false;
 
     onForegroundMessage((title, body) => {
       toast(`${title}: ${body}`);
     }).then((unsub) => {
-      unsubscribeForeground = unsub;
+      if (cancelled) {
+        unsub();
+      } else {
+        unsubscribeForeground = unsub;
+      }
     });
 
     return () => {
+      cancelled = true;
       unsubscribeForeground?.();
     };
   }, []);
