@@ -12,6 +12,7 @@ const cors = require("cors");
 initializeApp();
 
 const { onOrderCreated, onProductStockChanged } = require("./triggers");
+const { notifyAdmins } = require("./notifications");
 
 exports.onOrderCreated = onOrderCreated;
 exports.onProductStockChanged = onProductStockChanged;
@@ -111,6 +112,8 @@ const applyOrderPaymentUpdate = async ({
   let shouldReduceStock = false;
   let orderItems = [];
   const paymentStatus = mapMercadoPagoStatus(mercadoPagoStatus);
+  let paymentStatusChanged = false;
+  let orderForNotification = null;
 
   await db.runTransaction(async (transaction) => {
     const orderSnapshot = await transaction.get(orderRef);
@@ -140,6 +143,8 @@ const applyOrderPaymentUpdate = async ({
         changedBy: "mercadopago-webhook",
         note: note || null,
       });
+      paymentStatusChanged = true;
+      orderForNotification = order;
     }
 
     if (paymentStatus === "approved" && !order.paymentApprovedAt) {
@@ -171,6 +176,27 @@ const applyOrderPaymentUpdate = async ({
         item.fabricId,
         item.quantity,
       );
+    }
+  }
+
+  if (paymentStatusChanged && orderForNotification) {
+    const customerName =
+      orderForNotification.shippingAddress?.fullName || "Cliente";
+
+    if (paymentStatus === "approved") {
+      await notifyAdmins({
+        type: "sale",
+        title: "Nueva venta \u{1F389}",
+        body: `$${toSafeNumber(orderForNotification.total, 0)} — ${customerName}`,
+        data: { orderId },
+      });
+    } else if (paymentStatus === "rejected") {
+      await notifyAdmins({
+        type: "payment_rejected",
+        title: "Pago rechazado",
+        body: `Orden de ${customerName} — pago rechazado`,
+        data: { orderId },
+      });
     }
   }
 
@@ -543,3 +569,5 @@ exports.mpWebhook = onRequest(
     }
   },
 );
+
+exports.applyOrderPaymentUpdate = applyOrderPaymentUpdate;
