@@ -24,28 +24,33 @@ async function getMessagingInstance() {
 export async function requestNotificationPermission(
   userId: string,
 ): Promise<boolean> {
-  const messaging = await getMessagingInstance();
-  if (!messaging) {
+  try {
+    const messaging = await getMessagingInstance();
+    if (!messaging) {
+      return false;
+    }
+
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      return false;
+    }
+
+    const token = await getToken(messaging, {
+      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+    });
+
+    if (!token) {
+      return false;
+    }
+
+    const userRef = doc(db, FIREBASE_COLLECTIONS.USERS, userId);
+    await updateDoc(userRef, { fcmTokens: arrayUnion(token) });
+
+    return true;
+  } catch (error) {
+    console.error("Error requesting notification permission:", error);
     return false;
   }
-
-  const permission = await Notification.requestPermission();
-  if (permission !== "granted") {
-    return false;
-  }
-
-  const token = await getToken(messaging, {
-    vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
-  });
-
-  if (!token) {
-    return false;
-  }
-
-  const userRef = doc(db, FIREBASE_COLLECTIONS.USERS, userId);
-  await updateDoc(userRef, { fcmTokens: arrayUnion(token) });
-
-  return true;
 }
 
 /**
@@ -54,12 +59,17 @@ export async function requestNotificationPermission(
 export async function onForegroundMessage(
   callback: (title: string, body: string) => void,
 ): Promise<() => void> {
-  const messaging = await getMessagingInstance();
-  if (!messaging) {
+  try {
+    const messaging = await getMessagingInstance();
+    if (!messaging) {
+      return () => {};
+    }
+
+    return onMessage(messaging, (payload) => {
+      callback(payload.notification?.title || "", payload.notification?.body || "");
+    });
+  } catch (error) {
+    console.error("Error setting up foreground message listener:", error);
     return () => {};
   }
-
-  return onMessage(messaging, (payload) => {
-    callback(payload.notification?.title || "", payload.notification?.body || "");
-  });
 }
