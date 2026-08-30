@@ -8,6 +8,7 @@ export interface User {
   displayName: string;
   photoURL: string;
   role: UserRole;
+  fcmTokens?: string[];
   createdAt: Timestamp;
   lastLogin: Timestamp;
 }

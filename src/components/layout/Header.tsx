@@ -13,6 +13,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useThemeStore } from "@/store/themeStore";
 import { ROUTES } from "@/utils/constants";
 import logo from "@/assets/logo.png";
+import NotificationBell from "@/components/admin/NotificationBell";
 
 export default function Header() {
   const { user, logout } = useAuthStore();
@@ -96,13 +97,16 @@ export default function Header() {
                 </Link>
 
                 {user.role === "admin" && (
-                  <Link
-                    to="/admin"
-                    className="bg-[#8A4A86] hover:bg-[#6A3A66] text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
-                  >
-                    <UserCog className="h-5 w-5" />
-                    Admin
-                  </Link>
+                  <>
+                    <NotificationBell />
+                    <Link
+                      to="/admin"
+                      className="bg-[#8A4A86] hover:bg-[#6A3A66] text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                    >
+                      <UserCog className="h-5 w-5" />
+                      Admin
+                    </Link>
+                  </>
                 )}
 
                 <div className="flex items-center gap-3">
@@ -201,14 +205,19 @@ export default function Header() {
                 </Link>
 
                 {user.role === "admin" && (
-                  <Link
-                    to="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="px-4 py-3 text-[#8A4A86] hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-800 font-semibold transition-colors flex items-center gap-2"
-                  >
-                    <UserCog className="h-5 w-5" />
-                    Admin
-                  </Link>
+                  <>
+                    <div className="px-4 py-2">
+                      <NotificationBell />
+                    </div>
+                    <Link
+                      to="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="px-4 py-3 text-[#8A4A86] hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-800 font-semibold transition-colors flex items-center gap-2"
+                    >
+                      <UserCog className="h-5 w-5" />
+                      Admin
+                    </Link>
+                  </>
                 )}
 
                 <Link
