@@ -6,6 +6,7 @@ import OrderHistory from "@/components/common/OrderHistory";
 import { OrderCardSkeleton } from "@/components/common/Skeleton";
 import { useAuthStore } from "@/store/authStore";
 import { getUserOrders } from "@/services/orders.service";
+import { createMercadoPagoPreference } from "@/services/mercadopago.service";
 import { formatPrice } from "@/utils/formatters";
 import type { Order } from "@/types/order.types";
 import toast from "react-hot-toast";
@@ -44,6 +45,7 @@ export default function MyOrders() {
   const { user } = useAuthStore();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [retryingOrderId, setRetryingOrderId] = useState<string | null>(null);
 
   // Pull-to-refresh state
   const [isPulling, setIsPulling] = useState(false);
@@ -99,6 +101,20 @@ export default function MyOrders() {
     setIsPulling(false);
     setPullDistance(0);
     touchStartY.current = 0;
+  };
+
+  const handleRetryPayment = async (orderId: string) => {
+    if (retryingOrderId) return;
+
+    try {
+      setRetryingOrderId(orderId);
+      const preference = await createMercadoPagoPreference(orderId);
+      window.location.href = preference.initPoint;
+    } catch (error) {
+      console.error("Error al reintentar pago:", error);
+      toast.error("No se pudo iniciar el reintento de pago");
+      setRetryingOrderId(null);
+    }
   };
 
   const formatDate = (timestamp: unknown) => {
@@ -225,6 +241,17 @@ export default function MyOrders() {
                       >
                         {STATUS_LABELS[order.status] || order.status}
                       </span>
+                      {order.paymentStatus === "rejected" && (
+                        <button
+                          onClick={() => handleRetryPayment(order.id)}
+                          disabled={retryingOrderId === order.id}
+                          className="px-3 py-1 text-xs font-semibold rounded-full bg-[#2391C3] hover:bg-[#1A6B8E] text-white transition-colors disabled:opacity-60"
+                        >
+                          {retryingOrderId === order.id
+                            ? "Redirigiendo..."
+                            : "Reintentar pago"}
+                        </button>
+                      )}
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-gray-600 dark:text-gray-300">
