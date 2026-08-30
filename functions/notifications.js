@@ -61,6 +61,9 @@ const notifyAdmins = async ({ type, title, body, data = {} }) => {
   const response = await getMessaging().sendEachForMulticast({
     tokens,
     notification: { title, body },
+    webpush: {
+      notification: { icon: "/logo.png" },
+    },
     data: Object.fromEntries(
       Object.entries(data).map(([key, value]) => [key, String(value)]),
     ),
