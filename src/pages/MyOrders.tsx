@@ -241,17 +241,21 @@ export default function MyOrders() {
                       >
                         {STATUS_LABELS[order.status] || order.status}
                       </span>
-                      {order.paymentStatus === "rejected" && (
-                        <button
-                          onClick={() => handleRetryPayment(order.id)}
-                          disabled={retryingOrderId === order.id}
-                          className="px-3 py-1 text-xs font-semibold rounded-full bg-[#2391C3] hover:bg-[#1A6B8E] text-white transition-colors disabled:opacity-60"
-                        >
-                          {retryingOrderId === order.id
-                            ? "Redirigiendo..."
-                            : "Reintentar pago"}
-                        </button>
-                      )}
+                      {(order.paymentStatus === "rejected" ||
+                        order.paymentStatus === "pending") &&
+                        order.status !== "cancelled" && (
+                          <button
+                            onClick={() => handleRetryPayment(order.id)}
+                            disabled={retryingOrderId === order.id}
+                            className="px-3 py-1 text-xs font-semibold rounded-full bg-[#2391C3] hover:bg-[#1A6B8E] text-white transition-colors disabled:opacity-60"
+                          >
+                            {retryingOrderId === order.id
+                              ? "Redirigiendo..."
+                              : order.paymentStatus === "rejected"
+                                ? "Reintentar pago"
+                                : "Pagar ahora"}
+                          </button>
+                        )}
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-gray-600 dark:text-gray-300">
