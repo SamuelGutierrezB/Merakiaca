@@ -183,20 +183,24 @@ const applyOrderPaymentUpdate = async ({
     const customerName =
       orderForNotification.shippingAddress?.fullName || "Cliente";
 
-    if (paymentStatus === "approved") {
-      await notifyAdmins({
-        type: "sale",
-        title: "Nueva venta \u{1F389}",
-        body: `$${toSafeNumber(orderForNotification.total, 0)} — ${customerName}`,
-        data: { orderId },
-      });
-    } else if (paymentStatus === "rejected") {
-      await notifyAdmins({
-        type: "payment_rejected",
-        title: "Pago rechazado",
-        body: `Orden de ${customerName} — pago rechazado`,
-        data: { orderId },
-      });
+    try {
+      if (paymentStatus === "approved") {
+        await notifyAdmins({
+          type: "sale",
+          title: "Nueva venta \u{1F389}",
+          body: `$${toSafeNumber(orderForNotification.total, 0)} — ${customerName}`,
+          data: { orderId },
+        });
+      } else if (paymentStatus === "rejected") {
+        await notifyAdmins({
+          type: "payment_rejected",
+          title: "Pago rechazado",
+          body: `Orden de ${customerName} — pago rechazado`,
+          data: { orderId },
+        });
+      }
+    } catch (error) {
+      console.error("Error in applyOrderPaymentUpdate notifyAdmins:", error);
     }
   }
 
