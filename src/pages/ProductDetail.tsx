@@ -197,6 +197,7 @@ export default function ProductDetail() {
                     <img
                       src={image}
                       alt={`${product.name} - Vista ${index + 1}`}
+                      loading="lazy"
                       className="w-full h-full object-cover"
                     />
                   </button>

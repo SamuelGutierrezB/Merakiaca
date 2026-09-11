@@ -9,8 +9,10 @@ import {
   query,
   where,
   orderBy,
+  limit as firestoreLimit,
   serverTimestamp,
   writeBatch,
+  type QueryConstraint,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import type { Product, ProductFormData, FabricOption } from "@/types";
@@ -55,26 +57,29 @@ export const getAllProducts = async (): Promise<Product[]> => {
 };
 
 /**
- * Obtiene solo productos activos
- * Nota: Ordena en el cliente para evitar necesitar índice compuesto
+ * Obtiene productos activos, ordenados por más reciente primero.
+ * Ordena server-side (usa el indice compuesto isActive+createdAt de
+ * firestore.indexes.json) para poder limitar la cantidad sin traer el
+ * catalogo completo — ver MRK-010, antes se traia todo y se ordenaba/
+ * cortaba en el cliente.
+ * @param maxResults - si se da, limita la cantidad de productos traidos (ej. carrusel del Home)
  */
-export const getActiveProducts = async (): Promise<Product[]> => {
+export const getActiveProducts = async (
+  maxResults?: number,
+): Promise<Product[]> => {
   try {
     const productsRef = collection(db, FIREBASE_COLLECTIONS.PRODUCTS);
-    // Temporalmente sin orderBy para evitar necesitar índice compuesto
-    const q = query(productsRef, where("isActive", "==", true));
+    const constraints: QueryConstraint[] = [
+      where("isActive", "==", true),
+      orderBy("createdAt", "desc"),
+    ];
+    if (maxResults) {
+      constraints.push(firestoreLimit(maxResults));
+    }
+    const q = query(productsRef, ...constraints);
     const snapshot = await getDocs(q);
 
-    const products = snapshot.docs.map((doc) =>
-      normalizeProductData(doc.id, doc.data()),
-    );
-
-    // Ordenar en el cliente
-    return products.sort((a, b) => {
-      const aTime = a.createdAt?.toMillis() || 0;
-      const bTime = b.createdAt?.toMillis() || 0;
-      return bTime - aTime; // Descendente (más reciente primero)
-    });
+    return snapshot.docs.map((doc) => normalizeProductData(doc.id, doc.data()));
   } catch (error) {
     console.error("Error al obtener productos activos:", error);
     throw error;

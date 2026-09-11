@@ -35,8 +35,8 @@ export default function Home() {
   const loadProducts = async () => {
     try {
       setIsLoading(true);
-      const data = await getActiveProducts();
-      setProducts(data.slice(0, 6)); // Máximo 6 productos para el carrusel
+      const data = await getActiveProducts(6); // Solo pide 6, no el catálogo completo
+      setProducts(data);
     } catch (error) {
       console.error("Error al cargar productos:", error);
     } finally {

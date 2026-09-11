@@ -74,6 +74,7 @@ export default function Cart() {
                       <img
                         src={item.productImage}
                         alt={item.productName}
+                        loading="lazy"
                         className="w-full h-full object-cover"
                       />
                     ) : (
