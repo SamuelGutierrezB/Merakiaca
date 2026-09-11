@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
@@ -24,6 +24,13 @@ import {
 import { deleteOrder } from "@/services/orders.service";
 import { PRIMARY_ADMIN_EMAIL } from "@/utils/constants";
 import { formatPrice } from "@/utils/formatters";
+import { branches } from "@/utils/branches";
+import {
+  filterOrders,
+  ordersToCsv,
+  DELIVERY_FILTER_VALUE,
+  type OrderFilterCriteria,
+} from "@/utils/orderFilters";
 import type { Order, OrderStatus, PaymentStatus } from "@/types/order.types";
 import { useAuthStore } from "@/store/authStore";
 import toast from "react-hot-toast";
@@ -85,6 +92,65 @@ export default function AdminOrders() {
   }>({ isOpen: false, order: null });
   const [deleteAllDialogOpen, setDeleteAllDialogOpen] = useState(false);
   const [deleteAllConfirmation, setDeleteAllConfirmation] = useState("");
+
+  const [statusFilter, setStatusFilter] = useState<OrderStatus | "">("");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState<
+    PaymentStatus | ""
+  >("");
+  const [branchFilter, setBranchFilter] = useState("");
+  const [dateFromFilter, setDateFromFilter] = useState("");
+  const [dateToFilter, setDateToFilter] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const hasActiveFilters =
+    statusFilter !== "" ||
+    paymentStatusFilter !== "" ||
+    branchFilter !== "" ||
+    dateFromFilter !== "" ||
+    dateToFilter !== "" ||
+    searchTerm.trim() !== "";
+
+  const clearFilters = () => {
+    setStatusFilter("");
+    setPaymentStatusFilter("");
+    setBranchFilter("");
+    setDateFromFilter("");
+    setDateToFilter("");
+    setSearchTerm("");
+  };
+
+  const filteredOrders = useMemo(() => {
+    const criteria: OrderFilterCriteria = {
+      status: statusFilter || undefined,
+      paymentStatus: paymentStatusFilter || undefined,
+      branchId: branchFilter || undefined,
+      // Los inputs type="date" dan "YYYY-MM-DD" en hora local; dateTo se manda
+      // al final del dia para que incluya todo ese dia en el filtro.
+      dateFrom: dateFromFilter ? new Date(`${dateFromFilter}T00:00:00`) : undefined,
+      dateTo: dateToFilter ? new Date(`${dateToFilter}T23:59:59.999`) : undefined,
+      search: searchTerm || undefined,
+    };
+    return filterOrders(orders, criteria);
+  }, [
+    orders,
+    statusFilter,
+    paymentStatusFilter,
+    branchFilter,
+    dateFromFilter,
+    dateToFilter,
+    searchTerm,
+  ]);
+
+  const exportFilteredOrdersToCsv = () => {
+    const csv = ordersToCsv(filteredOrders);
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `ordenes-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     loadOrders();
@@ -288,6 +354,104 @@ export default function AdminOrders() {
             )}
           </div>
 
+          {!loading && orders.length > 0 && (
+            <div
+              className="mb-6 bg-white dark:bg-gray-900 rounded-lg shadow-md p-4"
+              data-tour="orders-filters"
+            >
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Buscar por cliente o # de orden"
+                  className="px-3 py-2 text-sm rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:border-[#2391C3] focus:outline-none xl:col-span-2"
+                />
+                <select
+                  value={statusFilter}
+                  onChange={(e) =>
+                    setStatusFilter(e.target.value as OrderStatus | "")
+                  }
+                  className="px-3 py-2 text-sm rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:border-[#2391C3] focus:outline-none"
+                >
+                  <option value="">Todos los estados</option>
+                  {Object.entries(STATUS_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={paymentStatusFilter}
+                  onChange={(e) =>
+                    setPaymentStatusFilter(e.target.value as PaymentStatus | "")
+                  }
+                  className="px-3 py-2 text-sm rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:border-[#2391C3] focus:outline-none"
+                >
+                  <option value="">Todos los pagos</option>
+                  {Object.entries(PAYMENT_STATUS_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={branchFilter}
+                  onChange={(e) => setBranchFilter(e.target.value)}
+                  className="px-3 py-2 text-sm rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:border-[#2391C3] focus:outline-none"
+                >
+                  <option value="">Todas las entregas</option>
+                  <option value={DELIVERY_FILTER_VALUE}>Envío a domicilio</option>
+                  {branches.map((branch) => (
+                    <option key={branch.id} value={branch.id}>
+                      Recolección: {branch.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex gap-2 xl:col-span-2">
+                  <input
+                    type="date"
+                    value={dateFromFilter}
+                    onChange={(e) => setDateFromFilter(e.target.value)}
+                    className="flex-1 px-3 py-2 text-sm rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:border-[#2391C3] focus:outline-none"
+                    aria-label="Fecha desde"
+                  />
+                  <input
+                    type="date"
+                    value={dateToFilter}
+                    onChange={(e) => setDateToFilter(e.target.value)}
+                    className="flex-1 px-3 py-2 text-sm rounded-lg border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 focus:border-[#2391C3] focus:outline-none"
+                    aria-label="Fecha hasta"
+                  />
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {filteredOrders.length} de {orders.length} órdenes
+                </p>
+                <div className="flex gap-2">
+                  {hasActiveFilters && (
+                    <button
+                      type="button"
+                      onClick={clearFilters}
+                      className="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 px-3 py-2"
+                    >
+                      Limpiar filtros
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={exportFilteredOrdersToCsv}
+                    disabled={filteredOrders.length === 0}
+                    className="text-sm font-semibold text-white bg-[#2391C3] hover:bg-[#1A6B8E] disabled:opacity-50 disabled:cursor-not-allowed rounded-lg px-4 py-2"
+                  >
+                    Exportar CSV
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {loading ? (
             <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-12 text-center">
               <Loader2 className="h-16 w-16 mx-auto mb-4 text-[#2391C3] animate-spin" />
@@ -296,7 +460,7 @@ export default function AdminOrders() {
               </p>
             </div>
           ) : orders.length === 0 ? (
-            /* Estado vacío */
+            /* Estado vacío: no hay ninguna orden */
             <div
               className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-12 text-center"
               data-tour="orders-empty"
@@ -313,6 +477,23 @@ export default function AdminOrders() {
                 className="inline-flex items-center gap-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
               >
                 Ver Productos
+              </button>
+            </div>
+          ) : filteredOrders.length === 0 ? (
+            /* Estado vacío: hay órdenes, pero ninguna coincide con los filtros */
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-12 text-center">
+              <Package className="h-24 w-24 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+                Ninguna orden coincide con los filtros
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Ajusta o limpia los filtros para ver más resultados
+              </p>
+              <button
+                onClick={clearFilters}
+                className="inline-flex items-center gap-2 bg-[#2391C3] hover:bg-[#1A6B8E] text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                Limpiar filtros
               </button>
             </div>
           ) : (
@@ -350,7 +531,7 @@ export default function AdminOrders() {
                       </tr>
                     </thead>
                     <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200">
-                      {orders.map((order) => (
+                      {filteredOrders.map((order) => (
                         <tr
                           key={order.id}
                           onClick={() => setSelectedOrder(order)}
@@ -444,7 +625,7 @@ export default function AdminOrders() {
 
               {/* Vista de tarjetas para móvil/tablet */}
               <div className="lg:hidden space-y-4">
-                {orders.map((order) => (
+                {filteredOrders.map((order) => (
                   <div
                     key={order.id}
                     onClick={() => setSelectedOrder(order)}
