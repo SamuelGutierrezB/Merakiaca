@@ -107,6 +107,8 @@ const applyOrderPaymentUpdate = async ({
   orderId,
   mercadoPagoPaymentId,
   mercadoPagoStatus,
+  paymentTypeId,
+  paymentMethodId,
   note,
 }) => {
   const orderRef = db.collection(ORDERS_COLLECTION).doc(orderId);
@@ -134,6 +136,14 @@ const applyOrderPaymentUpdate = async ({
       order.mercadoPagoPaymentId !== mercadoPagoPaymentId
     ) {
       updateData.mercadoPagoPaymentId = mercadoPagoPaymentId;
+    }
+
+    if (paymentTypeId && order.paymentTypeId !== paymentTypeId) {
+      updateData.paymentTypeId = paymentTypeId;
+    }
+
+    if (paymentMethodId && order.paymentMethodId !== paymentMethodId) {
+      updateData.paymentMethodId = paymentMethodId;
     }
 
     if (order.paymentStatus !== paymentStatus) {
@@ -379,6 +389,13 @@ exports.mpCreatePreference = onRequest(
             .json({ error: "MP credentials not configured" });
         }
 
+        // MRK-002: la preferencia expira a los 30 min de creada para no dejar
+        // links de pago abiertos indefinidamente.
+        const preferenceCreatedAt = new Date();
+        const preferenceExpiresAt = new Date(
+          preferenceCreatedAt.getTime() + 30 * 60 * 1000,
+        );
+
         const mpResponse = await fetch(
           "https://api.mercadopago.com/checkout/preferences",
           {
@@ -394,7 +411,9 @@ exports.mpCreatePreference = onRequest(
               notification_url: WEBHOOK_URL,
               auto_return: "approved",
               statement_descriptor: "MERAKIACA",
-              expires: false,
+              expires: true,
+              expiration_date_from: preferenceCreatedAt.toISOString(),
+              expiration_date_to: preferenceExpiresAt.toISOString(),
               payer:
                 typeof order.customerEmail === "string"
                   ? { email: order.customerEmail }
@@ -495,6 +514,8 @@ exports.mpSyncPaymentStatus = onRequest(
           orderId,
           mercadoPagoPaymentId: String(payment.id),
           mercadoPagoStatus: payment.status,
+          paymentTypeId: payment.payment_type_id,
+          paymentMethodId: payment.payment_method_id,
           note: "Sincronizado desde el redirect del cliente",
         });
 
@@ -539,6 +560,8 @@ exports.mpWebhook = onRequest(
         orderId,
         mercadoPagoPaymentId: String(payment.id),
         mercadoPagoStatus: payment.status,
+        paymentTypeId: payment.payment_type_id,
+        paymentMethodId: payment.payment_method_id,
         note: "Actualizado desde webhook de Mercado Pago",
       });
 

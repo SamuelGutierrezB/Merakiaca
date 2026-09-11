@@ -11,23 +11,7 @@ import {
   createMercadoPagoPreference,
   syncMercadoPagoPaymentStatus,
 } from "@/services/mercadopago.service";
-
-type ResultType = "success" | "failure" | "pending";
-
-const TITLE: Record<ResultType, string> = {
-  success: "¡Pago exitoso!",
-  failure: "Pago rechazado",
-  pending: "Pago en proceso",
-};
-
-const DESCRIPTION: Record<ResultType, string> = {
-  success:
-    "Tu pedido ha sido confirmado. Pronto recibirás noticias por WhatsApp.",
-  failure:
-    "El pago no pudo completarse. Esto puede pasar, por ejemplo, si la tarjeta está bloqueada o fue rechazada por el banco. Tu compra no se confirmó; puedes intentarlo de nuevo.",
-  pending:
-    "Tu pago está siendo procesado por Mercado Pago. Te avisaremos cuando se confirme.",
-};
+import { getResultMessage, type ResultType } from "@/utils/orderResultMessage";
 
 const ICON: Record<ResultType, React.ReactNode> = {
   success: <CheckCircleIcon className="h-20 w-20 text-green-500" />,
@@ -110,6 +94,11 @@ export default function OrderResult() {
     void syncPayment();
   }, [externalReference, collectionId, collectionStatus, processed]);
 
+  const { title, description } = getResultMessage(
+    pathType,
+    Boolean(externalReference),
+  );
+
   const handleGoToOrders = () => navigate("/mis-ordenes");
   const handleGoToCart = () => navigate("/carrito");
 
@@ -137,10 +126,10 @@ export default function OrderResult() {
           {ICON[pathType]}
 
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">
-            {TITLE[pathType]}
+            {title}
           </h1>
 
-          <p className="text-gray-600 dark:text-gray-300">{DESCRIPTION[pathType]}</p>
+          <p className="text-gray-600 dark:text-gray-300">{description}</p>
 
           {collectionId && (
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">

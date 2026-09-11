@@ -31,6 +31,7 @@ import {
   DELIVERY_FILTER_VALUE,
   type OrderFilterCriteria,
 } from "@/utils/orderFilters";
+import { formatPaymentMethodLabel } from "@/utils/paymentMethod";
 import type { Order, OrderStatus, PaymentStatus } from "@/types/order.types";
 import { useAuthStore } from "@/store/authStore";
 import toast from "react-hot-toast";
@@ -953,6 +954,20 @@ export default function AdminOrders() {
                   )}
                   {selectedOrder.mercadoPagoPaymentId && (
                     <>
+                      {formatPaymentMethodLabel(
+                        selectedOrder.paymentTypeId,
+                        selectedOrder.paymentMethodId,
+                      ) && (
+                        <p className="col-span-2 text-sm text-gray-500 dark:text-gray-400">
+                          Método de pago:{" "}
+                          <span className="font-semibold text-gray-700 dark:text-gray-200">
+                            {formatPaymentMethodLabel(
+                              selectedOrder.paymentTypeId,
+                              selectedOrder.paymentMethodId,
+                            )}
+                          </span>
+                        </p>
+                      )}
                       <a
                         href={buildMercadoPagoActivityUrl(
                           selectedOrder.mercadoPagoPaymentId,

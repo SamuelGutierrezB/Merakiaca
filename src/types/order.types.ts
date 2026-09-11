@@ -57,6 +57,10 @@ export interface Order {
   shippingAddress: Address;
   paymentMethod: "mercadopago";
   mercadoPagoPaymentId?: string;
+  /** payment_type_id de Mercado Pago (ej. "credit_card", "ticket", "bank_transfer") */
+  paymentTypeId?: string;
+  /** payment_method_id de Mercado Pago (ej. "visa", "oxxo", "spei") */
+  paymentMethodId?: string;
   mercadoPagoPreferenceId?: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
