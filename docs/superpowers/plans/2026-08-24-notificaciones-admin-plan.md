@@ -600,7 +600,7 @@ importScripts(
 );
 
 firebase.initializeApp({
-  apiKey: "AIzaSyAX12tiTOkSoJ6HWrm4r6qXTNedmjRFy7A",
+  apiKey: "REDACTADO-2026-09-10-ver-.env",
   authDomain: "merakiaca-3a05a.firebaseapp.com",
   projectId: "merakiaca-3a05a",
   storageBucket: "merakiaca-3a05a.firebasestorage.app",
