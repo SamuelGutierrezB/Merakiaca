@@ -175,7 +175,7 @@ VITE_MERCADOPAGO_PENDING_URL=https://merakiaca-3a05a.web.app/orden/pending
 ### En Firebase Secret Manager (privado, ✅ Seguro):
 
 ```
-MERCADOPAGO_ACCESS_TOKEN = APP_USR-6819053407099765-032923-…
+MERCADOPAGO_ACCESS_TOKEN = REDACTED (ver Firebase Secret Manager)
 ```
 
 **Cambios vs antes:**
